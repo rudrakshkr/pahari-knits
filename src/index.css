@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ─────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: 'Fira Sans', system-ui, sans-serif;
+    background-color: #F7F5F1;
+    color: #1A2438;
+  }
+
+  img { display: block; }
+}
+
+/* ── Scrollbar — subtle ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #F0EDE7; }
+::-webkit-scrollbar-thumb { background: #C8D2DE; border-radius: 3px; }
+
+/* ── Nav link — full-width sliding underline ─────────────────────────────────── */
+/*
+  The <NavLink> renders with class `nav-link`.
+  When active, React Router adds class `active`.
+
+  The underline is an ::after pseudo-element that:
+   - starts at width 0
+   - expands to 100% on hover OR when .active
+   - uses gold (#B8892E) to match the brand
+*/
+@layer components {
+  .nav-link {
+    @apply relative inline-block text-sm font-semibold uppercase tracking-widest
+           text-ink-500 transition-colors duration-150;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background-color: #B8892E;        /* gold-500 */
+    border-radius: 1px;
+    transition: width 0.22s ease;
+  }
+
+  /* Expand on hover */
+  .nav-link:hover {
+    @apply text-navy-700;
+  }
+  .nav-link:hover::after { width: 100%; }
+
+  /* Persist when route is active — React Router sets this class */
+  .nav-link.active {
+    @apply text-navy-700;
+    font-weight: 700;
+  }
+  .nav-link.active::after { width: 100%; }
+}
+
+/* ── Utility: section ornament rule ─────────────────────────────────────────── */
+@layer components {
+  .ornament {
+    @apply flex items-center gap-2.5 justify-center;
+  }
+  .ornament-line {
+    @apply h-px w-7 bg-gold-500 rounded-full opacity-70;
+  }
+}
+
+/* ── Animation delay utilities ───────────────────────────────────────────────── */
+@layer utilities {
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+}

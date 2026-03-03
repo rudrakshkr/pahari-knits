@@ -15,9 +15,16 @@ const express  = require('express')
 const cors     = require('cors')
 const crypto   = require('crypto')
 const Razorpay = require('razorpay')
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config()
 
-const PRODUCTS = require('./data/products')
+const { PrismaClient } = require('@prisma/client')
+const { PrismaPg }     = require('@prisma/adapter-pg')
+const { Pool }         = require('pg')
+
+// Setup Database Connection for Prisma 7
+const pool    = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma  = new PrismaClient({ adapter })
 
 // ── Validate env ──────────────────────────────────────────────────────────────
 const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
@@ -39,7 +46,7 @@ app.use(cors({
 
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'PahariKnits API', products: PRODUCTS.length })
+  res.json({ status: 'ok', service: 'PahariKnits API' }) // Removed PRODUCTS.length
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -48,12 +55,16 @@ app.get('/api/health', (_req, res) => {
 // Returns all products. Supports optional ?category= filter.
 // e.g. GET /api/products?category=shawl
 // ══════════════════════════════════════════════════════════════════════════════
-app.get('/api/products', (req, res) => {
-  const { category } = req.query
-  const results = category
-    ? PRODUCTS.filter(p => p.category === category.toLowerCase())
-    : PRODUCTS
-  res.json({ success: true, count: results.length, products: results })
+app.get('/api/products', async (req, res) => {
+  try {
+    const { category } = req.query
+    const results = await prisma.product.findMany({
+      where: category ? { category: category.toLowerCase() } : {}
+    })
+    res.json({ success: true, count: results.length, products: results })
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Database fetch failed' })
+  }
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -62,22 +73,28 @@ app.get('/api/products', (req, res) => {
 // Returns a single product's full details including the images array.
 // Also returns `related` — up to 3 products from the same category.
 // ══════════════════════════════════════════════════════════════════════════════
-app.get('/api/products/:id', (req, res) => {
-  const product = PRODUCTS.find(p => p.id === req.params.id)
-
-  if (!product) {
-    return res.status(404).json({
-      success: false,
-      error:   `Product "${req.params.id}" not found.`,
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: req.params.id }
     })
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' })
+    }
+
+    const related = await prisma.product.findMany({
+      where: { 
+        category: product.category,
+        id: { not: product.id } 
+      },
+      take: 3
+    })
+
+    res.json({ success: true, product, related })
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Database error' })
   }
-
-  // Up to 3 products from the same category, excluding self
-  const related = PRODUCTS
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 3)
-
-  res.json({ success: true, product, related })
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -108,7 +125,7 @@ app.post('/api/create-order', async (req, res) => {
 // ══════════════════════════════════════════════════════════════════════════════
 // POST /api/verify-payment
 // ══════════════════════════════════════════════════════════════════════════════
-app.post('/api/verify-payment', (req, res) => {
+app.post('/api/verify-payment', async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
 
@@ -130,11 +147,45 @@ app.post('/api/verify-payment', (req, res) => {
       return res.status(400).json({ success: false, error: 'Payment signature verification failed.' })
     }
 
+    // --- ADD THIS PRISMA 7 LOGIC HERE ---
+    try {
+      await prisma.order.create({
+        data: {
+          amount: req.body.amount || 0, // Pass amount from frontend to save it
+          status: 'PAID',
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+        }
+      })
+      console.log(`📡 Database updated: Order ${razorpay_order_id} marked as PAID`)
+    } catch (dbErr) {
+      console.error('❌ Database Save Error:', dbErr)
+      // We don't necessarily want to fail the request if the payment was successful 
+      // but the DB log failed, but you should log it for manual reconciliation.
+    }
+    // -------------------------------------
+
     console.log(`✅  Payment verified: ${razorpay_payment_id}`)
     res.status(200).json({ success: true, message: 'Payment verified.', payment_id: razorpay_payment_id, order_id: razorpay_order_id })
   } catch (err) {
     console.error('verify-payment error:', err)
     res.status(500).json({ success: false, error: 'Verification error. Contact support.' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /api/contact
+// ══════════════════════════════════════════════════════════════════════════════
+
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, topic, message } = req.body
+    await prisma.contactMessage.create({
+      data: { name, email, topic, message }
+    })
+    res.status(201).json({ success: true, message: 'Message saved!' })
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to save message' })
   }
 })
 

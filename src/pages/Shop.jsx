@@ -98,13 +98,13 @@ function ProductCard({ product }) {
             {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
-              className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600
+              className="inline-flex items-center gap-3 bg-gold-500 hover:bg-gold-600
                          text-white text-sm font-bold px-4 py-2.5 rounded-xl
                          shadow-btn-gold transition-colors duration-150"
             >
               Add to Cart
               <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
-                               justify-center text-xs leading-none">+</span>
+                               justify-center text-xl leading-none">+</span>
             </button>
           </div>
         </div>

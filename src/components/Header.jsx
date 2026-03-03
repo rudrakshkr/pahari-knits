@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 const NAV = [
@@ -35,6 +35,10 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handle)
   }, [])
 
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const isProductPage = pathname.startsWith('/product/');
+
   return (
     <header
       className={[
@@ -43,9 +47,21 @@ export default function Header() {
       ].join(' ')}
     >
       <div className="max-w-content mx-auto px-6 h-16 flex items-center justify-between gap-6">
+        {/* ── Mobile Back Button (Only on Product Pages) ─────────────────── */}
+        {isProductPage && (
+          <button 
+            onClick={() => navigate(-1)}
+            className="md:hidden flex items-center gap-2 text-navy-700 hover:text-gold-600 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-sm font-bold uppercase tracking-tight">Back</span>
+          </button>
+        )}
 
         {/* ── Logo ────────────────────────────────────────────────────────── */}
-        <Link to="/" className="flex items-center gap-3 shrink-0 group">
+        <Link to="/" className={`${isProductPage ? 'hidden md:flex' : 'flex'} items-center gap-3 shrink-0 group`}>
           <img
             src="/logo.png"
             alt="PahariKnits logo"
@@ -63,9 +79,12 @@ export default function Header() {
         </Link>
 
         {/* ── Desktop nav ─────────────────────────────────────────────────── */}
-        <nav className="hidden md:flex items-center gap-8">
-          {NAV.map(n => <AppNavLink key={n.to} {...n} />)}
-        </nav>
+        {/* ── Desktop nav ─────────────────────────────────────────────────── */}
+        {!isProductPage && (
+          <nav className="hidden md:flex items-center gap-8">
+            {NAV.map(n => <AppNavLink key={n.to} {...n} />)}
+          </nav>
+        )}
 
         {/* ── Right actions ───────────────────────────────────────────────── */}
         <div className="flex items-center gap-3">
@@ -96,17 +115,19 @@ export default function Header() {
           </NavLink>
 
           {/* Mobile hamburger */}
-          <button
-            className="md:hidden p-2 rounded-lg text-ink-500 hover:bg-cream-100 transition-colors"
-            onClick={() => setMenuOpen(o => !o)}
-            aria-label="Toggle menu"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              {menuOpen
-                ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
-            </svg>
-          </button>
+          {!isProductPage && (
+            <button
+              className="md:hidden p-2 rounded-lg text-ink-500 hover:bg-cream-100 transition-colors"
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Toggle menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {menuOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 

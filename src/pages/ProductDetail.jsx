@@ -481,11 +481,10 @@ export default function ProductDetail() {
       {/* ════════════════════════════════════════════════════════════════════
           RELATED PRODUCTS
       ════════════════════════════════════════════════════════════════════ */}
-      {related.length > 0 && (
+      {/* {related.length > 0 && (
         <div className="border-t border-line-200 bg-white mt-6">
           <div className="max-w-content mx-auto px-6 py-12">
 
-            {/* Section header */}
             <div className="flex items-center justify-between mb-8">
               <div>
                 <div className="flex items-center gap-2.5 mb-2">
@@ -499,19 +498,19 @@ export default function ProductDetail() {
               <Link
                 to="/shop"
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold
-                           text-navy-700 hover:text-navy-900 transition-colors"
+                          text-navy-700 hover:text-navy-900 transition-colors"
               >
                 View all <span>→</span>
               </Link>
             </div>
 
-            {/* Related grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {related.map(p => <RelatedCard key={p.id} product={p} />)}
             </div>
           </div>
         </div>
-      )}
+      )} 
+    */}
 
     </div>
   )

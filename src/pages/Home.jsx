@@ -140,9 +140,9 @@ export default function Home() {
       <div className="bg-white border-y border-line-200">
         <div className="max-w-content mx-auto px-6 py-5
                         flex items-center justify-around gap-4">
-          <StatChip value="Mountain" label="Made" />
+          <StatChip value="200+" label="Artisans" />
           <span className="h-9 w-px bg-line-200" />
-          <StatChip value="Heirloom" label="QUALITY"  />
+          <StatChip value="4"    label="Valleys"  />
           <span className="h-9 w-px bg-line-200" />
           <StatChip value="100%" label="Handmade" />
           <span className="h-9 w-px bg-line-200 hidden sm:block" />

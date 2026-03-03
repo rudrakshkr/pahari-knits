@@ -277,13 +277,29 @@ export default function Cart() {
                 className="flex items-center gap-4 bg-white rounded-2xl p-4
                            border border-line-200 shadow-card"
               >
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="w-[72px] h-[72px] rounded-xl object-cover shrink-0"
-                />
+                {/* Thumbnail — links to PDP */}
+                <Link
+                  to={`/product/${product.id}`}
+                  className="shrink-0 block rounded-xl overflow-hidden
+                             ring-2 ring-transparent hover:ring-gold-400 transition-all"
+                >
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-[72px] h-[72px] object-cover hover:scale-105
+                               transition-transform duration-200"
+                  />
+                </Link>
+
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-ink-900 leading-snug truncate">{product.name}</p>
+                  {/* Name — links to PDP */}
+                  <Link
+                    to={`/product/${product.id}`}
+                    className="font-bold text-ink-900 leading-snug truncate block
+                               hover:text-navy-700 transition-colors"
+                  >
+                    {product.name}
+                  </Link>
                   <p className="text-xs text-teal-500 font-medium mt-0.5">{product.origin}</p>
                   <p className="text-base font-bold text-navy-700 mt-1">
                     {formatINR(product.price * quantity)}

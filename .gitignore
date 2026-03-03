@@ -1,6 +1,5 @@
 # Environment — NEVER commit
 .env
-.env.example
 .env.local
 .env.*.local
 

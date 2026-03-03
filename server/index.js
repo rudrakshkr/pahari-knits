@@ -1,194 +1,148 @@
 /**
- * PahariKnits — Express + Razorpay payment server
+ * PahariKnits — Express backend
  *
- * Endpoints
- * ─────────
- *  POST /api/create-order    →  creates a Razorpay order
- *  POST /api/verify-payment  →  verifies the HMAC signature after payment
- *
- * Run:
- *   cd server && npm install && npm run dev
+ * Routes
+ * ──────
+ *  GET  /api/products         →  all products (catalogue)
+ *  GET  /api/products/:id     →  single product by id
+ *  POST /api/create-order     →  create Razorpay order
+ *  POST /api/verify-payment   →  verify Razorpay HMAC signature
  */
 
 'use strict'
 
-const express   = require('express')
-const cors      = require('cors')
-const crypto    = require('crypto')          // Node built-in — no install needed
-const Razorpay  = require('razorpay')
-require('dotenv').config({ path: '../.env' }) // load root-level .env
+const express  = require('express')
+const cors     = require('cors')
+const crypto   = require('crypto')
+const Razorpay = require('razorpay')
+require('dotenv').config({ path: '../.env' })
 
-// ── Validate env vars early so the server fails fast ─────────────────────────
+const PRODUCTS = require('./data/products')
+
+// ── Validate env ──────────────────────────────────────────────────────────────
 const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
-
 if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
-  console.error(
-    '\n❌  Missing Razorpay credentials.\n' +
-    '    Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to your .env file.\n'
-  )
+  console.error('\n❌  Missing Razorpay credentials in .env\n')
   process.exit(1)
 }
 
-// ── Razorpay client ───────────────────────────────────────────────────────────
-const razorpay = new Razorpay({
-  key_id:     RAZORPAY_KEY_ID,
-  key_secret: RAZORPAY_KEY_SECRET,
-})
+const razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET })
 
-// ── Express app ───────────────────────────────────────────────────────────────
 const app  = express()
 const PORT = process.env.PORT || 5000
 
 app.use(express.json())
 app.use(cors({
-  // In production replace '*' with your actual frontend origin
-  // e.g. 'https://pahariknits.com'
-  origin: process.env.FRONTEND_ORIGIN || '*',
+  origin:  process.env.FRONTEND_ORIGIN || '*',
   methods: ['GET', 'POST'],
 }))
 
-// ── Health check ──────────────────────────────────────────────────────────────
+// ── Health ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'PahariKnits Payment API' })
+  res.json({ status: 'ok', service: 'PahariKnits API', products: PRODUCTS.length })
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GET /api/products
+//
+// Returns all products. Supports optional ?category= filter.
+// e.g. GET /api/products?category=shawl
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/products', (req, res) => {
+  const { category } = req.query
+  const results = category
+    ? PRODUCTS.filter(p => p.category === category.toLowerCase())
+    : PRODUCTS
+  res.json({ success: true, count: results.length, products: results })
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GET /api/products/:id
+//
+// Returns a single product's full details including the images array.
+// Also returns `related` — up to 3 products from the same category.
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/products/:id', (req, res) => {
+  const product = PRODUCTS.find(p => p.id === req.params.id)
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      error:   `Product "${req.params.id}" not found.`,
+    })
+  }
+
+  // Up to 3 products from the same category, excluding self
+  const related = PRODUCTS
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 3)
+
+  res.json({ success: true, product, related })
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
 // POST /api/create-order
-//
-// Body:   { amount: number }   ← amount in INR (e.g. 2499)
-// Returns: { order_id, amount, currency }
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/create-order', async (req, res) => {
   try {
     const { amount } = req.body
-
-    // ── Input validation ──────────────────────────────────────────────────
     if (typeof amount !== 'number' || amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'amount must be a positive number (in INR)',
-      })
+      return res.status(400).json({ success: false, error: 'amount must be a positive number (INR)' })
     }
 
-    // Razorpay requires amount in the smallest currency unit (paise for INR)
-    // ₹2,499  →  249900 paise
-    const amountInPaise = Math.round(amount * 100)
-
-    // ── Create order with Razorpay ────────────────────────────────────────
     const order = await razorpay.orders.create({
-      amount:   amountInPaise,
+      amount:   Math.round(amount * 100), // paise
       currency: 'INR',
-      // receipt: a short identifier you can use to look up the order later
       receipt:  `pk_order_${Date.now()}`,
-      // partial_payment: false  (default — full amount required)
-      notes: {
-        source:  'pahariknits-web',
-        version: '1.0',
-      },
+      notes:    { source: 'pahariknits-web' },
     })
 
     console.log(`✅  Order created: ${order.id}  |  ₹${amount}`)
-
-    return res.status(201).json({
-      success:   true,
-      order_id:  order.id,
-      amount:    order.amount,      // returned in paise
-      currency:  order.currency,    // 'INR'
-    })
+    res.status(201).json({ success: true, order_id: order.id, amount: order.amount, currency: order.currency })
   } catch (err) {
     console.error('create-order error:', err)
-    return res.status(500).json({
-      success: false,
-      error:   'Failed to create Razorpay order. Please try again.',
-    })
+    res.status(500).json({ success: false, error: 'Failed to create Razorpay order.' })
   }
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
 // POST /api/verify-payment
-//
-// Body: {
-//   razorpay_order_id:   string,
-//   razorpay_payment_id: string,
-//   razorpay_signature:  string,
-// }
-//
-// How Razorpay signature verification works:
-//   1. Concatenate  razorpay_order_id + "|" + razorpay_payment_id
-//   2. HMAC-SHA256 the result using your KEY_SECRET as the key
-//   3. Compare the hex digest to razorpay_signature
-//   4. If they match → payment is genuine
-//
-// Returns: { success: true, message: "Payment verified" }
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/verify-payment', (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-    } = req.body
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
 
-    // ── Validate presence ─────────────────────────────────────────────────
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        error:   'Missing required payment verification fields.',
-      })
+      return res.status(400).json({ success: false, error: 'Missing verification fields.' })
     }
 
-    // ── Reconstruct the expected signature ────────────────────────────────
-    //
-    //  Razorpay signs:   "<order_id>|<payment_id>"
-    //  using HMAC-SHA256 keyed with your KEY_SECRET
-    //
-    const body      = razorpay_order_id + '|' + razorpay_payment_id
     const generated = crypto
       .createHmac('sha256', RAZORPAY_KEY_SECRET)
-      .update(body)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
 
-    // ── Constant-time comparison to prevent timing attacks ─────────────────
-    //  crypto.timingSafeEqual requires same-length Buffers
-    const genBuf = Buffer.from(generated,           'hex')
-    const sigBuf = Buffer.from(razorpay_signature,   'hex')
-
-    // Lengths differ → definitely not equal (but don't leak via timing)
-    const lengthMatch = genBuf.length === sigBuf.length
-    const sigMatch    = lengthMatch && crypto.timingSafeEqual(genBuf, sigBuf)
+    const genBuf    = Buffer.from(generated,          'hex')
+    const sigBuf    = Buffer.from(razorpay_signature,  'hex')
+    const sigMatch  = genBuf.length === sigBuf.length && crypto.timingSafeEqual(genBuf, sigBuf)
 
     if (!sigMatch) {
       console.warn(`⚠️  Signature mismatch for order ${razorpay_order_id}`)
-      return res.status(400).json({
-        success: false,
-        error:   'Payment signature verification failed. This request may be tampered.',
-      })
+      return res.status(400).json({ success: false, error: 'Payment signature verification failed.' })
     }
 
-    // ── Signature is valid — payment is genuine ────────────────────────────
-    console.log(`✅  Payment verified: ${razorpay_payment_id}  (order: ${razorpay_order_id})`)
-
-    // TODO: persist the order to your database here
-    // e.g. await db.orders.create({ orderId, paymentId, amount, status: 'paid' })
-
-    return res.status(200).json({
-      success:    true,
-      message:    'Payment verified successfully.',
-      payment_id: razorpay_payment_id,
-      order_id:   razorpay_order_id,
-    })
+    console.log(`✅  Payment verified: ${razorpay_payment_id}`)
+    res.status(200).json({ success: true, message: 'Payment verified.', payment_id: razorpay_payment_id, order_id: razorpay_order_id })
   } catch (err) {
     console.error('verify-payment error:', err)
-    return res.status(500).json({
-      success: false,
-      error:   'Verification error. Please contact support.',
-    })
+    res.status(500).json({ success: false, error: 'Verification error. Contact support.' })
   }
 })
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`\n🚀  PahariKnits Payment API running on http://localhost:${PORT}`)
+  console.log(`\n🚀  PahariKnits API  →  http://localhost:${PORT}`)
+  console.log(`    GET  /api/products`)
+  console.log(`    GET  /api/products/:id`)
   console.log(`    POST /api/create-order`)
   console.log(`    POST /api/verify-payment\n`)
 })

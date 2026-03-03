@@ -21,6 +21,8 @@ const { PrismaClient } = require('@prisma/client')
 const { PrismaPg }     = require('@prisma/adapter-pg')
 const { Pool }         = require('pg')
 
+const nodemailer = require('nodemailer');
+
 // Setup Database Connection for Prisma 7
 const pool    = new Pool({ connectionString: process.env.DATABASE_URL })
 const adapter = new PrismaPg(pool)
@@ -177,17 +179,57 @@ app.post('/api/verify-payment', async (req, res) => {
 // POST /api/contact
 // ══════════════════════════════════════════════════════════════════════════════
 
+
 app.post('/api/contact', async (req, res) => {
+  const { name, email, topic, message } = req.body;
+
   try {
-    const { name, email, topic, message } = req.body
-    await prisma.contactMessage.create({
+    // --- 1. Save to Neon Database via Prisma 7 ---
+    const savedMessage = await prisma.contactMessage.create({
       data: { name, email, topic, message }
-    })
-    res.status(201).json({ success: true, message: 'Message saved!' })
+    });
+
+    // --- 2. Setup Email Transporter ---
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // --- 3. Define the Email Content ---
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: 'rudrakshkumar2908@gmail.com', // Where you want to receive the mail
+      replyTo: email,                // So you can hit "Reply" to the customer
+      subject: `🏔 PahariKnits Inquiry: ${topic} from ${name}`,
+      text: `
+        New Message from PahariKnits Contact Form:
+        
+        Name: ${name}
+        Email: ${email}
+        Topic: ${topic}
+        
+        Message:
+        ${message}
+        
+        ---
+        Database Record ID: ${savedMessage.id}
+      `,
+    };
+
+    // --- 4. Send the Email ---
+    await transporter.sendMail(mailOptions);
+
+    console.log(`✉️ Contact message from ${name} saved and emailed.`);
+    res.status(201).json({ success: true, message: 'Message sent successfully!' });
+
   } catch (err) {
-    res.status(500).json({ success: false, error: 'Failed to save message' })
+    console.error('Contact Error:', err);
+    res.status(500).json({ success: false, error: 'Failed to process message.' });
   }
-})
+});
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {

@@ -12,12 +12,27 @@ export default function Contact() {
   const [topic, setTopic]     = useState(TOPICS[0])
   const [message, setMessage] = useState('')
   const [sent, setSent]       = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleSend = (e) => {
-    e.preventDefault()
-    if (!name.trim() || !email.trim() || !message.trim()) return
-    setSent(true)
-  }
+  const handleSend = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, topic, message }),
+      });
+
+      if (res.ok) {
+        setSent(true);
+      }
+    } catch (err) {
+      console.error("Frontend Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -50,10 +65,13 @@ export default function Contact() {
           </div>
 
           {sent ? (
-            <div className="text-center py-10">
-              <div className="w-16 h-16 rounded-full bg-gold-500 flex items-center justify-center
-                              text-white text-2xl font-bold mx-auto mb-5 shadow-btn-gold">✓</div>
-              <h3 className="text-xl font-bold text-ink-900 mb-2">Message Sent!</h3>
+            <div className="text-center py-10 animate-in fade-in zoom-in duration-300">
+            <div className="w-16 h-16 rounded-full bg-gold-500 flex items-center justify-center
+                            text-white text-2xl font-bold mx-auto mb-5 shadow-btn-gold
+                            animate-bounce"> {/* Added bounce for extra flair */}
+              ✓
+            </div>
+          <h3 className="text-xl font-bold text-ink-900 mb-2">Message Sent!</h3>
               <p className="text-sm text-ink-500 mb-6">We'll reply within 24 hours at <strong className="text-navy-700">{email}</strong></p>
               <button
                 onClick={() => { setName(''); setEmail(''); setMessage(''); setSent(false) }}
@@ -106,10 +124,27 @@ export default function Contact() {
                           className={INPUT_CLASS + ' resize-none'} required />
               </div>
 
-              <button type="submit"
-                      className="w-full bg-gold-500 hover:bg-gold-600 text-white font-bold uppercase
-                                 tracking-wider py-4 rounded-xl shadow-btn-gold transition-colors text-sm mt-1">
-                Send Message ✈
+              <button 
+                type="submit"
+                disabled={loading}
+                className={`w-full flex items-center justify-center gap-3 font-bold uppercase
+                          tracking-wider py-4 rounded-xl transition-all duration-200 text-sm mt-1
+                          ${loading 
+                            ? 'bg-gold-300 cursor-not-allowed text-white' 
+                            : 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-95'
+                          }`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending Message...
+                  </>
+                ) : (
+                  <>Send Message ✈</>
+                )}
               </button>
             </form>
           )}

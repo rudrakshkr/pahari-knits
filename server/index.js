@@ -80,18 +80,19 @@ const razorpay = new Razorpay({
 })
 
 // ── Nodemailer transporter ────────────────────────────────────────────────────
-// Uses SMTP credentials from .env.  Falls back gracefully if not configured.
-const mailer = process.env.SMTP_HOST
-  ? nodemailer.createTransport({
-      host:   process.env.SMTP_HOST,
-      port:   Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    })
-  : null
+let mailer = null;
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+  mailer = nodemailer.createTransport({
+    service: 'gmail', // This handles the host/port automatically for Gmail
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  })
+  console.log('✉️  Nodemailer configured to send from:', process.env.EMAIL_USER)
+} else {
+  console.warn('⚠️  EMAIL_USER or EMAIL_PASS missing in .env. Emails will not be sent.')
+}
 
 // ── Express app ───────────────────────────────────────────────────────────────
 const app  = express()
@@ -308,11 +309,10 @@ app.post('/api/verify-payment', async (req, res) => {
     res.status(500).json({ success: false, error: 'Verification error. Contact support.' })
   }
 })
-
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — POST /api/contact
 //
-// Dual-write: saves ContactMessage to log + sends email via Nodemailer.
+// Dual-write: saves ContactMessage to DB + sends email via Nodemailer.
 // If SMTP is not configured, still returns 200 (form works, email is skipped).
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/contact', async (req, res) => {
@@ -325,11 +325,24 @@ app.post('/api/contact', async (req, res) => {
 
     console.log(`📬  Contact form — ${name} <${email}> [${topic}]`)
 
-    // ── Send email if SMTP is configured ─────────────────────────────────
+    // ── 1. SAVE TO DATABASE (This was missing!) ──────────────────────────
+    await prisma.contactMessage.create({
+      data: {
+        name,
+        email,
+        topic: topic || 'Other',
+        message
+      }
+    })
+    console.log(`💾  Contact message saved to database!`)
+
+    // ── 2. Send email if SMTP is configured ──────────────────────────────
     if (mailer) {
-      const recipientEmail = process.env.CONTACT_EMAIL || process.env.SMTP_USER
+      const sender = (process.env.EMAIL_USER || "").trim()
+      const recipientEmail = (process.env.CONTACT_EMAIL || "").trim() || sender
+
       await mailer.sendMail({
-        from:    `"PahariKnits Site" <${process.env.SMTP_USER}>`,
+        from:    `"PahariKnits Site" <${sender}>`,
         to:      recipientEmail,
         replyTo: email,
         subject: `[PahariKnits Contact] ${topic} — from ${name}`,

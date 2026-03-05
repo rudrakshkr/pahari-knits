@@ -1,0 +1,3407 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  logo.png
+server/
+  data/
+    products.js
+  prisma/
+    schema.prisma
+    seed.js
+  .gitignore
+  index.js
+  package.json
+  prisma.config.ts
+src/
+  components/
+    Footer.jsx
+    Header.jsx
+    Toast.jsx
+  context/
+    CartContext.jsx
+    ToastContext.jsx
+  data/
+    products.js
+  pages/
+    Cart.jsx
+    Contact.jsx
+    Home.jsx
+    ProductDetail.jsx
+    Shop.jsx
+    Success.jsx
+  App.jsx
+  index.css
+  main.jsx
+.gitignore
+index.html
+package.json
+PAYMENT_SETUP.md
+postcss.config.js
+README.md
+tailwind.config.js
+vite.config.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="server/data/products.js">
+// server/data/products.js  — CJS mirror of src/data/products.js
+// Keep in sync manually (or replace both with a shared JSON file later).
+'use strict'
+
+const PRODUCTS = [
+  {
+    id:'pk-001', name:'Kullu Valley Shawl', price:2499, category:'shawl',
+    origin:'Kullu, Himachal Pradesh', badge:'Bestseller', inStock:true,
+    material:'Pure Himalayan wool — hand-spun and naturally dyed',
+    dimensions:'200 cm × 100 cm · weight approx. 380 g',
+    care:'Hand wash in cold water with mild soap. Dry flat in shade. Do not wring.',
+    description:'Hand-woven on traditional pit looms passed down through generations, this pure wool shawl carries the iconic bold geometric patterns — the "Kullu buti" — that have defined Himachali textile identity for centuries. Each shawl takes a skilled weaver three to five days to complete. The tightly woven twill structure traps air efficiently, making it warm in the mountains yet breathable in milder weather. No two pieces are identical.',
+    images: [
+      'https://images.unsplash.com/photo-1732476342752-6870145d1f9c?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1737988007411-e85aa733efa1?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1638786023988-d27bed11e076?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1510574457807-3d9bf494ff6b?q=80&w=801&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+  {
+    id:'pk-002', name:'Kinnauri Striped Muffler', price:899, category:'muffler',
+    origin:'Kinnaur, Himachal Pradesh', badge:'New Arrival', inStock:true,
+    material:'Angora-blend wool (70% wool, 30% Angora) — hand-woven',
+    dimensions:'170 cm × 28 cm · weight approx. 120 g',
+    care:'Dry clean recommended. If hand-washing, use cold water; reshape and dry flat.',
+    description:'The distinctive burgundy, ivory, and mustard stripe of Kinnaur is one of the most recognisable weaving signatures in all of Himachal Pradesh. This muffler is crafted from an Angora-blend that gives it an exceptionally soft hand-feel while maintaining the structural integrity needed to hold the crisp stripe pattern.',
+    images: [
+      'https://images.unsplash.com/photo-1517496267011-39d56c54984d?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://plus.unsplash.com/premium_photo-1695603438043-1b9ab6ebe1a8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1669626495508-58acf2311688?q=80&w=947&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1728034261963-3ff8c2490788?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+  {
+    id:'pk-003', name:'Spiti Hand-Knit Woolen Socks', price:349, category:'socks',
+    origin:'Spiti Valley, Himachal Pradesh', badge:null, inStock:true,
+    material:'Unbleached Himalayan sheep wool — hand-knit',
+    dimensions:'Available in S / M / L — length approx. 28 cm (M)',
+    care:'Hand wash only in cold water. Air dry. Avoid tumble drying.',
+    description:'At 3,800 metres above sea level, Spiti winters are unforgiving — and these socks were designed for exactly that. Knitted by artisan women of the Spiti high desert cooperatives using thick, unbleached local wool, they are structured with a reinforced heel and toe for durability and a ribbed cuff that keeps them in place all day.',
+    images: [
+      'https://images.unsplash.com/photo-1739640081476-fd55589f8838?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1631180543602-727e1197619d?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1566563634870-d566ab58a4df?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+  {
+    id:'pk-004', name:'Chamba Embroidered Stole', price:1799, category:'stole',
+    origin:'Chamba, Himachal Pradesh', badge:'Artisan Pick', inStock:true,
+    material:'Pashmina-blend base (60% pashmina, 40% silk) with silk embroidery thread',
+    dimensions:'190 cm × 70 cm · weight approx. 160 g',
+    care:'Dry clean only. Store folded in a muslin cloth away from direct light.',
+    description:'The "Chamba Rumal" is a UNESCO-recognised embroidery tradition — a double-sided chain stitch in silk thread so precise that both faces of the fabric are equally finished. This stole adapts the ancient motifs into a contemporary wearable form on a gossamer pashmina-silk base. Each stole is the work of a single artisan over two to three weeks.',
+    images: [
+      'https://images.unsplash.com/photo-1761724794779-6b21b4a317c7?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1697781826540-20cff4de8acd?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1576073383268-a8aae73f33bd?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1760837992224-e73b2ba6f1c6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+  {
+    id:'pk-005', name:"Manali Shepherd's Cap", price:599, category:'cap',
+    origin:'Manali, Himachal Pradesh', badge:null, inStock:true,
+    material:'Dense felted wool — hand-blocked and hand-finished',
+    dimensions:'One size fits most (internal circumference 56–60 cm)',
+    care:'Spot clean only with a damp cloth. Re-block by steaming gently if misshapen.',
+    description:'Known locally as the "Himachali topi," this cap has been worn by shepherds and farmers of the Kullu-Manali corridor for as long as anyone can remember. Felting is done by hand — pressing and shrinking wet wool fibres until they lock permanently. The result is a cap that sheds light rain, holds its shape indefinitely, and improves with age.',
+    images: [
+      'https://images.unsplash.com/photo-1699347611474-5be693bee31e?q=80&w=723&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1720534490358-bc2ad29d51d5?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1589831377283-33cb1cc6bd5d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1604532057336-2c4a09f71330?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+  {
+    id:'pk-006', name:'Rampur Double-Weave Shawl', price:3299, category:'shawl',
+    origin:'Rampur Bushahr, Himachal Pradesh', badge:'Limited Edition', inStock:true,
+    material:'Fine merino wool — double-weave, hand-woven on a fly-shuttle loom',
+    dimensions:'210 cm × 105 cm · weight approx. 520 g',
+    care:'Dry clean only. Store in a cedar box or with cedar balls to protect against moths.',
+    description:'Double-weave is one of the most technically demanding techniques in handloom weaving: two separate cloth layers are woven simultaneously on the same loom. This Rampur piece uses merino wool for exceptional softness and drape. There are fewer than a dozen weavers in Himachal Pradesh who still practise double-weave at this quality level. Each shawl is numbered and signed by the weaver.',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1725721362512-2f47d969e554?q=80&w=1143&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1688502769136-3d1bdee7b222?q=80&w=1493&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1700671788328-eecc12128f68?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://plus.unsplash.com/premium_photo-1768514188394-03b802d6e648?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  },
+]
+
+// Attach imageUrl alias so API consumers don't have to know about images[0]
+module.exports = PRODUCTS.map(p => ({ ...p, imageUrl: p.images[0] }))
+</file>
+
+<file path="server/prisma/schema.prisma">
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  price       Int
+  category    String
+  origin      String
+  description String
+  material    String?
+  dimensions  String?
+  care        String?
+  badge       String?
+  images      String[] // Native Postgres String Array
+  inStock     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  amount            Int
+  status            String   @default("PENDING") 
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  createdAt         DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  topic     String
+  message   String
+  createdAt DateTime @default(now())
+}
+</file>
+
+<file path="server/prisma/seed.js">
+const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { Pool } = require('pg');
+require('dotenv').config();
+
+// 1. Setup the connection pool using your environment variable
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+// 2. Initialize the adapter
+const adapter = new PrismaPg(pool);
+
+// 3. Pass the adapter to the PrismaClient constructor
+const prisma = new PrismaClient({ adapter });
+
+const PRODUCTS = [
+  {
+    id:       'pk-001',
+    name:     'Kullu Valley Shawl',
+    price:    2499,
+    category: 'shawl',
+    origin:   'Kullu, Himachal Pradesh',
+    badge:    'Bestseller',
+    inStock:  true,
+    material: 'Pure Himalayan wool — hand-spun and naturally dyed',
+    dimensions: '200 cm x 100 cm · weight approx. 380 g',
+    care:     'Hand wash in cold water with mild soap. Dry flat in shade. Do not wring.',
+    description: 'Hand-woven on traditional pit looms, this pure wool shawl features iconic "Kullu buti" geometric patterns. A skilled artisan takes days to complete each unique piece, creating a breathable yet warm layer that defines Himachali textile heritage.',
+    images: [
+      'https://images.unsplash.com/photo-1732476342752-6870145d1f9c?q=80&w=1469&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1737988007411-e85aa733efa1?q=80&w=687&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1638786023988-d27bed11e076?q=80&w=735&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1510574457807-3d9bf494ff6b?q=80&w=801&auto=format&fit=crop',
+    ],
+  },
+  {
+    id:       'pk-002',
+    name:     'Kinnauri Striped Muffler',
+    price:    899,
+    category: 'muffler',
+    origin:   'Kinnaur, Himachal Pradesh',
+    badge:    'New Arrival',
+    inStock:  true,
+    material: 'Angora-blend wool (70% wool, 30% Angora) — hand-woven',
+    dimensions: '170 cm x 28 cm · weight approx. 120 g',
+    care:     'Dry clean recommended. If hand-washing, use cold water; reshape and dry flat.',
+    description: 'Featuring the distinctive stripes of the Baspa Valley, this Angora-blend muffler offers exceptional softness and warmth. Each piece is hand-finished with knotted fringes, maintaining a crisp pattern that is lightweight yet incredibly durable.',
+    images: [
+      'https://images.unsplash.com/photo-1517496267011-39d56c54984d?q=80&w=1074&auto=format&fit=crop',
+      'https://plus.unsplash.com/premium_photo-1695603438043-1b9ab6ebe1a8?q=80&w=687&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1669626495508-58acf2311688?q=80&w=947&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1728034261963-3ff8c2490788?q=80&w=1470&auto=format&fit=crop',
+    ],
+  },
+  {
+    id:       'pk-003',
+    name:     'Spiti Hand-Knit Woolen Socks',
+    price:    349,
+    category: 'socks',
+    origin:   'Spiti Valley, Himachal Pradesh',
+    badge:    null,
+    inStock:  true,
+    material: 'Unbleached Himalayan sheep wool — hand-knit',
+    dimensions: 'Available in S / M / L — length approx. 28 cm (M)',
+    care:     'Hand wash only in cold water. Air dry. Avoid tumble drying.',
+    description: 'Knitted by artisan women in the Spiti high desert, these thick socks are crafted from unbleached local wool for sub-zero protection. Naturally moisture-resistant and reinforced for durability, they are a winter essential for extreme cold.',
+    images: [
+      'https://images.unsplash.com/photo-1739640081476-fd55589f8838?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1631180543602-727e1197619d?q=80&w=764&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1566563634870-d566ab58a4df?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=687&auto=format&fit=crop',
+    ],
+  },
+  {
+    id:       'pk-004',
+    name:     'Chamba Embroidered Stole',
+    price:    1799,
+    category: 'stole',
+    origin:   'Chamba, Himachal Pradesh',
+    badge:    'Artisan Pick',
+    inStock:  true,
+    material: 'Pashmina-blend base (60% pashmina, 40% silk) with silk embroidery thread',
+    dimensions: '190 cm x 70 cm · weight approx. 160 g',
+    care:     'Dry clean only. Store folded in a muslin cloth away from direct light.',
+    description: 'Adapting UNESCO-recognized embroidery, this gossamer pashmina-silk stole features precise double-sided silk motifs. Dyed with local botanicals, each piece represents weeks of intricate hand-stitching by master artisans in Chamba.',
+    images: [
+      'https://images.unsplash.com/photo-1761724794779-6b21b4a317c7?q=80&w=1470&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1697781826540-20cff4de8acd?q=80&w=1074&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1576073383268-a8aae73f33bd?q=80&w=687&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1760837992224-e73b2ba6f1c6?q=80&w=1470&auto=format&fit=crop',
+    ],
+  },
+  {
+    id:       'pk-005',
+    name:     "Manali Shepherd's Cap",
+    price:    599,
+    category: 'cap',
+    origin:   'Manali, Himachal Pradesh',
+    badge:    null,
+    inStock:  true,
+    material: 'Dense felted wool — hand-blocked and hand-finished',
+    dimensions: 'One size fits most (internal circumference 56–60 cm)',
+    care:     'Spot clean only with a damp cloth. Re-block by steaming gently if misshapen.',
+    description: 'The traditional "Himachali topi" crafted from dense felted wool. This weather-resistant cap features iconic geometric banding and a structured hand-blocked finish, offering timeless mountain style that improves with age.',
+    images: [
+      'https://images.unsplash.com/photo-1699347611474-5be693bee31e?q=80&w=723&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1720534490358-bc2ad29d51d5?q=80&w=687&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1589831377283-33cb1cc6bd5d?q=80&w=687&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1604532057336-2c4a09f71330?q=80&w=687&auto=format&fit=crop',
+    ],
+  },
+  {
+    id:       'pk-006',
+    name:     'Rampur Double-Weave Shawl',
+    price:    3299,
+    category: 'shawl',
+    origin:   'Rampur Bushahr, Himachal Pradesh',
+    badge:    'Limited Edition',
+    inStock:  true,
+    material: 'Fine merino wool — double-weave, hand-woven on a fly-shuttle loom',
+    dimensions: '210 cm x 105 cm · weight approx. 520 g',
+    care:     'Dry clean only. Store in a cedar box or with cedar balls to protect against moths.',
+    description: 'A technical masterpiece, this reversible double-weave shawl features inverted colors on each side. Woven from fine merino wool by a heritage family in Rampur, it is one of the rarest examples of high-level Himachali handloom.',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1725721362512-2f47d969e554?q=80&w=1143&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1688502769136-3d1bdee7b222?q=80&w=1493&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1700671788328-eecc12128f68?q=80&w=687&auto=format&fit=crop',
+      'https://plus.unsplash.com/premium_photo-1768514188394-03b802d6e648?q=80&w=687&auto=format&fit=crop',
+    ],
+  }
+];
+
+async function main() {
+  console.log('--- Starting Seed Process ---');
+  
+  for (const product of PRODUCTS) {
+    const result = await prisma.product.upsert({
+      where: { id: product.id },
+      update: product,
+      create: product,
+    });
+    console.log(`✅ Upserted: ${result.name} (${result.id})`);
+  }
+  
+  console.log('--- Seed Finished Successfully ---');
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+</file>
+
+<file path="server/.gitignore">
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+</file>
+
+<file path="server/prisma.config.ts">
+// This file was generated by Prisma, and assumes you have installed the following:
+// npm install --save-dev prisma dotenv
+import "dotenv/config";
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+    seed: "node ./prisma/seed.js"
+  },
+  datasource: {
+    url: process.env["DATABASE_URL"],
+  },
+});
+</file>
+
+<file path="src/components/Footer.jsx">
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+export default function Footer() {
+  return (
+    <footer className="bg-white border-t border-line-200 mt-16">
+      <div className="max-w-content mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" alt="PahariKnits" className="w-8 h-8 rounded-lg object-cover" />
+          <div>
+            <span className="block text-sm font-bold text-navy-700">PahariKnits</span>
+            <span className="block text-[10px] text-ink-400 tracking-widest uppercase">Traditional Himachali Apparel</span>
+          </div>
+        </div>
+
+        {/* Links */}
+        <nav className="flex items-center gap-6 text-sm text-ink-400">
+          {[['/', 'Home'], ['/shop', 'Shop'], ['/cart', 'Cart'], ['/contact', 'Contact']].map(([to, label]) => (
+            <Link key={to} to={to} className="hover:text-navy-700 transition-colors">{label}</Link>
+          ))}
+        </nav>
+
+        {/* Copyright */}
+        <p className="text-xs text-ink-200">© {new Date().getFullYear()} PahariKnits. All rights reserved.</p>
+      </div>
+    </footer>
+  )
+}
+</file>
+
+<file path="src/components/Toast.jsx">
+import React, { useEffect, useState } from 'react'
+import { useToast } from '../context/ToastContext'
+
+export default function Toast() {
+  const { toast, dismissToast } = useToast()
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (toast) {
+      // tiny rAF to ensure mount triggers transition
+      requestAnimationFrame(() => setVisible(true))
+    } else {
+      setVisible(false)
+    }
+  }, [toast])
+
+  if (!toast) return null
+
+  return (
+    <div
+      className={[
+        'fixed top-20 left-1/2 -translate-x-1/2 z-[9999]',
+        'transition-all duration-300',
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3',
+      ].join(' ')}
+    >
+      <div className="flex items-center gap-3 bg-navy-700 text-white
+                      px-4 py-3 rounded-2xl shadow-card-lg
+                      border-t-2 border-gold-500 min-w-[260px] max-w-sm">
+        {/* Product thumbnail */}
+        {toast.imageUrl && (
+          <img
+            src={toast.imageUrl}
+            alt=""
+            className="w-10 h-10 rounded-lg object-cover shrink-0"
+          />
+        )}
+
+        {/* Check icon + message */}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-6 h-6 rounded-full bg-gold-500 flex items-center justify-center shrink-0">
+            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-navy-200 font-medium">Added to cart</p>
+            <p className="text-sm font-semibold text-white truncate">{toast.name}</p>
+          </div>
+        </div>
+
+        {/* Dismiss */}
+        <button
+          onClick={dismissToast}
+          className="text-navy-300 hover:text-white transition-colors ml-1 shrink-0"
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="src/context/CartContext.jsx">
+import React, { createContext, useContext, useState, useCallback } from 'react'
+import { getCartTotal, formatINR } from '../data/products'
+
+const CartContext = createContext(undefined)
+
+export function CartProvider({ children }) {
+  const [items, setItems] = useState([])
+
+  const addToCart = useCallback((product) => {
+    setItems(prev => {
+      const existing = prev.find(i => i.product.id === product.id)
+      if (existing) return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i)
+      return [...prev, { product, quantity: 1 }]
+    })
+  }, [])
+
+  const removeFromCart = useCallback((id) => setItems(prev => prev.filter(i => i.product.id !== id)), [])
+
+  const updateQuantity = useCallback((id, qty) => {
+    if (qty <= 0) setItems(prev => prev.filter(i => i.product.id !== id))
+    else setItems(prev => prev.map(i => i.product.id === id ? { ...i, quantity: qty } : i))
+  }, [])
+
+  const clearCart = useCallback(() => setItems([]), [])
+
+  const totalItems  = items.reduce((s, i) => s + i.quantity, 0)
+  const totalAmount = getCartTotal(items)
+
+  return (
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, totalItems, totalAmount, formattedTotal: formatINR(totalAmount) }}>
+      {children}
+    </CartContext.Provider>
+  )
+}
+
+export function useCart() {
+  const ctx = useContext(CartContext)
+  if (!ctx) throw new Error('useCart must be used inside CartProvider')
+  return ctx
+}
+</file>
+
+<file path="src/context/ToastContext.jsx">
+import React, { createContext, useContext, useState, useCallback } from 'react'
+
+const ToastContext = createContext(undefined)
+
+export function ToastProvider({ children }) {
+  const [toast, setToast] = useState(null) // { name, imageUrl }
+
+  const showToast = useCallback((name, imageUrl) => {
+    setToast({ name, imageUrl })
+    setTimeout(() => setToast(null), 2400)
+  }, [])
+
+  const dismissToast = useCallback(() => setToast(null), [])
+
+  return (
+    <ToastContext.Provider value={{ toast, showToast, dismissToast }}>
+      {children}
+    </ToastContext.Provider>
+  )
+}
+
+export function useToast() {
+  const ctx = useContext(ToastContext)
+  if (!ctx) throw new Error('useToast must be inside ToastProvider')
+  return ctx
+}
+</file>
+
+<file path="src/pages/Success.jsx">
+/**
+ * Success.jsx — Post-payment confirmation page
+ *
+ * Receives state from Cart.jsx navigate('/success', { state: { ... } })
+ * Falls back gracefully if navigated to directly.
+ */
+import React, { useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+
+// Tiny confetti burst — pure CSS, no dependency
+function ConfettiBurst() {
+  const COLORS = ['#B8892E', '#1D3461', '#2A7A8A', '#B35938', '#C9A84C']
+  const pieces = Array.from({ length: 18 }, (_, i) => ({
+    id:    i,
+    color: COLORS[i % COLORS.length],
+    left:  `${Math.random() * 100}%`,
+    delay: `${Math.random() * 0.6}s`,
+    dur:   `${0.8 + Math.random() * 0.6}s`,
+    size:  `${6 + Math.random() * 6}px`,
+  }))
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      {pieces.map(p => (
+        <span
+          key={p.id}
+          className="absolute rounded-sm opacity-0"
+          style={{
+            left:             p.left,
+            top:              '-10px',
+            width:            p.size,
+            height:           p.size,
+            backgroundColor:  p.color,
+            animation:        `confettiFall ${p.dur} ${p.delay} ease-in forwards`,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes confettiFall {
+          0%   { transform: translateY(0)   rotate(0deg);   opacity: 1; }
+          100% { transform: translateY(340px) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+export default function Success() {
+  const { state } = useLocation()
+  const paymentId = state?.paymentId
+  const orderId   = state?.orderId
+  const amount    = state?.amount
+
+  // Short ID shown to user: last 8 chars of payment ID
+  const shortId = paymentId
+    ? paymentId.slice(-8).toUpperCase()
+    : '--------'
+
+  return (
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center
+                    bg-cream-50 px-6 py-16">
+      <div className="relative max-w-md w-full text-center">
+        {/* Confetti */}
+        <ConfettiBurst />
+
+        {/* Card */}
+        <div className="relative bg-white rounded-3xl border border-line-200
+                        shadow-card-lg px-8 py-12 z-10">
+
+          {/* Big check circle */}
+          <div className="w-20 h-20 rounded-full bg-gold-500 flex items-center justify-center
+                          text-white text-4xl font-bold mx-auto mb-6
+                          shadow-[0_6px_24px_rgba(184,137,46,0.40)]">
+            ✓
+          </div>
+
+          {/* Ornament */}
+          <div className="flex items-center justify-center gap-2.5 mb-4">
+            <span className="h-px w-7 bg-gold-400 rounded-full opacity-60" />
+            <span className="text-[11px] font-semibold text-gold-500 tracking-[0.22em] uppercase">
+              Payment Confirmed
+            </span>
+            <span className="h-px w-7 bg-gold-400 rounded-full opacity-60" />
+          </div>
+
+          <h1 className="text-2xl font-bold text-ink-900 mb-2">
+            Thank you for your order!
+          </h1>
+          <p className="text-sm text-ink-400 leading-relaxed mb-8">
+            Your handcrafted Himachali pieces are being prepared with care.
+            You'll receive a confirmation email shortly.
+          </p>
+
+          {/* Order details */}
+          {paymentId && (
+            <div className="bg-cream-100 rounded-2xl p-5 text-left space-y-3 mb-8
+                            border border-line-200">
+              <DetailRow label="Payment ID"  value={`#${shortId}`} />
+              {amount && (
+                <DetailRow
+                  label="Amount Paid"
+                  value={`₹${amount.toLocaleString('en-IN')}`}
+                  highlight
+                />
+              )}
+              <DetailRow label="Status" value="✅  Paid & Verified" />
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              to="/shop"
+              className="flex-1 inline-flex items-center justify-center gap-2
+                         bg-navy-700 hover:bg-navy-800 text-white text-sm font-bold
+                         uppercase tracking-wide px-6 py-3.5 rounded-xl
+                         shadow-btn transition-colors"
+            >
+              Continue Shopping
+            </Link>
+            <Link
+              to="/"
+              className="flex-1 inline-flex items-center justify-center
+                         bg-cream-100 hover:bg-cream-200 border border-line-200
+                         text-ink-700 text-sm font-semibold px-6 py-3.5 rounded-xl
+                         transition-colors"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+
+        {/* Below-card tagline */}
+        <p className="mt-6 text-xs text-ink-300 leading-relaxed max-w-xs mx-auto">
+          Every purchase directly supports artisan weavers in Kullu, Kinnaur,
+          Spiti, and Chamba. Thank you. 🏔
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function DetailRow({ label, value, highlight }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-ink-400 font-medium">{label}</span>
+      <span className={highlight ? 'font-bold text-navy-700' : 'font-semibold text-ink-700'}>
+        {value}
+      </span>
+    </div>
+  )
+}
+</file>
+
+<file path="src/index.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ─────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: 'Fira Sans', system-ui, sans-serif;
+    background-color: #F7F5F1;
+    color: #1A2438;
+  }
+
+  img { display: block; }
+}
+
+/* ── Scrollbar — subtle ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #F0EDE7; }
+::-webkit-scrollbar-thumb { background: #C8D2DE; border-radius: 3px; }
+
+/* ── Nav link — full-width sliding underline ─────────────────────────────────── */
+/*
+  The <NavLink> renders with class `nav-link`.
+  When active, React Router adds class `active`.
+
+  The underline is an ::after pseudo-element that:
+   - starts at width 0
+   - expands to 100% on hover OR when .active
+   - uses gold (#B8892E) to match the brand
+*/
+@layer components {
+  .nav-link {
+    @apply relative inline-block text-sm font-semibold uppercase tracking-widest
+           text-ink-500 transition-colors duration-150;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background-color: #B8892E;        /* gold-500 */
+    border-radius: 1px;
+    transition: width 0.22s ease;
+  }
+
+  /* Expand on hover */
+  .nav-link:hover {
+    @apply text-navy-700;
+  }
+  .nav-link:hover::after { width: 100%; }
+
+  /* Persist when route is active — React Router sets this class */
+  .nav-link.active {
+    @apply text-navy-700;
+    font-weight: 700;
+  }
+  .nav-link.active::after { width: 100%; }
+}
+
+/* ── Utility: section ornament rule ─────────────────────────────────────────── */
+@layer components {
+  .ornament {
+    @apply flex items-center gap-2.5 justify-center;
+  }
+  .ornament-line {
+    @apply h-px w-7 bg-gold-500 rounded-full opacity-70;
+  }
+}
+
+/* ── Animation delay utilities ───────────────────────────────────────────────── */
+@layer utilities {
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+}
+</file>
+
+<file path="src/main.jsx">
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+)
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PahariKnits — Traditional Himachali Apparel</title>
+    <meta name="description" content="Authentic hand-woven apparel from the valleys of Himachal Pradesh. Shop shawls, stoles, mufflers and more — direct from mountain artisans." />
+
+    <!-- Favicon placeholder -->
+    <link rel="icon" type="image/svg+xml" href="/logo.png" />
+
+    <!-- Fira Sans — all weights we use -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="PAYMENT_SETUP.md">
+# PahariKnits — Razorpay Payment Integration Setup
+
+## Quick start (5 steps)
+
+### 1. Get your Razorpay credentials
+
+1. Sign up / log in at https://dashboard.razorpay.com
+2. Go to **Settings → API Keys**
+3. Click **Generate Test Key** (for development)
+4. Copy your `Key ID` and `Key Secret`
+
+---
+
+### 2. Create your `.env` file
+
+Copy the example and fill in your real keys:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+```env
+RAZORPAY_KEY_ID=rzp_test_XXXXXXXXXXXX
+RAZORPAY_KEY_SECRET=your_actual_secret_here
+VITE_RAZORPAY_KEY_ID=rzp_test_XXXXXXXXXXXX   # same key, prefix VITE_ for browser
+```
+
+> ⚠️  **KEY_SECRET must NEVER go in any VITE_ variable.**
+> Vite bundles `VITE_*` vars into the browser JS — anyone can read them.
+> The secret is only ever used server-side in `server/index.js`.
+
+---
+
+### 3. Install dependencies
+
+```bash
+# Frontend
+npm install
+
+# Backend
+cd server && npm install && cd ..
+```
+
+---
+
+### 4. Run both servers
+
+Open two terminal tabs:
+
+```bash
+# Terminal 1 — Express backend (port 5000)
+cd server && npm run dev
+
+# Terminal 2 — Vite frontend (port 5173)
+npm run dev
+```
+
+Vite proxies `/api/*` → `localhost:5000` automatically (see `vite.config.js`).
+
+---
+
+### 5. Test a payment
+
+1. Open http://localhost:5173
+2. Add items to cart → click **Pay ₹X · GPay / UPI / Card**
+3. Use Razorpay test credentials:
+   - **Card:** `4111 1111 1111 1111`  · Any future date · CVV `123`
+   - **UPI / GPay:** `success@razorpay`
+   - **Net Banking:** Any bank → **Success**
+4. After success you should land on `/success` with your Payment ID
+
+---
+
+## How the verification works
+
+```
+Browser                     Your Server              Razorpay
+──────                     ────────────             ────────
+Add to cart
+Click "Pay"
+  │
+  ├── POST /api/create-order ──────────────────────────► creates order
+  │   ◄── { order_id, amount, currency } ──────────────
+  │
+  ├── Razorpay modal opens
+  │   User pays via GPay / card
+  │   Modal calls handler(response)
+  │     response = { razorpay_order_id, razorpay_payment_id, razorpay_signature }
+  │
+  ├── POST /api/verify-payment ──►
+  │      HMAC-SHA256(order_id|payment_id, KEY_SECRET)
+  │      compare with razorpay_signature
+  │      ◄── { success: true }
+  │
+Navigate to /success
+```
+
+The HMAC signature check is the security gate. Without it, a malicious user
+could fake a successful payment by calling your backend directly.
+
+---
+
+## Going live
+
+1. Complete Razorpay KYC at https://dashboard.razorpay.com/app/kyc
+2. Generate **Live** keys (start with `rzp_live_`)
+3. Replace test keys in your production `.env`
+4. Set `FRONTEND_ORIGIN` to your actual domain
+5. The code requires zero changes — it works identically with live keys
+</file>
+
+<file path="postcss.config.js">
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+</file>
+
+<file path="README.md">
+# pahari-knits
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        // ── PahariKnits brand palette ─────────────────────────────
+        // Backgrounds
+        cream: {
+          50:  '#F7F5F1',   // main page bg — warm off-white
+          100: '#F0EDE7',   // alternate section bg
+          200: '#E8E2D8',   // hover tint / borders
+        },
+        // Primary navy (logo, CTAs, text)
+        navy: {
+          50:  '#EEF2F9',
+          100: '#D0DCEF',
+          200: '#9AB2D9',
+          600: '#253F78',
+          700: '#1D3461',   // ← main brand navy
+          800: '#152648',
+          900: '#0E1832',
+        },
+        // Gold accent (knitting needles from logo, CTAs)
+        gold: {
+          100: '#FBF2DC',
+          200: '#F0D98C',
+          300: '#DFC060',
+          400: '#C9A84C',
+          500: '#B8892E',   // ← main CTA gold
+          600: '#9A7020',
+          700: '#7A5614',
+        },
+        // Teal — origin tags, eyebrow labels
+        teal: {
+          500: '#2A7A8A',
+          400: '#3D96A8',
+          100: '#E0F2F6',
+        },
+        // Text hierarchy — warm ink tones
+        ink: {
+          900: '#1A2438',
+          700: '#2D3E56',
+          500: '#4A5A72',
+          400: '#6A7A90',
+          200: '#A0AABB',
+        },
+        // Borders
+        line: {
+          100: '#F0F2F5',
+          200: '#E4E8F0',
+          300: '#C8D2DE',
+        },
+        // Warm earthy tones for the New Arrivals banner
+        stone: {
+          warm:   '#F5EFE6',
+          amber:  '#C47C2B',
+          sienna: '#A0522D',
+          terra:  '#7B3A1E',
+        },
+      },
+
+      fontFamily: {
+        sans:    ['Fira Sans', 'system-ui', 'sans-serif'],
+        display: ['Fira Sans', 'system-ui', 'sans-serif'],
+      },
+
+      boxShadow: {
+        card:   '0 4px 20px rgba(26,36,56,0.08)',
+        'card-lg': '0 8px 32px rgba(26,36,56,0.12)',
+        btn:    '0 4px 14px rgba(13,26,46,0.22)',
+        'btn-gold': '0 4px 14px rgba(184,137,46,0.40)',
+      },
+
+      maxWidth: {
+        content: '1120px',
+      },
+
+      keyframes: {
+        fadeUp: {
+          '0%':   { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)'    },
+        },
+        slideDown: {
+          '0%':   { opacity: '0', transform: 'translateY(-8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)'    },
+        },
+      },
+      animation: {
+        'fade-up':    'fadeUp 0.5s ease forwards',
+        'slide-down': 'slideDown 0.25s ease forwards',
+      },
+    },
+  },
+  plugins: [],
+}
+</file>
+
+<file path="vite.config.js">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+
+  // ── Dev proxy ────────────────────────────────────────────────────────────
+  // During `npm run dev`, any request to /api/* is forwarded to the Express
+  // server at localhost:5000. This avoids CORS issues in development and
+  // means the frontend never needs to hard-code the backend URL.
+  //
+  // In production your reverse-proxy (nginx / Vercel rewrite / etc.) handles
+  // this routing instead.
+  server: {
+    proxy: {
+      '/api': {
+        target:       'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+})
+</file>
+
+<file path="src/components/Header.jsx">
+import React, { useState, useEffect } from 'react'
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+
+const NAV = [
+  { to: '/',        label: 'Home'    },
+  { to: '/shop',    label: 'Shop'    },
+  { to: '/contact', label: 'Contact' },
+]
+
+// NavLink demands `end` on the root path so /shop doesn't also activate /
+function AppNavLink({ to, label }) {
+  return (
+    <NavLink
+      to={to}
+      end={to === '/'}
+      className={({ isActive }) =>
+        ['nav-link', isActive ? 'active' : ''].join(' ')
+      }
+    >
+      {label}
+    </NavLink>
+  )
+}
+
+export default function Header() {
+  const { totalItems } = useCart()
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Add a subtle shadow once user scrolls down
+  useEffect(() => {
+    const handle = () => setScrolled(window.scrollY > 6)
+    window.addEventListener('scroll', handle, { passive: true })
+    return () => window.removeEventListener('scroll', handle)
+  }, [])
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const isProductPage = pathname.startsWith('/product/');
+
+  return (
+    <header
+      className={[
+        'sticky top-0 z-50 bg-white border-b border-line-200 transition-shadow duration-200',
+        scrolled ? 'shadow-[0_2px_16px_rgba(26,36,56,0.08)]' : '',
+      ].join(' ')}
+    >
+      <div className="max-w-content mx-auto px-6 h-16 flex items-center justify-between gap-6">
+        {/* ── Mobile Back Button (Only on Product Pages) ─────────────────── */}
+        {isProductPage && (
+          <button 
+            onClick={() => navigate(-1)}
+            className="md:hidden flex items-center gap-2 text-navy-700 hover:text-gold-600 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-sm font-bold uppercase tracking-tight">Back</span>
+          </button>
+        )}
+
+        {/* ── Logo ────────────────────────────────────────────────────────── */}
+        <Link to="/" className={`${isProductPage ? 'hidden md:flex' : 'flex'} items-center gap-3 shrink-0 group`}>
+          <img
+            src="/logo.png"
+            alt="PahariKnits logo"
+            className="w-10 h-10 rounded-xl object-cover shadow-sm
+                       ring-1 ring-line-200 group-hover:ring-gold-400 transition-all duration-200"
+          />
+          <div className="leading-none">
+            <span className="block text-[17px] font-bold text-navy-700 tracking-tight">
+              PahariKnits
+            </span>
+            <span className="block text-[10px] font-medium text-ink-400 tracking-[0.18em] uppercase mt-0.5">
+              Himachali Apparel
+            </span>
+          </div>
+        </Link>
+
+        {/* ── Desktop nav ─────────────────────────────────────────────────── */}
+        {/* ── Desktop nav ─────────────────────────────────────────────────── */}
+        {!isProductPage && (
+          <nav className="hidden md:flex items-center gap-8">
+            {NAV.map(n => <AppNavLink key={n.to} {...n} />)}
+          </nav>
+        )}
+
+        {/* ── Right actions ───────────────────────────────────────────────── */}
+        <div className="flex items-center gap-3">
+          {/* Cart */}
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              [
+                'relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold',
+                'transition-colors duration-150',
+                isActive
+                  ? 'bg-navy-700 text-white'
+                  : 'bg-cream-100 text-ink-700 hover:bg-navy-50 hover:text-navy-700',
+              ].join(' ')
+            }
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+            </svg>
+            Cart
+            {totalItems > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1
+                               bg-gold-500 text-white text-[10px] font-bold rounded-full
+                               flex items-center justify-center leading-none animate-slide-down">
+                {totalItems}
+              </span>
+            )}
+          </NavLink>
+
+          {/* Mobile hamburger */}
+          {!isProductPage && (
+            <button
+              className="md:hidden p-2 rounded-lg text-ink-500 hover:bg-cream-100 transition-colors"
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Toggle menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                {menuOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Mobile dropdown menu ─────────────────────────────────────────────── */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-line-200 bg-white px-6 pb-4 pt-3 flex flex-col gap-1 animate-slide-down">
+          {NAV.map(n => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              end={n.to === '/'}
+              onClick={() => setMenuOpen(false)}
+              className={({ isActive }) =>
+                [
+                  'px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors',
+                  isActive
+                    ? 'bg-navy-50 text-navy-700'
+                    : 'text-ink-500 hover:bg-cream-100 hover:text-ink-900',
+                ].join(' ')
+              }
+            >
+              {n.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </header>
+  )
+}
+</file>
+
+<file path="src/pages/Cart.jsx">
+/**
+ * Cart.jsx — PahariKnits
+ *
+ * Payment flow:
+ *  1. User clicks "Proceed to Payment"
+ *  2. displayRazorpay() calls POST /api/create-order → gets order_id
+ *  3. Razorpay checkout modal opens (with GPay via prefetch: true)
+ *  4. On success → POST /api/verify-payment with the three Razorpay IDs
+ *  5. Server verifies HMAC signature
+ *  6. Navigate to /success
+ */
+
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+import { formatINR } from '../data/products'
+
+// ── Razorpay brand-matching theme ────────────────────────────────────────────
+// color   = modal header / primary UI — we use Rust/Amber to match the
+//           "Premium Earthy Boutique" palette
+// color_background = modal body bg
+// color_text       = text on the colored header
+const RAZORPAY_THEME = {
+  color:            '#B35938',   // Rust / Amber — earthy accent
+  color_background: '#FBF9F6',   // Cream — matches app background
+  color_text:       '#FBF9F6',   // Cream text on the rust header
+}
+
+// ── Utility: dynamically load the Razorpay checkout script ───────────────────
+// Razorpay requires their JS to be loaded at runtime (not bundled).
+// This function injects the <script> tag once and resolves when it's ready.
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    // If already loaded (e.g. user clicks pay twice) resolve immediately
+    if (document.getElementById('razorpay-script')) {
+      resolve(true)
+      return
+    }
+
+    const script    = document.createElement('script')
+    script.id       = 'razorpay-script'
+    script.src      = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.async    = true
+    script.onload   = () => resolve(true)
+    script.onerror  = () => resolve(false) // don't reject — caller handles false
+    document.body.appendChild(script)
+  })
+}
+
+export default function Cart() {
+  const navigate = useNavigate()
+  const { items, removeFromCart, updateQuantity, totalItems, totalAmount, clearCart } = useCart()
+  const [payLoading, setPayLoading] = useState(false)
+  const [payError,   setPayError  ] = useState(null)
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // displayRazorpay — main payment handler
+  //
+  // Step-by-step:
+  //  1. Load checkout.js (dynamic script injection)
+  //  2. POST /api/create-order  →  get Razorpay order_id
+  //  3. Open Razorpay modal with prefetch: true (ensures GPay appears)
+  //  4. handler.success → POST /api/verify-payment → navigate /success
+  //  5. handler.dismiss → restore button state
+  // ══════════════════════════════════════════════════════════════════════════
+  const displayRazorpay = async () => {
+    setPayError(null)
+    setPayLoading(true)
+
+    // ── Step 1: load the Razorpay JS SDK ─────────────────────────────────
+    const scriptLoaded = await loadRazorpayScript()
+    if (!scriptLoaded) {
+      setPayError('Could not load payment gateway. Please check your internet connection.')
+      setPayLoading(false)
+      return
+    }
+
+    // ── Step 2: create a Razorpay order on our backend ───────────────────
+    let orderData
+    try {
+      const res = await fetch('/api/create-order', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ amount: totalAmount }), // INR amount
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || `Server error ${res.status}`)
+      }
+
+      orderData = await res.json()
+    } catch (err) {
+      setPayError(`Order creation failed: ${err.message}`)
+      setPayLoading(false)
+      return
+    }
+
+    // ── Step 3: open the Razorpay checkout modal ──────────────────────────
+    //
+    // Key options explained:
+    //   prefetch: true    — pre-fetches payment methods including GPay; this
+    //                       is what makes Google Pay show up prominently
+    //   method.upi: true  — explicitly enables UPI (covers GPay, PhonePe…)
+    //   remember_customer — pre-fills phone/email on repeat visits
+    //
+    const options = {
+      key:         import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount:      orderData.amount,      // in paise (as returned by backend)
+      currency:    orderData.currency,    // 'INR'
+      name:        'PahariKnits',
+      description: `${totalItems} handcrafted ${totalItems === 1 ? 'item' : 'items'} from the Himalayas`,
+      image:       '/logo.png',           // your brand logo in the modal
+      order_id:    orderData.order_id,
+
+      // ── GPay / UPI prominence ─────────────────────────────────────────
+      prefetch:    true,                  // pre-loads GPay, PhonePe, BHIM etc.
+      method: {
+        upi:        true,                 // enables all UPI apps (GPay, PhonePe)
+        card:       true,
+        netbanking: true,
+        wallet:     true,
+        emi:        false,
+      },
+
+      // ── Remember customer details ─────────────────────────────────────
+      remember_customer: true,
+
+      // ── Theme — Premium Earthy Boutique palette ───────────────────────
+      theme: RAZORPAY_THEME,
+
+      // ── Pre-fill (optional — remove if not collecting user info) ──────
+      // prefill: {
+      //   name:    currentUser?.name  || '',
+      //   email:   currentUser?.email || '',
+      //   contact: currentUser?.phone || '',
+      // },
+
+      // ── Notes (visible in Razorpay dashboard) ─────────────────────────
+      notes: {
+        items:      items.map(i => i.product.name).join(', '),
+        item_count: totalItems,
+      },
+
+      // ── Success handler ───────────────────────────────────────────────
+      // Razorpay calls this with three IDs once payment is captured.
+      // We MUST verify the signature on our server before trusting it.
+      handler: async function (response) {
+        const {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+        } = response
+
+        try {
+          const verifyRes = await fetch('/api/verify-payment', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id,
+              razorpay_payment_id,
+              razorpay_signature,
+            }),
+          })
+
+          const verifyData = await verifyRes.json()
+
+          if (!verifyRes.ok || !verifyData.success) {
+            throw new Error(verifyData.error || 'Verification failed')
+          }
+
+          // Payment is confirmed — clear cart and navigate to success page
+          clearCart()
+          navigate('/success', {
+            state: {
+              paymentId: razorpay_payment_id,
+              orderId:   razorpay_order_id,
+              amount:    totalAmount,
+            },
+          })
+        } catch (err) {
+          // Verification failed — show error, DO NOT clear cart
+          setPayError(
+            `Payment received but verification failed. ` +
+            `Please contact support with Payment ID: ${razorpay_payment_id}`
+          )
+          setPayLoading(false)
+        }
+      },
+
+      // ── Modal close / dismiss handler ────────────────────────────────
+      modal: {
+        ondismiss: () => {
+          setPayLoading(false)
+          // User closed modal without paying — just restore the button
+        },
+        // Prevent accidental closes
+        confirm_close: true,
+        escape:        false,
+      },
+    }
+
+    // Open the modal
+    const rzp = new window.Razorpay(options)
+
+    // Handle payment failures (e.g. card declined) inside the modal
+    rzp.on('payment.failed', (response) => {
+      setPayError(
+        `Payment failed: ${response.error.description || 'Unknown error'}. ` +
+        `Code: ${response.error.code}`
+      )
+      setPayLoading(false)
+      rzp.close()
+    })
+
+    rzp.open()
+    setPayLoading(false) // restore button while modal is open
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  return (
+    <div>
+      {/* Page header */}
+      <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
+        <div className="max-w-content mx-auto px-6 py-7">
+          <p className="text-[11px] font-semibold text-teal-500 tracking-[0.22em] uppercase mb-1.5">
+            Your Selection
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-ink-900 tracking-tight">
+            Cart{totalItems > 0 ? ` (${totalItems})` : ''}
+          </h1>
+        </div>
+      </div>
+
+      {/* Payment notice */}
+      <div className="max-w-2xl mx-auto px-6 mt-5">
+        <div className="flex items-start gap-3 bg-gold-100 border-l-4 border-gold-500
+                        rounded-xl px-4 py-3.5 shadow-sm">
+          <span className="text-gold-600 mt-0.5">⚑</span>
+          <p className="text-sm text-ink-700 leading-relaxed">
+            We accept all major payment methods including{' '}
+            <strong className="text-navy-700">Google Pay, UPI, Cards & Net Banking</strong>.
+            Cash on Delivery (COD) is{' '}
+            <strong className="text-[#9A4A2E]">not available</strong>.
+          </p>
+        </div>
+      </div>
+
+      {items.length === 0 ? (
+        /* ── Empty state ─────────────────────────────────────────────────── */
+        <div className="max-w-sm mx-auto text-center py-24 px-6">
+          <div className="w-20 h-20 rounded-2xl bg-navy-50 flex items-center justify-center
+                          text-4xl mx-auto mb-6">
+            🧣
+          </div>
+          <h2 className="text-xl font-bold text-ink-900 mb-2">Your cart is empty</h2>
+          <p className="text-sm text-ink-400 mb-8 leading-relaxed">
+            Discover our handcrafted Himachali apparel and add pieces you love.
+          </p>
+          <Link
+            to="/shop"
+            className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600
+                       text-white text-sm font-bold uppercase tracking-wide
+                       px-7 py-3.5 rounded-xl shadow-btn-gold transition-colors"
+          >
+            Browse the Shop
+          </Link>
+        </div>
+      ) : (
+        <div className="max-w-2xl mx-auto px-6 py-8 flex flex-col gap-6">
+
+          {/* ── Cart items ─────────────────────────────────────────────────── */}
+          <div className="flex flex-col gap-3">
+            {items.map(({ product, quantity }) => (
+              <div
+                key={product.id}
+                className="flex items-center gap-4 bg-white rounded-2xl p-4
+                           border border-line-200 shadow-card"
+              >
+                {/* Thumbnail — links to PDP */}
+                <Link
+                  to={`/product/${product.id}`}
+                  className="shrink-0 block rounded-xl overflow-hidden
+                             ring-2 ring-transparent hover:ring-gold-400 transition-all"
+                >
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-[72px] h-[72px] object-cover hover:scale-105
+                               transition-transform duration-200"
+                  />
+                </Link>
+
+                <div className="flex-1 min-w-0">
+                  {/* Name — links to PDP */}
+                  <Link
+                    to={`/product/${product.id}`}
+                    className="font-bold text-ink-900 leading-snug truncate block
+                               hover:text-navy-700 transition-colors"
+                  >
+                    {product.name}
+                  </Link>
+                  <p className="text-xs text-teal-500 font-medium mt-0.5">{product.origin}</p>
+                  <p className="text-base font-bold text-navy-700 mt-1">
+                    {formatINR(product.price * quantity)}
+                  </p>
+                </div>
+
+                {/* Qty stepper */}
+                <div className="flex items-center gap-1 bg-navy-50 rounded-full px-1.5 py-1.5 shrink-0">
+                  <button
+                    onClick={() => updateQuantity(product.id, quantity - 1)}
+                    className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center
+                               text-navy-700 font-bold text-base hover:bg-navy-50 transition-colors"
+                  >
+                    −
+                  </button>
+                  <span className="w-8 text-center text-sm font-bold text-ink-900">{quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(product.id, quantity + 1)}
+                    className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center
+                               text-navy-700 font-bold text-base hover:bg-navy-50 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => removeFromCart(product.id)}
+                  className="text-ink-200 hover:text-ink-500 transition-colors p-1 shrink-0"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Order summary ──────────────────────────────────────────────── */}
+          <div className="bg-white rounded-2xl border border-line-200 shadow-card p-6">
+            <h2 className="text-sm font-bold text-ink-900 uppercase tracking-widest mb-5">
+              Order Summary
+            </h2>
+
+            <div className="space-y-3 mb-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-ink-500">
+                  Subtotal ({totalItems} {totalItems === 1 ? 'item' : 'items'})
+                </span>
+                <span className="font-semibold text-ink-700">{formatINR(totalAmount)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-ink-500">Shipping</span>
+                <span className="font-bold text-teal-500">FREE</span>
+              </div>
+            </div>
+
+            <div className="border-t border-dashed border-line-200 pt-4
+                            flex justify-between items-center mb-6">
+              <span className="font-bold text-ink-900">Total</span>
+              <span className="text-2xl font-bold text-navy-700">{formatINR(totalAmount)}</span>
+            </div>
+
+            {/* ── Error banner ─────────────────────────────────────────────── */}
+            {payError && (
+              <div className="mb-4 flex items-start gap-2.5 bg-red-50 border border-red-200
+                              rounded-xl px-4 py-3 text-sm text-red-700">
+                <span className="shrink-0 mt-0.5">⚠️</span>
+                <span>{payError}</span>
+              </div>
+            )}
+
+            {/* ── Payment button ────────────────────────────────────────────── */}
+            <button
+              onClick={displayRazorpay}
+              disabled={payLoading}
+              className={[
+                'w-full flex items-center justify-center gap-3 font-bold uppercase',
+                'tracking-wider py-4 rounded-xl text-sm transition-all duration-200',
+                payLoading
+                  ? 'bg-gold-300 text-white cursor-not-allowed'
+                  : 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-[0.98]',
+              ].join(' ')}
+            >
+              {payLoading ? (
+                <>
+                  {/* Spinner */}
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10"
+                            stroke="currentColor" strokeWidth="4"/>
+                    <path  className="opacity-75" fill="currentColor"
+                           d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z"/>
+                  </svg>
+                  Preparing Payment…
+                </>
+              ) : (
+                <>
+                  {/* GPay / lock icon row */}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                  Pay {formatINR(totalAmount)} · GPay / UPI / Card
+                </>
+              )}
+            </button>
+
+            {/* Payment method logos row */}
+            <div className="mt-4 flex items-center justify-center gap-3">
+              {/* GPay */}
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/120px-Google_Pay_Logo.svg.png"
+                alt="Google Pay"
+                className="h-5 object-contain opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <span className="text-line-200">·</span>
+              <span className="text-[11px] font-medium text-ink-300 tracking-wide">UPI</span>
+              <span className="text-line-200">·</span>
+              <span className="text-[11px] font-medium text-ink-300 tracking-wide">Cards</span>
+              <span className="text-line-200">·</span>
+              <span className="text-[11px] font-medium text-ink-300 tracking-wide">Net Banking</span>
+            </div>
+
+            <p className="text-xs text-ink-300 text-center mt-2.5">
+              🔒 Secured by Razorpay · PCI-DSS compliant
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+</file>
+
+<file path="src/pages/Contact.jsx">
+import React, { useState } from 'react'
+
+const TOPICS = ['Order Status', 'Returns & Exchanges', 'Product Inquiry', 'Partnership', 'Other']
+
+const INPUT_CLASS = `w-full bg-cream-100 border border-line-200 rounded-xl
+  px-4 py-3 text-sm text-ink-900 placeholder-ink-200
+  focus:outline-none focus:border-navy-400 focus:bg-white transition-colors`
+
+export default function Contact() {
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
+  const [topic, setTopic]     = useState(TOPICS[0])
+  const [message, setMessage] = useState('')
+  const [sent, setSent]       = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, topic, message }),
+      });
+
+      if (res.ok) {
+        setSent(true);
+      }
+    } catch (err) {
+      console.error("Frontend Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      {/* Page header */}
+      <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
+        <div className="max-w-content mx-auto px-6 py-7">
+          <p className="text-[11px] font-semibold text-teal-500 tracking-[0.22em] uppercase mb-1.5">We're Here</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-ink-900 tracking-tight">Get in Touch</h1>
+          <p className="text-sm text-ink-400 mt-2">Questions about an order, a weave, or just want to say hello?</p>
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-6">
+        {/* Info cards */}
+        <div className="grid grid-cols-3 gap-3">
+          {[['✉', 'Email', 'support@pahariknits.com'], ['⏱', 'Response', 'Within 24 hrs'], ['🏔', 'Based in', 'Himachal Pradesh']].map(([icon, label, value]) => (
+            <div key={label} className="bg-white border border-line-200 rounded-2xl p-4 text-center shadow-card">
+              <span className="text-2xl block mb-2">{icon}</span>
+              <p className="text-[10px] font-medium text-ink-400 uppercase tracking-wider mb-1">{label}</p>
+              <p className="text-xs font-semibold text-navy-700">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Form card */}
+        <div className="bg-white rounded-2xl border border-line-200 shadow-card p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-7">
+            <span className="w-1 h-6 rounded-full bg-gold-500" />
+            <h2 className="text-base font-bold text-ink-900">Send a Message</h2>
+          </div>
+
+          {sent ? (
+            <div className="text-center py-10 animate-in fade-in zoom-in duration-300">
+            <div className="w-16 h-16 rounded-full bg-gold-500 flex items-center justify-center
+                            text-white text-2xl font-bold mx-auto mb-5 shadow-btn-gold
+                            animate-bounce"> {/* Added bounce for extra flair */}
+              ✓
+            </div>
+          <h3 className="text-xl font-bold text-ink-900 mb-2">Message Sent!</h3>
+              <p className="text-sm text-ink-500 mb-6">We'll reply within 24 hours at <strong className="text-navy-700">{email}</strong></p>
+              <button
+                onClick={() => { setName(''); setEmail(''); setMessage(''); setSent(false) }}
+                className="border-2 border-gold-400 text-gold-600 text-sm font-semibold
+                           px-5 py-2 rounded-xl hover:bg-gold-100 transition-colors">
+                Send Another
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSend} className="flex flex-col gap-5">
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-xs font-semibold text-ink-700 uppercase tracking-wider mb-2">
+                    Your Name <span className="text-gold-500">*</span>
+                  </label>
+                  <input value={name} onChange={e => setName(e.target.value)}
+                         placeholder="e.g. Priya Sharma" className={INPUT_CLASS} required />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-ink-700 uppercase tracking-wider mb-2">
+                    Email Address <span className="text-gold-500">*</span>
+                  </label>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                         placeholder="you@example.com" className={INPUT_CLASS} required />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-ink-700 uppercase tracking-wider mb-2">Topic</label>
+                <div className="flex flex-wrap gap-2">
+                  {TOPICS.map(t => (
+                    <button key={t} type="button" onClick={() => setTopic(t)}
+                            className={`px-3.5 py-2 rounded-full text-sm font-medium border transition-colors ${
+                              topic === t
+                                ? 'bg-navy-700 border-navy-700 text-white'
+                                : 'bg-cream-100 border-line-200 text-ink-500 hover:border-navy-300'
+                            }`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-ink-700 uppercase tracking-wider mb-2">
+                  Message <span className="text-gold-500">*</span>
+                </label>
+                <textarea value={message} onChange={e => setMessage(e.target.value)}
+                          placeholder="Tell us how we can help..." rows={5}
+                          className={INPUT_CLASS + ' resize-none'} required />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={loading}
+                className={`w-full flex items-center justify-center gap-3 font-bold uppercase
+                          tracking-wider py-4 rounded-xl transition-all duration-200 text-sm mt-1
+                          ${loading 
+                            ? 'bg-gold-300 cursor-not-allowed text-white' 
+                            : 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-95'
+                          }`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending Message...
+                  </>
+                ) : (
+                  <>Send Message ✈</>
+                )}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="src/pages/Home.jsx">
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+// ── Reusable ornament row ─────────────────────────────────────────────────────
+function Ornament({ label }) {
+  return (
+    <div className="ornament mb-4">
+      <span className="ornament-line" />
+      <span className="text-xs font-semibold text-gold-500 tracking-[0.22em] uppercase">
+        {label}
+      </span>
+      <span className="ornament-line" />
+    </div>
+  )
+}
+
+// ── Stat chip ─────────────────────────────────────────────────────────────────
+function StatChip({ value, label }) {
+  return (
+    <div className="flex flex-col items-center gap-0.5 px-2">
+      <span className="text-2xl font-bold text-navy-700 tracking-tight">{value}</span>
+      <span className="text-[11px] font-medium text-ink-400 tracking-wide uppercase">{label}</span>
+    </div>
+  )
+}
+
+// ── Region badge ──────────────────────────────────────────────────────────────
+function RegionBadge({ name, emoji }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 bg-white border border-line-200
+                     rounded-full px-3.5 py-2 text-sm font-semibold text-ink-700
+                     shadow-sm hover:border-gold-400 transition-colors">
+      <span>{emoji}</span>
+      {name}
+    </span>
+  )
+}
+
+// ── Why card ──────────────────────────────────────────────────────────────────
+function WhyCard({ icon, title, body, accentBg, delay }) {
+  return (
+    <div
+      className="flex-1 min-w-[200px] max-w-xs bg-white rounded-2xl p-6
+                 border border-line-200 shadow-card text-center
+                 hover:shadow-card-lg hover:-translate-y-0.5
+                 transition-all duration-200 opacity-0 animate-fade-up"
+      style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
+    >
+      <div
+        className="w-14 h-14 rounded-2xl flex items-center justify-center
+                   text-3xl mx-auto mb-5"
+        style={{ backgroundColor: accentBg }}
+      >
+        {icon}
+      </div>
+      <h3 className="text-base font-bold text-ink-900 mb-2">{title}</h3>
+      <p className="text-sm text-ink-400 leading-relaxed">{body}</p>
+    </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <div className="overflow-x-hidden">
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          HERO — snowy Himalayan panorama, cream stage at bottom
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section className="relative h-[500px] md:h-[560px] overflow-hidden">
+        {/* Background image */}
+        <img
+          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=90"
+          alt="Himalayan snow peaks"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Very subtle full-bleed cream wash — keeps peaks vivid */}
+        <div className="absolute inset-0 bg-cream-50/15" />
+
+        {/* Cream stage — bottom 280px where all text lives */}
+        <div className="absolute bottom-0 left-0 right-0 h-72 bg-gradient-to-t from-[#F7F5F1]/95 via-[#F7F5F1]/80 to-transparent" />
+
+        {/* Text content — anchored to the cream stage */}
+        <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center
+                        text-center pb-10 px-6 opacity-0 animate-fade-up"
+             style={{ animationDelay: '80ms', animationFillMode: 'forwards' }}>
+
+          {/* Logo */}
+          <img
+            src="/logo.png"
+            alt="PahariKnits"
+            className="w-20 h-20 rounded-2xl object-cover shadow-card
+                       ring-2 ring-white mb-4"
+          />
+
+          {/* Eyebrow */}
+          <div className="ornament mb-2">
+            <span className="ornament-line" />
+            <span className="text-[11px] font-semibold text-gold-500 tracking-[0.22em] uppercase">
+              From the Himalayan Highlands
+            </span>
+            <span className="ornament-line" />
+          </div>
+
+          {/* Brand name */}
+          <h1 className="text-5xl md:text-6xl font-bold text-navy-700
+                         tracking-tight leading-none mb-1">
+            PahariKnits
+          </h1>
+          <p className="text-[11px] font-light text-teal-500 tracking-[0.32em] uppercase mb-6">
+            Traditional Himachali Apparel
+          </p>
+
+          {/* CTAs */}
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2.5 bg-navy-700 hover:bg-navy-800
+                         text-white text-sm font-bold uppercase tracking-wide
+                         px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
+            >
+              Shop Now
+              <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center text-xs leading-none">→</span>
+            </Link>
+            <a
+              href="#story"
+              className="inline-flex items-center gap-2 bg-gold-100 hover:bg-gold-200
+                         border border-gold-300 text-gold-600 text-sm font-semibold
+                         px-6 py-3.5 rounded-xl transition-colors duration-150"
+            >
+              Our Story
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          STATS BAR
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div className="bg-white border-y border-line-200">
+        <div className="max-w-content mx-auto px-6 py-5
+                        flex items-center justify-around gap-4">
+          <StatChip value="200+" label="Artisans" />
+          <span className="h-9 w-px bg-line-200" />
+          <StatChip value="4"    label="Valleys"  />
+          <span className="h-9 w-px bg-line-200" />
+          <StatChip value="100%" label="Handmade" />
+          <span className="h-9 w-px bg-line-200 hidden sm:block" />
+          <StatChip value="Fair" label="Trade"    />
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          OUR STORY — fully centred
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section id="story" className="py-20 px-6 bg-cream-50 border-b border-line-200">
+        <div className="max-w-2xl mx-auto text-center
+                        opacity-0 animate-fade-up"
+             style={{ animationDelay: '120ms', animationFillMode: 'forwards' }}>
+
+          <Ornament label="Our Story" />
+
+          <h2 className="text-3xl md:text-4xl font-bold text-ink-900 leading-snug mb-5">
+            Woven into the fabric<br className="hidden sm:block" /> of the mountains.
+          </h2>
+
+          <p className="text-[15px] text-ink-500 leading-relaxed mb-8">
+            PahariKnits was born from a simple belief — that the artisans of Himachal Pradesh
+            deserve a platform as exceptional as their craft. We partner directly with weavers
+            in Kullu, Kinnaur, Spiti, and Chamba to bring their work to you, unfiltered and authentic.
+          </p>
+
+          {/* Region badges — centred */}
+          <div className="flex flex-wrap gap-2.5 justify-center">
+            <RegionBadge name="Kullu"   emoji="🏔" />
+            <RegionBadge name="Kinnaur" emoji="🌾" />
+            <RegionBadge name="Spiti"   emoji="❄️" />
+            <RegionBadge name="Chamba"  emoji="🧵" />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          WHY CHOOSE US — centred heading + bento cards
+          NOTE: "The Craft" photo grid is intentionally excluded.
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 bg-cream-50">
+        <div className="max-w-content mx-auto">
+
+          {/* Centred section header */}
+          <div className="text-center mb-12
+                          opacity-0 animate-fade-up"
+               style={{ animationDelay: '80ms', animationFillMode: 'forwards' }}>
+            <Ornament label="Why Choose Us" />
+            <h2 className="text-3xl md:text-4xl font-bold text-ink-900 leading-snug">
+              Every thread tells{' '}
+              <span className="text-gold-500">a mountain story.</span>
+            </h2>
+          </div>
+
+          {/* Cards row — centred, wraps on mobile */}
+          <div className="flex flex-wrap justify-center gap-5">
+            <WhyCard delay={140} icon="🏔" accentBg="#EEF2F9"
+              title="Mountain Sourced"
+              body="Every yarn traced to high-altitude artisan communities across Himachal Pradesh." />
+            <WhyCard delay={240} icon="🤝" accentBg="#FBF2DC"
+              title="Fair Trade"
+              body="Weavers earn fair wages — always. We believe craft deserves deep respect." />
+            <WhyCard delay={340} icon="🧶" accentBg="#E0F4F6"
+              title="Hand-Crafted"
+              body="No mass production. Only hands, looms, and generations of inherited skill." />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          NEW ARRIVALS BANNER — light earthy theme, no dark overlay
+      ═══════════════════════════════════════════════════════════════════ */}
+      <section className="py-12 px-6 bg-cream-100 border-y border-line-200">
+        <div className="max-w-content mx-auto">
+          <div className="relative rounded-3xl overflow-hidden
+                          bg-[#F5EFE6] border border-[#E0D0B8]
+                          shadow-card-lg">
+
+            {/* Warm amber accent bar at top */}
+            <div className="h-1 w-full bg-gradient-to-r from-gold-500 via-gold-300 to-gold-500/40" />
+
+            <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 p-8 md:p-10">
+
+              {/* Left: image */}
+              <div className="shrink-0 w-full md:w-64 h-48 md:h-52 rounded-2xl overflow-hidden shadow-card">
+                <img
+                  src="https://images.unsplash.com/photo-1678801868975-32786ae5aeeb?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="New season wool"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Right: copy */}
+              <div className="flex-1 text-center md:text-left">
+                {/* Eyebrow */}
+                <div className="inline-flex items-center gap-2 mb-4">
+                  <span className="h-px w-5 bg-gold-500 rounded-full" />
+                  <span className="text-[11px] font-semibold text-gold-600 tracking-[0.22em] uppercase">
+                    New Season
+                  </span>
+                </div>
+
+                <h2 className="text-2xl md:text-3xl font-bold text-ink-900 leading-snug mb-3">
+                  New arrivals<br className="hidden md:block" /> every season.
+                </h2>
+                <p className="text-[15px] text-ink-500 leading-relaxed mb-6 max-w-sm mx-auto md:mx-0">
+                  Freshly woven pieces from mountain artisans — limited quantities,
+                  each with a story sewn in.
+                </p>
+
+                <Link
+                  to="/shop"
+                  className="inline-flex items-center gap-2.5 bg-navy-700 hover:bg-navy-800
+                             text-white text-sm font-bold uppercase tracking-wide
+                             px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
+                >
+                  Browse Collection
+                  <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center text-xs">→</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Decorative gold ✦ watermark — bottom right */}
+            <span
+              className="absolute bottom-4 right-6 text-gold-300 text-7xl
+                         font-bold leading-none pointer-events-none select-none opacity-30"
+              aria-hidden="true"
+            >
+              ✦
+            </span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  )
+}
+</file>
+
+<file path="src/pages/ProductDetail.jsx">
+/**
+ * ProductDetail.jsx  —  PahariKnits Product Detail Page
+ *
+ * Layout (desktop, side-by-side):
+ *   LEFT   — vertical thumbnail strip + large main image with fade transition
+ *   RIGHT  — breadcrumb · badge · name · origin · price · description
+ *             accordion (material / care) · qty stepper · Add to Cart + Buy Now
+ *
+ * Below:  "You Might Also Like" — up to 3 related products from same category
+ *
+ * Data:   fetched from GET /api/products/:id (Vite proxies to Express)
+ *         Falls back gracefully to a "not found" state.
+ */
+
+import React, { useState, useEffect, useCallback } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+import { useToast } from '../context/ToastContext'
+import { formatINR } from '../data/products'
+
+// ── Badge colours (matches Shop.jsx) ──────────────────────────────────────────
+const BADGE_STYLE = {
+  'Bestseller':      'bg-gold-500 text-white',
+  'New Arrival':     'bg-teal-500 text-white',
+  'Artisan Pick':    'bg-navy-700 text-white',
+  'Limited Edition': 'bg-[#7A3820] text-white',
+}
+
+// ── Accordion section (Material / Care) ───────────────────────────────────────
+function Accordion({ title, children }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="border-t border-line-200 last:border-b">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between py-3.5 text-left
+                   text-sm font-semibold text-ink-700 hover:text-ink-900
+                   transition-colors group"
+      >
+        <span>{title}</span>
+        <svg
+          className={`w-4 h-4 text-ink-300 group-hover:text-ink-500 transition-transform duration-200
+                      ${open ? 'rotate-180' : 'rotate-0'}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div className={`overflow-hidden transition-all duration-200 ${open ? 'max-h-40 pb-4' : 'max-h-0'}`}>
+        <p className="text-sm text-ink-400 leading-relaxed">{children}</p>
+      </div>
+    </div>
+  )
+}
+
+// ── Related product mini-card ──────────────────────────────────────────────────
+function RelatedCard({ product }) {
+  return (
+    <Link
+      to={`/product/${product.id}`}
+      className="group bg-white rounded-2xl overflow-hidden border border-line-200
+                 shadow-card hover:shadow-card-lg hover:-translate-y-0.5
+                 transition-all duration-200 flex flex-col"
+    >
+      <div className="relative overflow-hidden">
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        {product.badge && (
+          <span className={`absolute top-2.5 left-2.5 text-[10px] font-semibold px-2 py-0.5
+                            rounded-full ${BADGE_STYLE[product.badge] ?? 'bg-ink-500 text-white'}`}>
+            {product.badge}
+          </span>
+        )}
+      </div>
+      <div className="p-4 flex flex-col flex-1">
+        <p className="text-[10px] font-medium text-teal-500 uppercase tracking-widest mb-1">
+          {product.origin}
+        </p>
+        <h4 className="text-sm font-bold text-ink-900 leading-snug mb-auto">{product.name}</h4>
+        <p className="text-base font-bold text-navy-700 mt-3">{formatINR(product.price)}</p>
+      </div>
+    </Link>
+  )
+}
+
+// ── Skeleton loader ────────────────────────────────────────────────────────────
+function Skeleton() {
+  return (
+    <div className="max-w-content mx-auto px-6 py-10 animate-pulse">
+      <div className="h-4 w-48 bg-line-200 rounded mb-8" />
+      <div className="flex flex-col lg:flex-row gap-10">
+        <div className="lg:w-[55%]">
+          <div className="w-full aspect-square bg-line-200 rounded-2xl mb-3" />
+          <div className="flex gap-2">
+            {[0,1,2,3].map(i => <div key={i} className="w-16 h-16 bg-line-200 rounded-xl" />)}
+          </div>
+        </div>
+        <div className="flex-1 space-y-4 pt-2">
+          <div className="h-3 w-20 bg-line-200 rounded" />
+          <div className="h-8 w-3/4 bg-line-200 rounded" />
+          <div className="h-4 w-1/3 bg-line-200 rounded" />
+          <div className="h-24 bg-line-200 rounded" />
+          <div className="h-12 bg-line-200 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Main component
+// ══════════════════════════════════════════════════════════════════════════════
+export default function ProductDetail() {
+  const { id }             = useParams()
+  const navigate           = useNavigate()
+  const { addToCart }      = useCart()
+  const { showToast }      = useToast()
+
+  const [product, setProduct]   = useState(null)
+  const [related, setRelated]   = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [error,   setError  ]   = useState(null)
+
+  // Gallery state
+  const [activeImg, setActiveImg]       = useState(0)
+  const [imgFading, setImgFading]       = useState(false)  // drives CSS opacity
+
+  // Right-panel state
+  const [qty,      setQty     ]         = useState(1)
+  const [added,    setAdded   ]         = useState(false)  // brief "Added ✓" feedback
+
+  // ── Fetch product ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    setActiveImg(0)
+    setQty(1)
+    setAdded(false)
+
+    fetch(`/api/products/${id}`)
+      .then(r => {
+        if (!r.ok) throw new Error(r.status === 404 ? 'not_found' : 'server_error')
+        return r.json()
+      })
+      .then(data => {
+        if (cancelled) return
+        setProduct(data.product)
+        setRelated(data.related || [])
+        setLoading(false)
+      })
+      .catch(err => {
+        if (cancelled) return
+        setError(err.message)
+        setLoading(false)
+      })
+
+    return () => { cancelled = true }
+  }, [id])
+
+  // ── Switch gallery image with a brief fade ────────────────────────────────
+  const switchImage = useCallback((index) => {
+    if (index === activeImg) return
+    setImgFading(true)
+    setTimeout(() => {
+      setActiveImg(index)
+      setImgFading(false)
+    }, 160)
+  }, [activeImg])
+
+  // ── Add to cart ────────────────────────────────────────────────────────────
+  const handleAddToCart = () => {
+    const productForCart = {
+      ...product,
+      imageUrl: product.images[0]
+    };
+
+    for (let i = 0; i < qty; i++) addToCart(productForCart);
+    
+    showToast(product.name, productForCart.imageUrl);
+    
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  }
+
+  // ── Buy now = add + go to cart ─────────────────────────────────────────────
+  const handleBuyNow = () => {
+    const productForCart = {
+      ...product,
+      imageUrl: product.images[0]
+    };
+
+    for (let i = 0; i < qty; i++) addToCart(productForCart);
+    navigate('/cart');
+  }
+
+  // ── States ─────────────────────────────────────────────────────────────────
+  if (loading) return <Skeleton />
+
+  if (error === 'not_found' || !product) {
+    return (
+      <div className="max-w-sm mx-auto text-center py-24 px-6">
+        <p className="text-5xl mb-4">🧵</p>
+        <h2 className="text-xl font-bold text-ink-900 mb-2">Product not found</h2>
+        <p className="text-sm text-ink-400 mb-8">This piece may have sold out or moved.</p>
+        <Link to="/shop" className="inline-flex items-center gap-2 bg-navy-700 hover:bg-navy-800
+                                     text-white text-sm font-bold uppercase tracking-wide
+                                     px-7 py-3.5 rounded-xl shadow-btn transition-colors">
+          Back to Shop
+        </Link>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-sm mx-auto text-center py-24 px-6">
+        <p className="text-5xl mb-4">⚠️</p>
+        <h2 className="text-xl font-bold text-ink-900 mb-2">Something went wrong</h2>
+        <p className="text-sm text-ink-400 mb-8">Could not load product details. Is the server running?</p>
+        <button onClick={() => window.location.reload()}
+                className="bg-gold-500 hover:bg-gold-600 text-white text-sm font-bold
+                           px-6 py-3 rounded-xl transition-colors">
+          Retry
+        </button>
+      </div>
+    )
+  }
+
+  // ── Full PDP render ─────────────────────────────────────────────────────────
+  return (
+    <div className="bg-cream-50 min-h-screen">
+
+      {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
+      <div className="bg-white border-b border-line-200">
+        <div className="max-w-content mx-auto px-6 py-3 flex items-center gap-2 text-xs text-ink-400">
+          <Link to="/"     className="hover:text-navy-700 transition-colors">Home</Link>
+          <span className="text-line-300">/</span>
+          <Link to="/shop" className="hover:text-navy-700 transition-colors">Shop</Link>
+          <span className="text-line-300">/</span>
+          <span className="text-ink-700 font-medium truncate max-w-[200px]">{product.name}</span>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          MAIN LAYOUT — gallery left, info right
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="max-w-content mx-auto px-6 py-10">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-14">
+
+          {/* ═══════════════════════════════════
+              LEFT — Image gallery
+          ═══════════════════════════════════ */}
+          <div className="lg:w-[52%] flex flex-col gap-4">
+
+            {/* Main image */}
+            <div className="relative rounded-2xl overflow-hidden bg-white border border-line-200
+                            shadow-card aspect-[4/3]">
+              <img
+                key={activeImg}
+                src={product.images[activeImg]}
+                alt={`${product.name} — view ${activeImg + 1}`}
+                className={`w-full h-full object-cover transition-opacity duration-150
+                            ${imgFading ? 'opacity-0' : 'opacity-100'}`}
+              />
+
+              {/* Badge overlay */}
+              {product.badge && (
+                <span className={`absolute top-4 left-4 text-[11px] font-semibold px-3 py-1
+                                  rounded-full shadow-sm
+                                  ${BADGE_STYLE[product.badge] ?? 'bg-ink-500 text-white'}`}>
+                  {product.badge}
+                </span>
+              )}
+
+              {/* Prev / Next arrows */}
+              {product.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => switchImage((activeImg - 1 + product.images.length) % product.images.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2
+                               w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow-card
+                               flex items-center justify-center text-ink-500 hover:text-ink-900
+                               backdrop-blur-sm transition-all"
+                    aria-label="Previous image"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() => switchImage((activeImg + 1) % product.images.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2
+                               w-9 h-9 rounded-full bg-white/80 hover:bg-white shadow-card
+                               flex items-center justify-center text-ink-500 hover:text-ink-900
+                               backdrop-blur-sm transition-all"
+                    aria-label="Next image"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnail strip */}
+            <div className="flex gap-2.5 overflow-x-auto pb-1">
+              {product.images.map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => switchImage(i)}
+                  className={[
+                    'shrink-0 w-[72px] h-[72px] rounded-xl overflow-hidden',
+                    'border-2 transition-all duration-150 hover:opacity-100',
+                    i === activeImg
+                      ? 'border-gold-500 opacity-100 shadow-sm'
+                      : 'border-line-200 opacity-60 hover:border-gold-300',
+                  ].join(' ')}
+                  aria-label={`View image ${i + 1}`}
+                >
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ═══════════════════════════════════
+              RIGHT — Product info
+          ═══════════════════════════════════ */}
+          <div className="flex-1 flex flex-col gap-0">
+
+            {/* Origin tag */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-teal-500 shrink-0" />
+              <span className="text-xs font-semibold text-teal-500 uppercase tracking-[0.18em]">
+                {product.origin}
+              </span>
+            </div>
+
+            {/* Product name */}
+            <h1 className="text-3xl md:text-4xl font-bold text-ink-900 leading-tight tracking-tight mb-4">
+              {product.name}
+            </h1>
+
+            {/* Star rating — static display */}
+            <div className="flex items-center gap-2 mb-5">
+              <div className="flex text-gold-400 text-base leading-none gap-0.5">
+                {'★★★★★'.split('').map((s, i) => <span key={i}>{s}</span>)}
+              </div>
+              <span className="text-xs text-ink-400 font-medium">4.9 · Verified artisan quality</span>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-line-200">
+              <span className="text-4xl font-bold text-navy-700 tracking-tight">
+                {formatINR(product.price)}
+              </span>
+              <span className="text-sm text-ink-400 font-medium">incl. all taxes · Free shipping</span>
+            </div>
+
+            {/* Description */}
+            <p className="text-[15px] text-ink-500 leading-[1.75] mb-6">
+              {product.description}
+            </p>
+
+            {/* Dimensions */}
+            {product.dimensions && (
+              <div className="flex items-start gap-2.5 mb-6 bg-navy-50 rounded-xl px-4 py-3
+                              border border-navy-100">
+                <span className="text-navy-400 shrink-0 mt-0.5">📐</span>
+                <p className="text-sm text-ink-700 leading-relaxed">
+                  <strong className="text-navy-700">Dimensions: </strong>
+                  {product.dimensions}
+                </p>
+              </div>
+            )}
+
+            {/* Accordion — Material + Care */}
+            <div className="mb-6">
+              <Accordion title="Material & Construction">
+                {product.material}
+              </Accordion>
+              <Accordion title="Care Instructions">
+                {product.care}
+              </Accordion>
+              <Accordion title="Authenticity Guarantee">
+                Every PahariKnits piece comes with a hand-signed artisan tag naming the weaver,
+                their village, and the technique used. This is not a mass-produced product.
+                If you ever have doubts about authenticity, contact us and we will provide
+                the full provenance of your piece.
+              </Accordion>
+            </div>
+
+            {/* Qty stepper */}
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-sm font-semibold text-ink-700 shrink-0">Quantity</span>
+              <div className="flex items-center gap-1.5 bg-cream-100 rounded-full
+                              px-2 py-2 border border-line-200">
+                <button
+                  onClick={() => setQty(q => Math.max(1, q - 1))}
+                  className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center
+                             text-ink-700 font-bold hover:bg-navy-50 transition-colors"
+                >
+                  −
+                </button>
+                <span className="w-10 text-center text-base font-bold text-ink-900">{qty}</span>
+                <button
+                  onClick={() => setQty(q => q + 1)}
+                  className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center
+                             text-ink-700 font-bold hover:bg-navy-50 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+              {product.inStock
+                ? <span className="text-xs text-teal-500 font-semibold">✓ In stock</span>
+                : <span className="text-xs text-red-400 font-semibold">Out of stock</span>
+              }
+            </div>
+
+            {/* CTA buttons */}
+            <div className="flex gap-3 flex-wrap">
+              {/* Add to Cart */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+                className={[
+                  'flex-1 min-w-[160px] inline-flex items-center justify-center gap-2.5',
+                  'font-bold text-sm uppercase tracking-wide py-4 rounded-xl',
+                  'transition-all duration-150',
+                  added
+                    ? 'bg-teal-500 text-white'
+                    : product.inStock
+                      ? 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-[0.98]'
+                      : 'bg-line-200 text-ink-300 cursor-not-allowed',
+                ].join(' ')}
+              >
+                {added ? (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Added to Cart
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+                    </svg>
+                    Add to Cart
+                  </>
+                )}
+              </button>
+
+              {/* Buy Now */}
+              <button
+                onClick={handleBuyNow}
+                disabled={!product.inStock}
+                className={[
+                  'flex-1 min-w-[160px] inline-flex items-center justify-center',
+                  'font-bold text-sm uppercase tracking-wide py-4 rounded-xl',
+                  'transition-all duration-150 border-2',
+                  product.inStock
+                    ? 'border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white active:scale-[0.98]'
+                    : 'border-line-200 text-ink-300 cursor-not-allowed',
+                ].join(' ')}
+              >
+                Buy Now
+              </button>
+            </div>
+
+            {/* Trust signals */}
+            <div className="mt-6 flex flex-wrap gap-4">
+              {[
+                ['🔒', 'Secure checkout'],
+                ['🔄', 'Easy returns'],
+                ['🚚', 'Free delivery'],
+                ['🏔', 'Artisan verified'],
+              ].map(([icon, label]) => (
+                <div key={label} className="flex items-center gap-1.5 text-xs text-ink-400 font-medium">
+                  <span>{icon}</span>
+                  {label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════════════════════════════════
+          RELATED PRODUCTS
+      ════════════════════════════════════════════════════════════════════ */}
+      {/* {related.length > 0 && (
+        <div className="border-t border-line-200 bg-white mt-6">
+          <div className="max-w-content mx-auto px-6 py-12">
+
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span className="h-px w-6 bg-gold-500 rounded-full opacity-60" />
+                  <span className="text-[11px] font-semibold text-gold-500 tracking-[0.22em] uppercase">
+                    From the same tradition
+                  </span>
+                </div>
+                <h2 className="text-2xl font-bold text-ink-900">You Might Also Like</h2>
+              </div>
+              <Link
+                to="/shop"
+                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold
+                          text-navy-700 hover:text-navy-900 transition-colors"
+              >
+                View all <span>→</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {related.map(p => <RelatedCard key={p.id} product={p} />)}
+            </div>
+          </div>
+        </div>
+      )} 
+    */}
+
+    </div>
+  )
+}
+</file>
+
+<file path="src/App.jsx">
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { CartProvider }  from './context/CartContext'
+import { ToastProvider } from './context/ToastContext'
+import Header        from './components/Header'
+import Footer        from './components/Footer'
+import Toast         from './components/Toast'
+import Home          from './pages/Home'
+import Shop          from './pages/Shop'
+import Cart          from './pages/Cart'
+import Contact       from './pages/Contact'
+import Success       from './pages/Success'
+import ProductDetail from './pages/ProductDetail'
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <CartProvider>
+        <Toast />
+        <div className="min-h-screen flex flex-col bg-cream-50">
+          <Header />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/"             element={<Home />}          />
+              <Route path="/shop"         element={<Shop />}          />
+              <Route path="/product/:id"  element={<ProductDetail />} />
+              <Route path="/cart"         element={<Cart />}          />
+              <Route path="/contact"      element={<Contact />}       />
+              <Route path="/success"      element={<Success />}       />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </CartProvider>
+    </ToastProvider>
+  )
+}
+</file>
+
+<file path=".gitignore">
+# Environment — NEVER commit
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build output
+dist/
+
+# Editor
+.DS_Store
+*.log
+</file>
+
+<file path="package.json">
+{
+  "name": "pahariknits-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev":     "vite",
+    "build":   "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react":            "^18.3.1",
+    "react-dom":        "^18.3.1",
+    "react-router-dom": "^6.24.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer":         "^10.4.19",
+    "postcss":              "^8.4.40",
+    "tailwindcss":          "^3.4.7",
+    "vite":                 "^5.3.4"
+  }
+}
+</file>
+
+<file path="server/package.json">
+{
+  "name": "pahariknits-server",
+  "version": "1.0.0",
+  "description": "PahariKnits Express + Razorpay backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^8.0.1",
+    "pg": "^8.19.0",
+    "razorpay": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.18.0",
+    "nodemon": "^3.1.4",
+    "prisma": "^7.4.2"
+  }
+}
+</file>
+
+<file path="src/data/products.js">
+// ─────────────────────────────────────────────────────────────────────────────
+// products.js  —  PahariKnits product catalogue (frontend)
+//
+// Each product now has an `images` array (3–4 Unsplash URLs).
+// `imageUrl` is a computed alias for images[0] so all existing
+// code (Shop, Cart, Toast) keeps working without a single edit.
+
+
+const withImageUrl = (p) => ({ ...p, imageUrl: p.images[0] })
+
+export const PRODUCTS = [
+  withImageUrl({
+    id:       'pk-001',
+    name:     'Kullu Valley Shawl',
+    price:    2499,
+    category: 'shawl',
+    origin:   'Kullu, Himachal Pradesh',
+    badge:    'Bestseller',
+    inStock:  true,
+    material: 'Pure Himalayan wool — hand-spun and naturally dyed',
+    dimensions: '200 cm x 100 cm · weight approx. 380 g',
+    care:     'Hand wash in cold water with mild soap. Dry flat in shade. Do not wring.',
+    description:
+      'Hand-woven on traditional pit looms, this pure wool shawl features iconic "Kullu buti" geometric patterns. A skilled artisan takes days to complete each unique piece, creating a breathable yet warm layer that defines Himachali textile heritage.',
+    images: [
+      'https://images.unsplash.com/photo-1732476342752-6870145d1f9c?q=80&w=1469&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1737988007411-e85aa733efa1?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1638786023988-d27bed11e076?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1510574457807-3d9bf494ff6b?q=80&w=801&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+  withImageUrl({
+    id:       'pk-002',
+    name:     'Kinnauri Striped Muffler',
+    price:    899,
+    category: 'muffler',
+    origin:   'Kinnaur, Himachal Pradesh',
+    badge:    'New Arrival',
+    inStock:  true,
+    material: 'Angora-blend wool (70% wool, 30% Angora) — hand-woven',
+    dimensions: '170 cm x 28 cm · weight approx. 120 g',
+    care:     'Dry clean recommended. If hand-washing, use cold water; reshape and dry flat.',
+    description:
+      'Featuring the distinctive stripes of the Baspa Valley, this Angora-blend muffler offers exceptional softness and warmth. Each piece is hand-finished with knotted fringes, maintaining a crisp pattern that is lightweight yet incredibly durable.',
+    images: [
+      'https://images.unsplash.com/photo-1517496267011-39d56c54984d?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://plus.unsplash.com/premium_photo-1695603438043-1b9ab6ebe1a8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1669626495508-58acf2311688?q=80&w=947&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1728034261963-3ff8c2490788?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+  withImageUrl({
+    id:       'pk-003',
+    name:     'Spiti Hand-Knit Woolen Socks',
+    price:    349,
+    category: 'socks',
+    origin:   'Spiti Valley, Himachal Pradesh',
+    badge:    null,
+    inStock:  true,
+    material: 'Unbleached Himalayan sheep wool — hand-knit',
+    dimensions: 'Available in S / M / L — length approx. 28 cm (M)',
+    care:     'Hand wash only in cold water. Air dry. Avoid tumble drying.',
+    description:
+      'Knitted by artisan women in the Spiti high desert, these thick socks are crafted from unbleached local wool for sub-zero protection. Naturally moisture-resistant and reinforced for durability, they are a winter essential for extreme cold.',
+    images: [
+      'https://images.unsplash.com/photo-1739640081476-fd55589f8838?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1631180543602-727e1197619d?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1566563634870-d566ab58a4df?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+  withImageUrl({
+    id:       'pk-004',
+    name:     'Chamba Embroidered Stole',
+    price:    1799,
+    category: 'stole',
+    origin:   'Chamba, Himachal Pradesh',
+    badge:    'Artisan Pick',
+    inStock:  true,
+    material: 'Pashmina-blend base (60% pashmina, 40% silk) with silk embroidery thread',
+    dimensions: '190 cm x 70 cm · weight approx. 160 g',
+    care:     'Dry clean only. Store folded in a muslin cloth away from direct light.',
+    description:
+      'Adapting UNESCO-recognized embroidery, this gossamer pashmina-silk stole features precise double-sided silk motifs. Dyed with local botanicals, each piece represents weeks of intricate hand-stitching by master artisans in Chamba.',
+    images: [
+      'https://images.unsplash.com/photo-1761724794779-6b21b4a317c7?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1697781826540-20cff4de8acd?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1576073383268-a8aae73f33bd?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1760837992224-e73b2ba6f1c6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+  withImageUrl({
+    id:       'pk-005',
+    name:     "Manali Shepherd's Cap",
+    price:    599,
+    category: 'cap',
+    origin:   'Manali, Himachal Pradesh',
+    badge:    null,
+    inStock:  true,
+    material: 'Dense felted wool — hand-blocked and hand-finished',
+    dimensions: 'One size fits most (internal circumference 56–60 cm)',
+    care:     'Spot clean only with a damp cloth. Re-block by steaming gently if misshapen.',
+    description:
+      'The traditional "Himachali topi" crafted from dense felted wool. This weather-resistant cap features iconic geometric banding and a structured hand-blocked finish, offering timeless mountain style that improves with age.',
+    images: [
+      'https://images.unsplash.com/photo-1699347611474-5be693bee31e?q=80&w=723&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1720534490358-bc2ad29d51d5?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1589831377283-33cb1cc6bd5d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1604532057336-2c4a09f71330?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+  withImageUrl({
+    id:       'pk-006',
+    name:     'Rampur Double-Weave Shawl',
+    price:    3299,
+    category: 'shawl',
+    origin:   'Rampur Bushahr, Himachal Pradesh',
+    badge:    'Limited Edition',
+    inStock:  true,
+    material: 'Fine merino wool — double-weave, hand-woven on a fly-shuttle loom',
+    dimensions: '210 cm x 105 cm · weight approx. 520 g',
+    care:     'Dry clean only. Store in a cedar box or with cedar balls to protect against moths.',
+    description:
+      'A technical masterpiece, this reversible double-weave shawl features inverted colors on each side. Woven from fine merino wool by a heritage family in Rampur, it is one of the rarest examples of high-level Himachali handloom.',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1725721362512-2f47d969e554?q=80&w=1143&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1688502769136-3d1bdee7b222?q=80&w=1493&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1700671788328-eecc12128f68?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://plus.unsplash.com/premium_photo-1768514188394-03b802d6e648?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    ],
+  }),
+]
+
+export const CATEGORIES = [
+  { key: 'all',     label: 'All',      emoji: '✦'  },
+  { key: 'shawl',   label: 'Shawls',   emoji: '🧣' },
+  { key: 'muffler', label: 'Mufflers', emoji: '🧤' },
+  { key: 'socks',   label: 'Socks',    emoji: '🧦' },
+  { key: 'cap',     label: 'Caps',     emoji: '🧢' },
+  { key: 'stole',   label: 'Stoles',   emoji: '🪡' },
+]
+
+export function formatINR(amount) {
+  return `₹${amount.toLocaleString('en-IN')}`
+}
+
+export function getCartTotal(items) {
+  return items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+}
+</file>
+
+<file path="src/pages/Shop.jsx">
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { PRODUCTS, CATEGORIES, formatINR } from '../data/products'
+import { useCart }  from '../context/CartContext'
+import { useToast } from '../context/ToastContext'
+
+const BADGE_STYLE = {
+  'Bestseller':      'bg-gold-500 text-white',
+  'New Arrival':     'bg-teal-500 text-white',
+  'Artisan Pick':    'bg-navy-700 text-white',
+  'Limited Edition': 'bg-[#7A3820] text-white',
+}
+
+function ProductCard({ product }) {
+  const { addToCart } = useCart()
+  const { showToast } = useToast()
+
+  const handleAddToCart = (e) => {
+    // Stop the click from bubbling up to the <Link> wrapper
+    e.preventDefault()
+    e.stopPropagation()
+    addToCart(product)
+    showToast(product.name, product.imageUrl)
+  }
+
+  return (
+    <article className="bg-white rounded-2xl overflow-hidden border border-line-200
+                        shadow-card hover:shadow-card-lg hover:-translate-y-0.5
+                        transition-all duration-200 flex flex-col group">
+
+      {/* ── Image — clicking navigates to PDP ── */}
+      <Link to={`/product/${product.id}`} className="block relative overflow-hidden">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-64 object-cover group-hover:scale-[1.03]
+                     transition-transform duration-300"
+        />
+        {product.badge && (
+          <span className={`absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1
+                            rounded-full tracking-wide ${BADGE_STYLE[product.badge] ?? 'bg-ink-500 text-white'}`}>
+            {product.badge}
+          </span>
+        )}
+        {/* Origin scrim */}
+        <div className="absolute bottom-0 left-0 right-0 h-16
+                        bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute bottom-3 left-4 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+          <span className="text-[11px] font-medium text-white/90 tracking-wide uppercase">
+            {product.origin}
+          </span>
+        </div>
+      </Link>
+
+      {/* ── Body ── */}
+      <div className="flex flex-col flex-1 p-5">
+
+        {/* Product name links to PDP */}
+        <Link
+          to={`/product/${product.id}`}
+          className="text-lg font-bold text-ink-900 leading-snug mb-2
+                     hover:text-navy-700 transition-colors"
+        >
+          {product.name}
+        </Link>
+
+        <p className="text-sm text-ink-400 leading-relaxed mb-5 flex-1">
+          {product.description}
+        </p>
+
+        <div className="flex items-center justify-between pt-4 border-t border-line-100">
+          <div>
+            <p className="text-[10px] font-medium text-ink-200 uppercase tracking-widest mb-0.5">
+              Price
+            </p>
+            <p className="text-xl font-bold text-navy-700">{formatINR(product.price)}</p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Quick-view link */}
+            <Link
+              to={`/product/${product.id}`}
+              className="w-9 h-9 rounded-xl border border-line-200 flex items-center justify-center
+                         text-ink-400 hover:border-navy-300 hover:text-navy-700 transition-colors"
+              title="View details"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                   stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path strokeLinecap="round" strokeLinejoin="round"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                         -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </Link>
+
+            {/* Add to Cart */}
+            <button
+              onClick={handleAddToCart}
+              className="inline-flex items-center gap-3 bg-gold-500 hover:bg-gold-600
+                         text-white text-sm font-bold px-4 py-2.5 rounded-xl
+                         shadow-btn-gold transition-colors duration-150"
+            >
+              Add to Cart
+              <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
+                               justify-center text-xl leading-none">+</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+export default function Shop() {
+  const [active, setActive] = useState('all')
+
+  const filtered = active === 'all'
+    ? PRODUCTS
+    : PRODUCTS.filter(p => p.category === active)
+
+  return (
+    <div>
+      {/* Page header */}
+      <div className="bg-white border-b border-line-200
+                      shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
+        <div className="max-w-content mx-auto px-6 py-7
+                        flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold text-teal-500
+                          tracking-[0.22em] uppercase mb-1.5">
+              Handcrafted in Himachal
+            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-ink-900
+                           tracking-tight leading-none">
+              The Collection
+            </h1>
+          </div>
+          <span className="shrink-0 bg-navy-50 text-navy-700 text-sm font-semibold
+                           px-4 py-2 rounded-full border border-navy-100">
+            {filtered.length} pieces
+          </span>
+        </div>
+
+        {/* Category filter */}
+        <div className="max-w-content mx-auto px-4 pb-3
+                        flex items-center gap-2 overflow-x-auto">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => setActive(cat.key)}
+              className={[
+                'inline-flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-full',
+                'text-sm font-semibold border transition-all duration-150',
+                active === cat.key
+                  ? 'bg-navy-700 border-navy-700 text-white shadow-sm'
+                  : 'bg-white border-line-200 text-ink-400 hover:border-navy-200 hover:text-ink-700',
+              ].join(' ')}
+            >
+              <span>{cat.emoji}</span>
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Product grid */}
+      <div className="max-w-content mx-auto px-6 py-10">
+        {filtered.length === 0 ? (
+          <div className="text-center py-24">
+            <p className="text-4xl mb-4">🧶</p>
+            <h3 className="text-xl font-bold text-ink-900 mb-2">Nothing here yet</h3>
+            <p className="text-sm text-ink-400">
+              Our weavers are crafting this category. Check back soon.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map(p => <ProductCard key={p.id} product={p} />)}
+          </div>
+        )}
+
+        {/* Footer ornament */}
+        <div className="mt-16 py-10 border border-dashed border-line-200
+                        rounded-2xl bg-navy-50 text-center">
+          <div className="ornament mb-3">
+            <span className="ornament-line" />
+            <span className="text-gold-500">✦</span>
+            <span className="ornament-line" />
+          </div>
+          <h3 className="text-xl font-bold text-ink-900 mb-2">
+            More authentic apparel coming soon...
+          </h3>
+          <p className="text-sm text-ink-400 max-w-xs mx-auto leading-relaxed">
+            Our artisans are at the loom. New shawls, blankets, and woven jackets each season.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="server/index.js">
+/**
+ * PahariKnits — Express backend
+ *
+ * Routes
+ * ──────
+ *  GET  /api/products         →  all products (catalogue)
+ *  GET  /api/products/:id     →  single product by id
+ *  POST /api/create-order     →  create Razorpay order
+ *  POST /api/verify-payment   →  verify Razorpay HMAC signature
+ */
+
+'use strict'
+
+const express  = require('express')
+const cors     = require('cors')
+const crypto   = require('crypto')
+const Razorpay = require('razorpay')
+require('dotenv').config()
+
+const { PrismaClient } = require('@prisma/client')
+const { PrismaPg }     = require('@prisma/adapter-pg')
+const { Pool }         = require('pg')
+
+const nodemailer = require('nodemailer');
+
+// Setup Database Connection for Prisma 7
+const pool    = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma  = new PrismaClient({ adapter })
+
+// ── Validate env ──────────────────────────────────────────────────────────────
+const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
+if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+  console.error('\n❌  Missing Razorpay credentials in .env\n')
+  process.exit(1)
+}
+
+const razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET })
+
+const app  = express()
+const PORT = process.env.PORT || 5000
+
+app.use(express.json())
+app.use(cors({
+  origin:  process.env.FRONTEND_ORIGIN || '*',
+  methods: ['GET', 'POST'],
+}))
+
+// ── Health ────────────────────────────────────────────────────────────────────
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', service: 'PahariKnits API' }) // Removed PRODUCTS.length
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GET /api/products
+//
+// Returns all products. Supports optional ?category= filter.
+// e.g. GET /api/products?category=shawl
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/products', async (req, res) => {
+  try {
+    const { category } = req.query
+    const results = await prisma.product.findMany({
+      where: category ? { category: category.toLowerCase() } : {}
+    })
+    res.json({ success: true, count: results.length, products: results })
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Database fetch failed' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GET /api/products/:id
+//
+// Returns a single product's full details including the images array.
+// Also returns `related` — up to 3 products from the same category.
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: req.params.id }
+    })
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' })
+    }
+
+    const related = await prisma.product.findMany({
+      where: { 
+        category: product.category,
+        id: { not: product.id } 
+      },
+      take: 3
+    })
+
+    res.json({ success: true, product, related })
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Database error' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /api/create-order
+// ══════════════════════════════════════════════════════════════════════════════
+app.post('/api/create-order', async (req, res) => {
+  try {
+    const { amount } = req.body
+    if (typeof amount !== 'number' || amount <= 0) {
+      return res.status(400).json({ success: false, error: 'amount must be a positive number (INR)' })
+    }
+
+    const order = await razorpay.orders.create({
+      amount:   Math.round(amount * 100), // paise
+      currency: 'INR',
+      receipt:  `pk_order_${Date.now()}`,
+      notes:    { source: 'pahariknits-web' },
+    })
+
+    console.log(`✅  Order created: ${order.id}  |  ₹${amount}`)
+    res.status(201).json({ success: true, order_id: order.id, amount: order.amount, currency: order.currency })
+  } catch (err) {
+    console.error('create-order error:', err)
+    res.status(500).json({ success: false, error: 'Failed to create Razorpay order.' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /api/verify-payment
+// ══════════════════════════════════════════════════════════════════════════════
+app.post('/api/verify-payment', async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({ success: false, error: 'Missing verification fields.' })
+    }
+
+    const generated = crypto
+      .createHmac('sha256', RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex')
+
+    const genBuf    = Buffer.from(generated,          'hex')
+    const sigBuf    = Buffer.from(razorpay_signature,  'hex')
+    const sigMatch  = genBuf.length === sigBuf.length && crypto.timingSafeEqual(genBuf, sigBuf)
+
+    if (!sigMatch) {
+      console.warn(`⚠️  Signature mismatch for order ${razorpay_order_id}`)
+      return res.status(400).json({ success: false, error: 'Payment signature verification failed.' })
+    }
+
+    // --- ADD THIS PRISMA 7 LOGIC HERE ---
+    try {
+      await prisma.order.create({
+        data: {
+          amount: req.body.amount || 0, // Pass amount from frontend to save it
+          status: 'PAID',
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+        }
+      })
+      console.log(`📡 Database updated: Order ${razorpay_order_id} marked as PAID`)
+    } catch (dbErr) {
+      console.error('❌ Database Save Error:', dbErr)
+      // We don't necessarily want to fail the request if the payment was successful 
+      // but the DB log failed, but you should log it for manual reconciliation.
+    }
+    // -------------------------------------
+
+    console.log(`✅  Payment verified: ${razorpay_payment_id}`)
+    res.status(200).json({ success: true, message: 'Payment verified.', payment_id: razorpay_payment_id, order_id: razorpay_order_id })
+  } catch (err) {
+    console.error('verify-payment error:', err)
+    res.status(500).json({ success: false, error: 'Verification error. Contact support.' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POST /api/contact
+// ══════════════════════════════════════════════════════════════════════════════
+
+
+app.post('/api/contact', async (req, res) => {
+  const { name, email, topic, message } = req.body;
+
+  try {
+    // --- 1. Save to Neon Database via Prisma 7 ---
+    const savedMessage = await prisma.contactMessage.create({
+      data: { name, email, topic, message }
+    });
+
+    // --- 2. Setup Email Transporter ---
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // --- 3. Define the Email Content ---
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: 'rudrakshkumar2908@gmail.com', // Where you want to receive the mail
+      replyTo: email,                // So you can hit "Reply" to the customer
+      subject: `🏔 PahariKnits Inquiry: ${topic} from ${name}`,
+      text: `
+        New Message from PahariKnits Contact Form:
+        
+        Name: ${name}
+        Email: ${email}
+        Topic: ${topic}
+        
+        Message:
+        ${message}
+        
+        ---
+        Database Record ID: ${savedMessage.id}
+      `,
+    };
+
+    // --- 4. Send the Email ---
+    await transporter.sendMail(mailOptions);
+
+    console.log(`✉️ Contact message from ${name} saved and emailed.`);
+    res.status(201).json({ success: true, message: 'Message sent successfully!' });
+
+  } catch (err) {
+    console.error('Contact Error:', err);
+    res.status(500).json({ success: false, error: 'Failed to process message.' });
+  }
+});
+
+// ── Start ─────────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`\n🚀  PahariKnits API  →  http://localhost:${PORT}`)
+  console.log(`    GET  /api/products`)
+  console.log(`    GET  /api/products/:id`)
+  console.log(`    POST /api/create-order`)
+  console.log(`    POST /api/verify-payment\n`)
+})
+</file>
+
+</files>

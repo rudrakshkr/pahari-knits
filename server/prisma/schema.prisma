@@ -20,16 +20,32 @@ model Product {
   images      String[] // Native Postgres String Array
   inStock     Boolean  @default(true)
   createdAt   DateTime @default(now())
+
+  orders OrderItem[]
 }
 
 model Order {
-  id                String   @id @default(cuid())
-  amount            Int
-  status            String   @default("PENDING") 
-  razorpayOrderId   String   @unique
-  razorpayPaymentId String?
-  createdAt         DateTime @default(now())
+  id                  String      @id @default(cuid())
+  razorpayOrderId     String      @unique
+  razorpayPaymentId   String      @unique
+  amountINR           Int
+  status              String      @default("paid")
+  items               OrderItem[]
+  createdAt           DateTime    @default(now())
 }
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  order      Order   @relation(fields: [orderId],   references: [id], onDelete: Cascade)
+  orderId    String
+  product    Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productId  String
+  name       String
+  price      Int
+  quantity   Int
+}
+
+
 
 model ContactMessage {
   id        String   @id @default(cuid())

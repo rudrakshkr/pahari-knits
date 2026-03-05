@@ -173,16 +173,28 @@ export default function ProductDetail() {
 
   // ── Add to cart ────────────────────────────────────────────────────────────
   const handleAddToCart = () => {
-    for (let i = 0; i < qty; i++) addToCart(product)
-    showToast(product.name, product.images[0])
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1800)
+    const productForCart = {
+      ...product,
+      imageUrl: product.images[0]
+    };
+
+    for (let i = 0; i < qty; i++) addToCart(productForCart);
+    
+    showToast(product.name, productForCart.imageUrl);
+    
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
   }
 
   // ── Buy now = add + go to cart ─────────────────────────────────────────────
   const handleBuyNow = () => {
-    for (let i = 0; i < qty; i++) addToCart(product)
-    navigate('/cart')
+    const productForCart = {
+      ...product,
+      imageUrl: product.images[0]
+    };
+
+    for (let i = 0; i < qty; i++) addToCart(productForCart);
+    navigate('/cart');
   }
 
   // ── States ─────────────────────────────────────────────────────────────────

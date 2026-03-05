@@ -160,6 +160,13 @@ export default function Cart() {
               razorpay_order_id,
               razorpay_payment_id,
               razorpay_signature,
+              amount: totalAmount,
+              items: items.map(i => ({
+                id: i.product.id,
+                name: i.product.name,
+                price: i.product.price,
+                quantity: i.quantity
+              }))
             }),
           })
 

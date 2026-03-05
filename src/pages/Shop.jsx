@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PRODUCTS, CATEGORIES, formatINR } from '../data/products'
 import { useCart }  from '../context/CartContext'
@@ -9,6 +9,24 @@ const BADGE_STYLE = {
   'New Arrival':     'bg-teal-500 text-white',
   'Artisan Pick':    'bg-navy-700 text-white',
   'Limited Edition': 'bg-[#7A3820] text-white',
+}
+
+// ── Skeleton card shown while loading ─────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden border border-line-200 animate-pulse">
+      <div className="w-full h-64 bg-line-100" />
+      <div className="p-5 space-y-3">
+        <div className="h-4 bg-line-100 rounded w-3/4" />
+        <div className="h-3 bg-line-100 rounded w-full" />
+        <div className="h-3 bg-line-100 rounded w-5/6" />
+        <div className="flex justify-between items-center pt-2">
+          <div className="h-6 bg-line-100 rounded w-20" />
+          <div className="h-9 bg-line-100 rounded-xl w-28" />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function ProductCard({ product }) {
@@ -114,11 +132,38 @@ function ProductCard({ product }) {
 }
 
 export default function Shop() {
-  const [active, setActive] = useState('all')
+  const [active,   setActive  ] = useState('all')
+  const [products, setProducts] = useState([])
+  const [loading,  setLoading ] = useState(true)
+  const [error,    setError   ] = useState(null)
 
-  const filtered = active === 'all'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.category === active)
+  // Fetch from Neon via API — this is what makes deletions live-sync
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    const url = active === 'all'
+      ? '/api/products'
+      : `/api/products?category=${active}`
+
+    fetch(url)
+      .then(r => { if (!r.ok) throw new Error('Failed to load products'); return r.json() })
+      .then(data => {
+        if (!cancelled) {
+          setProducts(data.products || [])
+          setLoading(false)
+        }
+      })
+      .catch(err => {
+        if (!cancelled) {
+          setError(err.message)
+          setLoading(false)
+        }
+      })
+
+    return () => { cancelled = true }
+  }, [active])
 
   return (
     <div>
@@ -139,7 +184,7 @@ export default function Shop() {
           </div>
           <span className="shrink-0 bg-navy-50 text-navy-700 text-sm font-semibold
                            px-4 py-2 rounded-full border border-navy-100">
-            {filtered.length} pieces
+            {products.length} pieces
           </span>
         </div>
 
@@ -167,7 +212,30 @@ export default function Shop() {
 
       {/* Product grid */}
       <div className="max-w-content mx-auto px-6 py-10">
-        {filtered.length === 0 ? (
+
+        {/* Error state */}
+        {error && !loading && (
+          <div className="text-center py-16">
+            <p className="text-4xl mb-4">⚠️</p>
+            <h3 className="text-xl font-bold text-ink-900 mb-2">Could not load products</h3>
+            <p className="text-sm text-ink-400 mb-6">{error}</p>
+            <button onClick={() => setActive(active)}
+                    className="bg-navy-700 hover:bg-navy-800 text-white text-sm font-bold
+                               px-6 py-3 rounded-xl transition-colors">
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Loading skeleton */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && products.length === 0 && (
           <div className="text-center py-24">
             <p className="text-4xl mb-4">🧶</p>
             <h3 className="text-xl font-bold text-ink-900 mb-2">Nothing here yet</h3>
@@ -175,27 +243,31 @@ export default function Shop() {
               Our weavers are crafting this category. Check back soon.
             </p>
           </div>
-        ) : (
+        )}
+
+        {/* Product cards */}
+        {!loading && !error && products.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map(p => <ProductCard key={p.id} product={p} />)}
+            {products.map(p => <ProductCard key={p.id} product={p} />)}
           </div>
         )}
 
         {/* Footer ornament */}
-        <div className="mt-16 py-10 border border-dashed border-line-200
-                        rounded-2xl bg-navy-50 text-center">
-          <div className="ornament mb-3">
-            <span className="ornament-line" />
-            <span className="text-gold-500">✦</span>
-            <span className="ornament-line" />
+        {!loading && !error && (
+          <div className="mt-16 py-10 border border-dashed border-line-200 rounded-2xl bg-navy-50 text-center">
+            <div className="ornament mb-3">
+              <span className="ornament-line" />
+              <span className="text-gold-500">✦</span>
+              <span className="ornament-line" />
+            </div>
+            <h3 className="text-xl font-bold text-ink-900 mb-2">
+              More authentic apparel coming soon...
+            </h3>
+            <p className="text-sm text-ink-400 max-w-xs mx-auto leading-relaxed">
+              Our artisans are at the loom. New shawls, blankets, and woven jackets each season.
+            </p>
           </div>
-          <h3 className="text-xl font-bold text-ink-900 mb-2">
-            More authentic apparel coming soon...
-          </h3>
-          <p className="text-sm text-ink-400 max-w-xs mx-auto leading-relaxed">
-            Our artisans are at the loom. New shawls, blankets, and woven jackets each season.
-          </p>
-        </div>
+        )}
       </div>
     </div>
   )

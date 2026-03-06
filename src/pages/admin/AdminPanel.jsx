@@ -1,12 +1,6 @@
 /**
  * AdminPanel.jsx — PahariKnits Admin Dashboard
- *
- * Tabs:
- *   Products — table of all products from Neon, Add Product form, Delete
- *   Orders   — table of all verified orders from Neon, Delete (archive)
- *
- * Every data-mutating action calls the authenticated API and immediately
- * re-fetches — so the Shop reflects changes on next page load/navigation.
+ * Optimized for Desktop and Mobile Layouts
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
@@ -28,10 +22,10 @@ const CATEGORY_OPTIONS = ['shawl', 'muffler', 'socks', 'cap', 'stole']
 
 function StatCard({ label, value, sub }) {
   return (
-    <div className="bg-[#1A2D50] border border-white/8 rounded-2xl px-5 py-4">
-      <p className="text-xs font-medium text-white/40 uppercase tracking-widest mb-1">{label}</p>
-      <p className="text-3xl font-bold text-white">{value}</p>
-      {sub && <p className="text-xs text-white/30 mt-1">{sub}</p>}
+    <div className="bg-[#1A2D50] border border-white/8 rounded-2xl px-4 sm:px-5 py-4">
+      <p className="text-[10px] sm:text-xs font-medium text-white/40 uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-2xl sm:text-3xl font-bold text-white">{value}</p>
+      {sub && <p className="text-[10px] sm:text-xs text-white/30 mt-1">{sub}</p>}
     </div>
   )
 }
@@ -45,7 +39,7 @@ function Badge({ text }) {
   }
   if (!text) return <span className="text-white/20 text-xs">—</span>
   return (
-    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${colours[text] ?? 'bg-white/10 text-white/60'}`}>
+    <span className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${colours[text] ?? 'bg-white/10 text-white/60'}`}>
       {text}
     </span>
   )
@@ -58,7 +52,7 @@ function StatusChip({ status }) {
     cancelled: 'bg-red-500/20 text-red-400',
   }
   return (
-    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${map[status] ?? 'bg-white/10 text-white/50'}`}>
+    <span className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${map[status] ?? 'bg-white/10 text-white/50'}`}>
       {status}
     </span>
   )
@@ -92,7 +86,6 @@ function AddProductModal({ token, onClose, onAdded }) {
     setError(null)
     setLoading(true)
 
-    // Convert comma-separated image URLs string → array
     const imagesArr = form.images.split(',').map(s => s.trim()).filter(Boolean)
     if (imagesArr.length === 0) {
       setError('Please enter at least one image URL.')
@@ -130,18 +123,18 @@ function AddProductModal({ token, onClose, onAdded }) {
   const LABEL = 'block text-xs font-medium text-white/40 uppercase tracking-wider mb-1.5'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-[#152648] border border-white/10 rounded-2xl
-                      shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                      shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
-          <h2 className="font-bold text-white text-lg">Add New Product</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
+          <h2 className="font-bold text-white text-base sm:text-lg">Add New Product</h2>
           <button onClick={onClose} className="text-white/40 hover:text-white transition-colors text-xl leading-none">✕</button>
         </div>
 
         {/* Scrollable form body */}
-        <div className="overflow-y-auto flex-1 px-6 py-5">
+        <div className="overflow-y-auto flex-1 px-5 py-5">
           {error && (
             <div className="mb-4 flex items-center gap-2 bg-red-500/10 border border-red-500/20
                             rounded-xl px-4 py-3 text-sm text-red-400">
@@ -149,9 +142,9 @@ function AddProductModal({ token, onClose, onAdded }) {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} id="add-product-form" className="space-y-4">
-            {/* Row 1: name + price */}
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} id="add-product-form" className="space-y-4 sm:space-y-5">
+            {/* Row 1: Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={LABEL}>Name *</label>
                 <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)}
@@ -164,8 +157,8 @@ function AddProductModal({ token, onClose, onAdded }) {
               </div>
             </div>
 
-            {/* Row 2: category + badge */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Row 2: Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={LABEL}>Category *</label>
                 <select className={INPUT + ' cursor-pointer'} value={form.category}
@@ -181,11 +174,7 @@ function AddProductModal({ token, onClose, onAdded }) {
                   onChange={e => set('badge', e.target.value)}
                 >
                   {BADGE_OPTIONS.map(b => (
-                    <option 
-                      key={b} 
-                      value={b} 
-                      className="bg-navy-900 text-white" // Force dark background for the list
-                    >
+                    <option key={b} value={b} className="bg-navy-900 text-white">
                       {b || '(none)'}
                     </option>
                   ))}
@@ -214,11 +203,11 @@ function AddProductModal({ token, onClose, onAdded }) {
               <textarea className={INPUT + ' resize-none'} rows={2} value={form.images}
                         onChange={e => set('images', e.target.value)}
                         placeholder="https://images.unsplash.com/..., https://..." />
-              <p className="text-xs text-white/25 mt-1">First URL = primary image shown in Shop & Cart</p>
+              <p className="text-[10px] sm:text-xs text-white/25 mt-1">First URL = primary image shown in Shop & Cart</p>
             </div>
 
-            {/* Optional fields */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Optional fields: Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={LABEL}>Material</label>
                 <input className={INPUT} value={form.material}
@@ -237,7 +226,7 @@ function AddProductModal({ token, onClose, onAdded }) {
             </div>
 
             {/* In Stock toggle */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => set('inStock', !form.inStock)}
@@ -261,16 +250,16 @@ function AddProductModal({ token, onClose, onAdded }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-white/8 flex justify-end gap-3">
+        <div className="px-5 py-4 border-t border-white/8 flex justify-end gap-3 shrink-0">
           <button onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white/50
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white/50
                              border border-white/10 hover:border-white/20 hover:text-white/70
                              transition-colors">
             Cancel
           </button>
           <button type="submit" form="add-product-form" disabled={loading}
                   className={[
-                    'px-6 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wide',
+                    'px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wide',
                     'transition-colors flex items-center gap-2',
                     loading
                       ? 'bg-[#B8892E]/40 text-white/40 cursor-not-allowed'
@@ -317,24 +306,22 @@ export default function AdminPanel() {
   const { token, logout } = useAuth()
   const navigate          = useNavigate()
 
-  const [tab,        setTab       ] = useState('products')  // 'products' | 'orders'
+  const [tab,        setTab       ] = useState('products')
   const [products,   setProducts  ] = useState([])
   const [orders,     setOrders    ] = useState([])
   const [loadingP,   setLoadingP  ] = useState(true)
   const [loadingO,   setLoadingO  ] = useState(false)
   const [showAdd,    setShowAdd   ] = useState(false)
-  const [deleteTarget, setDelTarget] = useState(null)  // { type, id, label }
+  const [deleteTarget, setDelTarget] = useState(null)
   const [delLoading, setDelLoading] = useState(false)
   const [apiError,   setApiError  ] = useState(null)
 
-  // ── Authenticated fetch helper ─────────────────────────────────────────────
   const authFetch = useCallback((url, opts = {}) =>
     fetch(url, {
       ...opts,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...opts.headers },
     }), [token])
 
-  // ── Fetch products ─────────────────────────────────────────────────────────
   const fetchProducts = useCallback(async () => {
     setLoadingP(true)
     try {
@@ -349,7 +336,6 @@ export default function AdminPanel() {
     }
   }, [authFetch])
 
-  // ── Fetch orders ───────────────────────────────────────────────────────────
   const fetchOrders = useCallback(async () => {
     setLoadingO(true)
     try {
@@ -369,7 +355,6 @@ export default function AdminPanel() {
      fetchOrders() 
     }, [fetchProducts, fetchOrders])
 
-  // ── Delete handler ─────────────────────────────────────────────────────────
   const handleDelete = async () => {
     if (!deleteTarget) return
     setDelLoading(true)
@@ -398,19 +383,18 @@ export default function AdminPanel() {
     }
   }
 
-  // ── Stats ──────────────────────────────────────────────────────────────────
   const totalRevenue = orders
     .filter(o => o.status.toLowerCase() === 'paid')
     .reduce((s, o) => s + (o.amountINR || 0), 0)
 
   const inStockCount = products.filter(p => p.inStock).length
-  // ── Render ─────────────────────────────────────────────────────────────────
+
   return (
     <div className="min-h-screen bg-[#0E1832] flex flex-col">
 
       {/* ── Top navigation bar ── */}
-      <header className="bg-[#152648] border-b border-white/8 px-6 py-3.5
-                         flex items-center justify-between shrink-0">
+      <header className="bg-[#152648] border-b border-white/8 px-4 sm:px-6 py-3.5
+                         flex items-center justify-between shrink-0 flex-wrap gap-3 sm:flex-nowrap">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="" className="w-8 h-8 rounded-lg" />
           <div>
@@ -421,26 +405,26 @@ export default function AdminPanel() {
 
         <div className="flex items-center gap-2">
           <a href="/shop" target="_blank" rel="noreferrer"
-             className="text-xs font-medium text-white/40 hover:text-white/70
-                        transition-colors px-3 py-1.5 rounded-lg border border-white/8
-                        hover:border-white/20">
+             className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
+                        transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/8
+                        hover:border-white/20 whitespace-nowrap">
             View Shop ↗
           </a>
           <button
             onClick={() => { logout(); navigate('/admin/login') }}
-            className="text-xs font-medium text-white/40 hover:text-red-400
-                       transition-colors px-3 py-1.5 rounded-lg border border-white/8
-                       hover:border-red-500/30"
+            className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-red-400
+                       transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/8
+                       hover:border-red-500/30 whitespace-nowrap"
           >
             Sign Out
           </button>
         </div>
       </header>
 
-      <div className="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col gap-6">
+      <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-5 sm:gap-6">
 
         {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <StatCard label="Products"  value={products.length} sub="in catalogue" />
           <StatCard label="Orders"    value={orders.length}   sub="verified payments" />
           <StatCard label="Revenue"   value={totalRevenue ? formatINR(totalRevenue) : '—'}
@@ -452,15 +436,15 @@ export default function AdminPanel() {
         {/* ── API error banner ── */}
         {apiError && (
           <div className="flex items-center justify-between gap-3 bg-red-500/10
-                          border border-red-500/20 rounded-xl px-5 py-3">
-            <p className="text-sm text-red-400">⚠ {apiError}</p>
+                          border border-red-500/20 rounded-xl px-4 py-3">
+            <p className="text-xs sm:text-sm text-red-400">⚠ {apiError}</p>
             <button onClick={() => setApiError(null)}
                     className="text-red-400/60 hover:text-red-400 transition-colors text-lg leading-none">✕</button>
           </div>
         )}
 
         {/* ── Tab bar ── */}
-        <div className="flex gap-1 bg-white/5 rounded-xl p-1 w-fit">
+        <div className="flex gap-1 bg-white/5 rounded-xl p-1 w-full sm:w-fit overflow-x-auto">
           {[
             { key: 'products', label: 'Products', count: products.length },
             { key: 'orders',   label: 'Orders',   count: orders.length   },
@@ -469,14 +453,14 @@ export default function AdminPanel() {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={[
-                'px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2',
+                'flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center justify-center sm:justify-start gap-2 whitespace-nowrap',
                 tab === t.key
                   ? 'bg-white/10 text-white shadow'
                   : 'text-white/40 hover:text-white/60',
               ].join(' ')}
             >
               {t.label}
-              <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold
+              <span className={`text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-full font-bold
                                 ${tab === t.key ? 'bg-[#B8892E] text-white' : 'bg-white/10 text-white/30'}`}>
                 {t.count}
               </span>
@@ -490,17 +474,17 @@ export default function AdminPanel() {
         {tab === 'products' && (
           <div className="flex flex-col gap-4">
             {/* Tab header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-white">Product Catalogue</h2>
                 <p className="text-xs text-white/30 mt-0.5">
-                  Changes reflect in the Shop immediately via Neon database
+                  Changes reflect in the Shop immediately via Neon
                 </p>
               </div>
               <button
                 onClick={() => setShowAdd(true)}
-                className="inline-flex items-center gap-2 bg-[#B8892E] hover:bg-[#9A7020]
-                           text-white text-sm font-bold px-4 py-2.5 rounded-xl
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#B8892E] hover:bg-[#9A7020]
+                           text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl
                            shadow-[0_4px_14px_rgba(184,137,46,0.35)] transition-colors"
               >
                 <span className="text-lg leading-none">+</span>
@@ -513,18 +497,18 @@ export default function AdminPanel() {
               {loadingP ? (
                 <div className="py-16 flex justify-center"><Spinner /></div>
               ) : products.length === 0 ? (
-                <div className="py-16 text-center text-white/30">
+                <div className="py-16 text-center text-white/30 px-4">
                   <p className="text-4xl mb-3">🧶</p>
                   <p className="text-sm">No products yet. Add your first one.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm min-w-[700px]">
                     <thead>
-                      <tr className="border-b border-white/8">
+                      <tr className="border-b border-white/8 bg-white/5">
                         {['Product', 'Category', 'Price', 'Badge', 'Stock', ''].map(h => (
-                          <th key={h} className="text-left text-[11px] font-semibold text-white/30
-                                                  uppercase tracking-widest px-5 py-3.5 first:pl-5">
+                          <th key={h} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40
+                                                  uppercase tracking-widest px-4 py-3 first:pl-5">
                             {h}
                           </th>
                         ))}
@@ -533,49 +517,43 @@ export default function AdminPanel() {
                     <tbody>
                       {products.map((p, i) => (
                         <tr key={p.id}
-                            className={`border-b border-white/5 hover:bg-white/3 transition-colors
+                            className={`border-b border-white/5 hover:bg-white/5 transition-colors
                                         ${i === products.length - 1 ? 'border-b-0' : ''}`}>
-                          {/* Product */}
-                          <td className="px-5 py-3.5">
+                          <td className="px-4 py-3 pl-5">
                             <div className="flex items-center gap-3">
                               <img src={p.imageUrl} alt=""
-                                   className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                                   className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" />
                               <div className="min-w-0">
-                                <p className="font-semibold text-white truncate max-w-[180px]">
+                                <p className="font-semibold text-white truncate max-w-[150px] sm:max-w-[180px]">
                                   {p.name}
                                 </p>
-                                <p className="text-[11px] text-white/30 truncate max-w-[180px]">
+                                <p className="text-[11px] text-white/40 truncate max-w-[150px] sm:max-w-[180px]">
                                   {p.origin}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          {/* Category */}
-                          <td className="px-5 py-3.5">
-                            <span className="text-xs text-white/50 font-medium capitalize">
+                          <td className="px-4 py-3">
+                            <span className="text-xs text-white/60 font-medium capitalize">
                               {p.category}
                             </span>
                           </td>
-                          {/* Price */}
-                          <td className="px-5 py-3.5">
+                          <td className="px-4 py-3">
                             <span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span>
                           </td>
-                          {/* Badge */}
-                          <td className="px-5 py-3.5"><Badge text={p.badge} /></td>
-                          {/* Stock */}
-                          <td className="px-5 py-3.5">
-                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full
+                          <td className="px-4 py-3"><Badge text={p.badge} /></td>
+                          <td className="px-4 py-3">
+                            <span className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap
                                               ${p.inStock
                                                 ? 'bg-emerald-500/20 text-emerald-400'
                                                 : 'bg-red-500/20 text-red-400'}`}>
                               {p.inStock ? 'In Stock' : 'Out of Stock'}
                             </span>
                           </td>
-                          {/* Actions */}
-                          <td className="px-5 py-3.5 text-right">
+                          <td className="px-4 py-3 pr-5 text-right">
                             <button
                               onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })}
-                              className="text-white/20 hover:text-red-400 transition-colors
+                              className="text-white/30 hover:text-red-400 transition-colors
                                          px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
                             >
                               Delete
@@ -600,15 +578,15 @@ export default function AdminPanel() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base font-bold text-white">Orders</h2>
-                <p className="text-xs text-white/30 mt-0.5">
-                  All verified Razorpay payments written to Neon
+                <p className="text-[10px] sm:text-xs text-white/30 mt-0.5">
+                  Verified Razorpay payments
                 </p>
               </div>
               <button onClick={fetchOrders}
-                      className="text-xs font-medium text-white/40 hover:text-white/70
-                                 px-3 py-2 rounded-lg border border-white/10 hover:border-white/20
-                                 transition-colors">
-                ↻ Refresh
+                      className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
+                                 px-3 py-1.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20
+                                 transition-colors flex items-center gap-1">
+                <span className="text-sm leading-none">↻</span> Refresh
               </button>
             </div>
 
@@ -616,18 +594,18 @@ export default function AdminPanel() {
               {loadingO ? (
                 <div className="py-16 flex justify-center"><Spinner /></div>
               ) : orders.length === 0 ? (
-                <div className="py-16 text-center text-white/30">
+                <div className="py-16 text-center text-white/30 px-4">
                   <p className="text-4xl mb-3">📦</p>
-                  <p className="text-sm">No orders yet. They appear here after payment verification.</p>
+                  <p className="text-sm">No orders yet.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm min-w-[750px]">
                     <thead>
-                      <tr className="border-b border-white/8">
+                      <tr className="border-b border-white/8 bg-white/5">
                         {['Order ID', 'Date', 'Items', 'Total', 'Status', ''].map(h => (
-                          <th key={h} className="text-left text-[11px] font-semibold text-white/30
-                                                  uppercase tracking-widest px-5 py-3.5">
+                          <th key={h} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40
+                                                  uppercase tracking-widest px-4 py-3 first:pl-5">
                             {h}
                           </th>
                         ))}
@@ -636,42 +614,36 @@ export default function AdminPanel() {
                     <tbody>
                       {orders.map((o, i) => (
                         <tr key={o.id}
-                            className={`border-b border-white/5 hover:bg-white/3 transition-colors
+                            className={`border-b border-white/5 hover:bg-white/5 transition-colors
                                         ${i === orders.length - 1 ? 'border-b-0' : ''}`}>
-                          {/* Order ID */}
-                          <td className="px-5 py-3.5">
-                            <p className="font-mono text-xs text-white/70 truncate max-w-[140px]">
+                          <td className="px-4 py-3 pl-5">
+                            <p className="font-mono text-[11px] sm:text-xs text-white/80 truncate max-w-[120px]">
                               #{o.razorpayPaymentId.slice(-8).toUpperCase()}
                             </p>
-                            <p className="text-[11px] text-white/25 font-mono truncate max-w-[140px]">
+                            <p className="text-[10px] sm:text-[11px] text-white/30 font-mono truncate max-w-[120px]">
                               {o.razorpayOrderId}
                             </p>
                           </td>
-                          {/* Date */}
-                          <td className="px-5 py-3.5 text-xs text-white/50">
+                          <td className="px-4 py-3 text-[11px] sm:text-xs text-white/50">
                             {fmtDate(o.createdAt)}
                           </td>
-                          {/* Items */}
-                          <td className="px-5 py-3.5">
-                            <div className="max-w-[200px]">
+                          <td className="px-4 py-3">
+                            <div className="max-w-[180px]">
                               {o.items.map((item, ii) => (
-                                <p key={ii} className="text-xs text-white/60 truncate">
+                                <p key={ii} className="text-[11px] sm:text-xs text-white/70 truncate">
                                   {item.quantity}× {item.name}
                                 </p>
                               ))}
                             </div>
                           </td>
-                          {/* Total */}
-                          <td className="px-5 py-3.5">
+                          <td className="px-4 py-3">
                             <span className="font-bold text-[#B8892E]">{formatINR(o.amountINR)}</span>
                           </td>
-                          {/* Status */}
-                          <td className="px-5 py-3.5"><StatusChip status={o.status} /></td>
-                          {/* Actions */}
-                          <td className="px-5 py-3.5 text-right">
+                          <td className="px-4 py-3"><StatusChip status={o.status} /></td>
+                          <td className="px-4 py-3 pr-5 text-right">
                             <button
                               onClick={() => setDelTarget({ type: 'order', id: o.id, label: 'order' })}
-                              className="text-white/20 hover:text-red-400 transition-colors
+                              className="text-white/30 hover:text-red-400 transition-colors
                                          px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
                             >
                               Delete

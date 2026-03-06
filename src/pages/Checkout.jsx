@@ -363,18 +363,17 @@ export default function Checkout() {
 
                 {/* City + State + PIN */}
                 <div>
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="flex flex-col gap-6">
                     <div>
                       <label className={LABEL}>PIN Code <span className="text-gold-500">*</span></label>
                       <div className="relative">
                         <input 
                           value={shipping.pin} 
-                          onChange={handlePinChange}
+                          onChange={handlePinChange} 
                           placeholder="175131" 
                           inputMode="numeric" 
                           className={`${INPUT} ${pinError ? 'border-red-400 focus:ring-red-400/10' : ''}`} 
                         />
-                        {/* Loading spinner inside the input */}
                         {pinLoading && (
                           <div className="absolute right-3 top-1/2 -translate-y-1/2">
                             <svg className="w-5 h-5 text-navy-400 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -384,28 +383,29 @@ export default function Checkout() {
                           </div>
                         )}
                       </div>
+                      {pinError && <p className="text-xs text-red-500 font-medium mt-2 flex items-center gap-1"><span>⚠️</span> {pinError}</p>}
                     </div>
-                    
-                    {/* City (Auto-filled) */}
-                    <div>
-                      <label className={LABEL}>City <span className="text-gold-500">*</span></label>
-                      <input 
-                        value={shipping.city} 
-                        readOnly
-                        placeholder="Auto-filled" 
-                        className={`${INPUT} bg-cream-50 text-ink-500 cursor-not-allowed focus:ring-0 focus:border-line-200`} 
-                      />
-                    </div>
-                    
-                    {/* State (Auto-filled) */}
-                    <div>
-                      <label className={LABEL}>State <span className="text-gold-500">*</span></label>
-                      <input 
-                        value={shipping.state} 
-                        readOnly
-                        placeholder="Auto-filled" 
-                        className={`${INPUT} bg-cream-50 text-ink-500 cursor-not-allowed focus:ring-0 focus:border-line-200`} 
-                      />
+
+                    {/* City and State: 1 column on mobile, 2 columns on desktop */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className={LABEL}>City <span className="text-gold-500">*</span></label>
+                        <input 
+                          value={shipping.city} 
+                          readOnly 
+                          placeholder="Auto-filled" 
+                          className={`${INPUT} bg-cream-50 text-ink-500 cursor-not-allowed focus:ring-0`} 
+                        />
+                      </div>
+                      <div>
+                        <label className={LABEL}>State <span className="text-gold-500">*</span></label>
+                        <input 
+                          value={shipping.state} 
+                          readOnly 
+                          placeholder="Auto-filled" 
+                          className={`${INPUT} bg-cream-50 text-ink-500 cursor-not-allowed focus:ring-0`} 
+                        />
+                      </div>
                     </div>
                   </div>
                   

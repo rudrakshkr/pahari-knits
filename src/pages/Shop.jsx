@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { PRODUCTS, CATEGORIES, formatINR } from '../data/products'
 import { useCart }  from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
@@ -167,6 +168,13 @@ export default function Shop() {
 
   return (
     <div>
+      {/* ── SEO MARKUP ─────────────────────────────────────────────────── */}
+      <Helmet>
+        <title>Shop Himalayan Apparel | PahariKnits</title>
+        <meta name="description" content="Browse our curated collection of handcrafted Himalayan knitwear. 100% authentic shawls, caps, and stoles." />
+        <meta property="og:title" content="Shop Himalayan Apparel | PahariKnits" />
+      </Helmet>
+
       {/* Page header */}
       <div className="bg-white border-b border-line-200
                       shadow-[0_2px_8px_rgba(26,36,56,0.05)]">

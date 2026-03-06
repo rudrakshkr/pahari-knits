@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { useCart } from '../context/CartContext'
 import { formatINR } from '../data/products'
 
@@ -9,6 +10,11 @@ export default function Cart() {
 
   return (
     <div>
+      <Helmet>
+        <title>Your Cart | PahariKnits</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+
       {/* Page header */}
       <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
         <div className="max-w-content mx-auto px-6 py-7">

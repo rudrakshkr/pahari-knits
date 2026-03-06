@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 
 // ── Reusable ornament row ─────────────────────────────────────────────────────
 function Ornament({ label }) {
@@ -62,6 +63,14 @@ function WhyCard({ icon, title, body, accentBg, delay }) {
 export default function Home() {
   return (
     <div className="overflow-x-hidden">
+
+      {/* ── SEO MARKUP ─────────────────────────────────────────────────── */}
+      <Helmet>
+        <title>PahariKnits | Authentic Himachali Handlooms & Knitwear</title>
+        <meta name="description" content="Discover authentic, handcrafted Himachali knitwear, Kullu shawls, and Kinnauri mufflers direct from the artisans of the Himalayas." />
+        <meta property="og:title" content="PahariKnits | Authentic Himachali Apparel" />
+        <meta property="og:type" content="website" />
+      </Helmet>
 
       {/* ═══════════════════════════════════════════════════════════════════
           HERO — snowy Himalayan panorama, cream stage at bottom

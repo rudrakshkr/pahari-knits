@@ -17,6 +17,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
 import { formatINR } from '../data/products'
+import { Helmet } from 'react-helmet-async';
 
 // ── Badge colours (matches Shop.jsx) ──────────────────────────────────────────
 const BADGE_STYLE = {
@@ -233,6 +234,43 @@ export default function ProductDetail() {
   // ── Full PDP render ─────────────────────────────────────────────────────────
   return (
     <div className="bg-cream-50 min-h-screen">
+      {/* ── SEO & JSON-LD SCHEMA MARKUP ────────────────────────────────────── */}
+      <Helmet>
+        <title>{product.name} | PahariKnits Himalayan Apparel</title>
+        <meta name="description" content={product.description.substring(0, 160)} />
+        
+        {/* Open Graph (Makes links look beautiful on WhatsApp/Facebook/Twitter) */}
+        <meta property="og:title" content={product.name} />
+        <meta property="og:description" content={product.description.substring(0, 160)} />
+        <meta property="og:image" content={product.images[0]} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={window.location.href} />
+
+        {/* Google Rich Snippet Data (JSON-LD) */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.name,
+            "image": product.images,
+            "description": product.description,
+            "brand": {
+              "@type": "Brand",
+              "name": "PahariKnits"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": window.location.href,
+              "priceCurrency": "INR",
+              "price": product.price,
+              "availability": product.inStock 
+                ? "https://schema.org/InStock" 
+                : "https://schema.org/OutOfStock",
+              "itemCondition": "https://schema.org/NewCondition"
+            }
+          })}
+        </script>
+      </Helmet>
 
       {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-line-200">

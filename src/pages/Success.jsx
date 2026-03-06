@@ -6,6 +6,7 @@
  */
 import React, { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 
 // Tiny confetti burst — pure CSS, no dependency
 function ConfettiBurst() {
@@ -59,6 +60,13 @@ export default function Success() {
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center
                     bg-cream-50 px-6 py-16">
+
+      {/* ── SEO MARKUP (PRIVATE PAGE) ──────────────────────────────────── */}
+      <Helmet>
+        <title>Order Confirmed | PahariKnits</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      
       <div className="relative max-w-md w-full text-center">
         {/* Confetti */}
         <ConfettiBurst />

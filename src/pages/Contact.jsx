@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 
 const TOPICS = ['Order Status', 'Returns & Exchanges', 'Product Inquiry', 'Partnership', 'Other']
 
@@ -36,6 +37,12 @@ export default function Contact() {
 
   return (
     <div>
+      {/* ── SEO MARKUP ─────────────────────────────────────────────────── */}
+      <Helmet>
+        <title>Contact Us | PahariKnits</title>
+        <meta name="description" content="Get in touch with PahariKnits. Questions about an order or our artisan weaves? We're based in Himachal Pradesh and here to help." />
+      </Helmet>
+
       {/* Page header */}
       <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
         <div className="max-w-content mx-auto px-6 py-7">

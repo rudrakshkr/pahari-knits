@@ -12,6 +12,7 @@
 
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { useCart } from '../context/CartContext'
 import { formatINR } from '../data/products'
 
@@ -256,6 +257,11 @@ export default function Checkout() {
   if (isVerifying) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-6">
+        <Helmet>
+          <title>Verifying Payment... | PahariKnits</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+
         <div className="relative w-20 h-20 mb-8">
           {/* Faint background circle */}
           <div className="absolute inset-0 border-4 border-line-200 rounded-full"></div>
@@ -279,23 +285,29 @@ export default function Checkout() {
   }
   return (
     <div>
-      {/* Page header */}
-      <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
-        <div className="max-w-content mx-auto px-6 py-7">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-ink-400 mb-3">
-            <Link to="/cart" className="hover:text-navy-700 transition-colors">Cart</Link>
-            <span>/</span>
-            <span className="text-ink-700 font-medium">Checkout</span>
-          </div>
-          <p className="text-[11px] font-semibold text-teal-500 tracking-[0.22em] uppercase mb-1.5">
-            Final Step
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-ink-900 tracking-tight">
-            Checkout
-          </h1>
+        {/* ── SEO MARKUP (PRIVATE PAGE) ──────────────────────────────────── */}
+        <Helmet>
+            <title>Secure Checkout | PahariKnits</title>
+            <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+
+        {/* Page header */}
+        <div className="bg-white border-b border-line-200 shadow-[0_2px_8px_rgba(26,36,56,0.05)]">
+            <div className="max-w-content mx-auto px-6 py-7">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-xs text-ink-400 mb-3">
+                <Link to="/cart" className="hover:text-navy-700 transition-colors">Cart</Link>
+                <span>/</span>
+                <span className="text-ink-700 font-medium">Checkout</span>
+            </div>
+            <p className="text-[11px] font-semibold text-teal-500 tracking-[0.22em] uppercase mb-1.5">
+                Final Step
+            </p>
+            <h1 className="text-3xl md:text-4xl font-bold text-ink-900 tracking-tight">
+                Checkout
+            </h1>
+            </div>
         </div>
-      </div>
 
       <div className="max-w-content mx-auto px-6 py-10">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">

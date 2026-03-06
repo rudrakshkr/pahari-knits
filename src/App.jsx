@@ -15,6 +15,7 @@ import Success       from './pages/Success'
 import ProductDetail from './pages/ProductDetail'
 import AdminLogin    from './pages/admin/AdminLogin'
 import AdminPanel    from './pages/admin/AdminPanel'
+import Checkout from './pages/Checkout'
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
                     <Route path="/shop"         element={<Shop />}          />
                     <Route path="/product/:id"  element={<ProductDetail />} />
                     <Route path="/cart"         element={<Cart />}          />
+                    <Route path="/checkout" element={<Checkout />} />
                     <Route path="/contact"      element={<Contact />}       />
                     <Route path="/success"      element={<Success />}       />
                   </Routes>

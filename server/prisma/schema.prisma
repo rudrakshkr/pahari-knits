@@ -32,6 +32,13 @@ model Order {
   status              String      @default("paid")
   items               OrderItem[]
   createdAt           DateTime    @default(now())
+
+  shippingName        String?
+  shippingPhone       String?
+  shippingStreet      String?
+  shippingCity        String?
+  shippingState       String?
+  shippingPin         String?
 }
 
 model OrderItem {

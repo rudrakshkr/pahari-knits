@@ -240,6 +240,7 @@ app.post('/api/verify-payment', async (req, res) => {
       razorpay_signature,
       amount,
       items,
+      shipping,
     } = req.body
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -273,6 +274,15 @@ app.post('/api/verify-payment', async (req, res) => {
             razorpayPaymentId: razorpay_payment_id,
             amountINR:         Math.round(amount),
             status:            'PAID',
+
+            // ── Shipping ──────────────────────────────
+            shippingName:   shipping?.name    || null,
+            shippingPhone:  shipping?.phone   || null,
+            shippingStreet: shipping?.street  || null,
+            shippingCity:   shipping?.city    || null,
+            shippingState:  shipping?.state   || null,
+            shippingPin:    shipping?.pin     || null,
+            
             items: {
               create: items.map(item => ({
                 productId: item.id,

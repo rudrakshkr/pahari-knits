@@ -116,7 +116,7 @@ export default function Home() {
                          tracking-tight leading-none mb-1">
             PahariKnits
           </h1>
-          <p className="text-[11px] font-light text-teal-500 tracking-[0.32em] uppercase mb-6">
+          <p className="text-[14px] font-medium text-teal-500 tracking-[0.32em] uppercase mb-6">
             Traditional Himachali Apparel
           </p>
 
@@ -146,7 +146,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════════
           STATS BAR
       ═══════════════════════════════════════════════════════════════════ */}
-      <div className="bg-white border-y border-line-200">
+      {/* <div className="bg-white border-y border-line-200">
         <div className="max-w-content mx-auto px-6 py-5
                         flex items-center justify-around gap-4">
           <StatChip value="200+" label="Artisans" />
@@ -157,7 +157,7 @@ export default function Home() {
           <span className="h-9 w-px bg-line-200 hidden sm:block" />
           <StatChip value="Fair" label="Trade"    />
         </div>
-      </div>
+      </div> */}
 
       {/* ═══════════════════════════════════════════════════════════════════
           OUR STORY — fully centred
@@ -176,16 +176,16 @@ export default function Home() {
           <p className="text-[15px] text-ink-500 leading-relaxed mb-8">
             PahariKnits was born from a simple belief — that the artisans of Himachal Pradesh
             deserve a platform as exceptional as their craft. We partner directly with weavers
-            in Kullu, Kinnaur, Spiti, and Chamba to bring their work to you, unfiltered and authentic.
+            in Palampur, Kullu, Kinnaur, Spiti, and Chamba to bring their work to you, unfiltered and authentic.
           </p>
 
           {/* Region badges — centred */}
-          <div className="flex flex-wrap gap-2.5 justify-center">
+          {/* <div className="flex flex-wrap gap-2.5 justify-center">
             <RegionBadge name="Kullu"   emoji="🏔" />
             <RegionBadge name="Kinnaur" emoji="🌾" />
             <RegionBadge name="Spiti"   emoji="❄️" />
             <RegionBadge name="Chamba"  emoji="🧵" />
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -276,13 +276,13 @@ export default function Home() {
             </div>
 
             {/* Decorative gold ✦ watermark — bottom right */}
-            <span
+            {/* <span
               className="absolute bottom-4 right-6 text-gold-300 text-7xl
                          font-bold leading-none pointer-events-none select-none opacity-30"
               aria-hidden="true"
             >
               ✦
-            </span>
+            </span> */}
           </div>
         </div>
       </section>

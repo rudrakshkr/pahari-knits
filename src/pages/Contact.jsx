@@ -54,12 +54,20 @@ export default function Contact() {
 
       <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col gap-6">
         {/* Info cards */}
-        <div className="grid grid-cols-3 gap-3">
-          {[['✉', 'Email', 'support@pahariknits.com'], ['⏱', 'Response', 'Within 24 hrs'], ['🏔', 'Based in', 'Himachal Pradesh']].map(([icon, label, value]) => (
-            <div key={label} className="bg-white border border-line-200 rounded-2xl p-4 text-center shadow-card">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            ['✉', 'Email', 'support@pahariknits.com'], 
+            ['⏱', 'Response', 'Within 24 hrs'], 
+            ['🏔', 'Based in', 'Himachal Pradesh']
+          ].map(([icon, label, value]) => (
+            <div key={label} className="bg-white border border-line-200 rounded-2xl p-5 text-center shadow-card flex flex-col items-center justify-center">
               <span className="text-2xl block mb-2">{icon}</span>
-              <p className="text-[10px] font-medium text-ink-400 uppercase tracking-wider mb-1">{label}</p>
-              <p className="text-xs font-semibold text-navy-700">{value}</p>
+              <p className="text-[11px] font-medium text-ink-400 uppercase tracking-wider mb-1.5 break-words text-center">
+                {label}
+              </p>
+              <p className="text-sm font-semibold text-navy-700 break-words text-center">
+                {value}
+              </p>
             </div>
           ))}
         </div>

@@ -381,12 +381,12 @@ export default function ProductDetail() {
             </h1>
 
             {/* Star rating — static display */}
-            <div className="flex items-center gap-2 mb-5">
+            {/* <div className="flex items-center gap-2 mb-5">
               <div className="flex text-gold-400 text-base leading-none gap-0.5">
                 {'★★★★★'.split('').map((s, i) => <span key={i}>{s}</span>)}
               </div>
               <span className="text-xs text-ink-400 font-medium">4.9 · Verified artisan quality</span>
-            </div>
+            </div> */}
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-line-200">
@@ -514,15 +514,30 @@ export default function ProductDetail() {
             <div className="mt-6 flex flex-wrap gap-4">
               {[
                 ['🔒', 'Secure checkout'],
-                ['🔄', 'Easy returns'],
+                ['🔄', 'Easy exchange'],
                 ['🚚', 'Free delivery'],
-                ['🏔', 'Artisan verified'],
+                // ['🏔', 'Artisan verified'],
               ].map(([icon, label]) => (
                 <div key={label} className="flex items-center gap-1.5 text-xs text-ink-400 font-medium">
                   <span>{icon}</span>
                   {label}
                 </div>
               ))}
+            </div>
+            {/* Delivery & Exchange Note */}
+            <div className="mt-5 bg-navy-50 rounded-xl px-4 py-3.5 border border-navy-100 flex flex-col gap-2">
+              <div className="flex items-start gap-2.5">
+                <span className="text-navy-400 shrink-0 text-sm mt-0.5">🚚</span>
+                <p className="text-[13px] text-ink-600 leading-relaxed">
+                  <strong className="text-navy-700">Estimated Delivery:</strong> Arrives in 7 to 10 days
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="text-navy-400 shrink-0 text-sm mt-0.5">📦</span>
+                <p className="text-[13px] text-ink-600 leading-relaxed">
+                  <strong className="text-navy-700">Easy Exchange:</strong> Available within 20 days of delivery
+                </p>
+              </div>
             </div>
           </div>
         </div>

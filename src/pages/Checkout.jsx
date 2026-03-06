@@ -333,7 +333,7 @@ export default function Checkout() {
                   <div>
                     <label className={LABEL}>Full Name <span className="text-gold-500">*</span></label>
                     <input value={shipping.name} onChange={setField('name')}
-                           placeholder="Priya Sharma" className={INPUT} />
+                           placeholder="Full Name" className={INPUT} />
                   </div>
                   <div>
                     <label className={LABEL}>Phone Number <span className="text-gold-500">*</span></label>
@@ -345,7 +345,7 @@ export default function Checkout() {
                       <input 
                         value={shipping.phone} 
                         onChange={setField('phone')}
-                        placeholder="9876543210" 
+                        placeholder="Phone Number" 
                         type="tel" 
                         inputMode="numeric" 
                         className="flex-1 bg-transparent px-3 py-3.5 text-base text-ink-900 placeholder-ink-300 focus:outline-none" 
@@ -356,7 +356,7 @@ export default function Checkout() {
 
                 {/* Street */}
                 <div>
-                  <label className={LABEL}>Street Address <span className="text-gold-500">*</span></label>
+                  <label className={LABEL}>Address <span className="text-gold-500">*</span></label>
                   <input value={shipping.street} onChange={setField('street')}
                          placeholder="12, Mall Road, Near Bus Stand" className={INPUT} />
                 </div>

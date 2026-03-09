@@ -192,7 +192,7 @@ export default function Shop() {
           </div>
           <span className="shrink-0 bg-navy-50 text-navy-700 text-sm font-semibold
                            px-4 py-2 rounded-full border border-navy-100">
-            {products.length} pieces
+            {products.length} products
           </span>
         </div>
 

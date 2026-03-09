@@ -9,6 +9,7 @@
  *  POST /api/create-order         Razorpay — unchanged
  *  POST /api/verify-payment       Razorpay HMAC + Prisma order write
  *  POST /api/contact              Nodemailer dual-write (DB + email)
+ *  POST /api/feedback             Save user feedback to DB
  *
  * Admin routes  (require Bearer JWT)
  * ─────────────
@@ -382,6 +383,73 @@ app.post('/api/contact', async (req, res) => {
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
+// PUBLIC — GET /api/feedback/check
+//
+// Checks if feedback already exists for a given product and customer.
+// ══════════════════════════════════════════════════════════════════════════════
+app.get('/api/feedback/check', async (req, res) => {
+  try {
+    const { productId, customerName } = req.query;
+
+    if (!productId || !customerName) {
+      return res.status(400).json({ success: false, error: 'productId and customerName are required.' });
+    }
+
+    const existingFeedback = await prisma.feedback.findUnique({
+      where: {
+        productId: productId,
+      },
+    });
+
+    res.json({ success: true, exists: !!existingFeedback });
+  } catch (err) {
+    console.error('feedback check error:', err);
+    res.status(500).json({ success: false, error: 'Failed to check feedback.' });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PUBLIC — POST /api/feedback
+//
+// Saves user feedback (rating + message) to the database.
+// Now includes productId and customerName, with a uniqueness check.
+// ══════════════════════════════════════════════════════════════════════════════
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { rating, feedback, productId, customerName } = req.body
+
+    // Basic validation
+    if (typeof rating !== 'number' || rating < 1 || rating > 5) {
+      return res.status(400).json({ success: false, error: 'A rating between 1 and 5 is required.' })
+    }
+    if (!productId || !customerName) {
+      return res.status(400).json({ success: false, error: 'productId and customerName are required.' });
+    }
+
+    console.log(`🌟  New Feedback — Rating: ${rating}/5 for product ${productId} by ${customerName}`)
+
+    await prisma.feedback.create({
+      data: {
+        rating: rating,
+        message: feedback || null,
+        productId,
+        customerName,
+      }
+    })
+    console.log(`💾  Feedback saved to database!`)
+
+    res.status(201).json({ success: true, message: 'Feedback received. Thank you!' })
+  } catch (err) {
+    // Prisma's P2002 code indicates a unique constraint violation
+    if (err.code === 'P2002') {
+      return res.status(409).json({ success: false, error: 'Feedback for this product already exists.' });
+    }
+    console.error('feedback error:', err)
+    res.status(500).json({ success: false, error: 'Failed to save feedback.' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
 // ADMIN — POST /api/admin/login
 //
 // Credentials are stored purely in .env (ADMIN_USERNAME, ADMIN_PASSWORD).
@@ -560,6 +628,8 @@ app.listen(PORT, () => {
   console.log(`    POST   /api/create-order        (Razorpay)`)
   console.log(`    POST   /api/verify-payment      (Razorpay + DB write)`)
   console.log(`    POST   /api/contact             (Nodemailer)`)
+  console.log(`    GET    /api/feedback/check      (DB check)`)
+  console.log(`    POST   /api/feedback            (DB write)`)
   console.log(`    POST   /api/admin/login         (JWT)`)
   console.log(`    GET    /api/admin/products      (admin)`)
   console.log(`    POST   /api/admin/products      (admin)`)

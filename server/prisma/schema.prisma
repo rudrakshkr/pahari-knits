@@ -62,3 +62,12 @@ model ContactMessage {
   message   String
   createdAt DateTime @default(now())
 }
+
+model Feedback {
+  id        String @id @default(cuid())
+  rating    Int
+  message   String?
+  productId String @unique
+  customerName String
+  createdAt DateTime @default(now())
+}

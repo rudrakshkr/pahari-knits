@@ -27,8 +27,8 @@ export default function Feedback() {
       try {
         const res = await fetch(`/api/feedback/check?productId=${productId}&customerName=${customerName}`)
         const data = await res.json()
-        if (data.exists) {
-          setAlreadyExists(true)
+        if (data.exists || !data.success) {
+          setAlreadyExists(true);
         }
       } catch (error) {
         console.error('Failed to check for existing feedback', error)

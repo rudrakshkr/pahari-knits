@@ -25,19 +25,19 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const express    = require('express')
-const cors       = require('cors')
-const crypto     = require('crypto')
-const Razorpay   = require('razorpay')
-const jwt        = require('jsonwebtoken')
+const express = require('express')
+const cors = require('cors')
+const crypto = require('crypto')
+const Razorpay = require('razorpay')
+const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 
 // ── Prisma 7 + Standard Postgres Driver ───────────────────────────────────────
 // We are using the standard 'pg' pool. It is much more stable for Express 
 // apps on local environments than the Neon Serverless edge driver.
 const { PrismaClient } = require('@prisma/client')
-const { PrismaPg }     = require('@prisma/adapter-pg')
-const { Pool }         = require('pg')
+const { PrismaPg } = require('@prisma/adapter-pg')
+const { Pool } = require('pg')
 
 console.log("DEBUG: Connection String is:", process.env.DATABASE_URL ? "FOUND" : "MISSING");
 
@@ -61,12 +61,12 @@ const {
 } = process.env
 
 const missingVars = [
-  ['RAZORPAY_KEY_ID',    RAZORPAY_KEY_ID],
-  ['RAZORPAY_KEY_SECRET',RAZORPAY_KEY_SECRET],
-  ['DATABASE_URL',       process.env.DATABASE_URL],
-  ['JWT_SECRET',         JWT_SECRET],
-  ['ADMIN_USERNAME',     ADMIN_USERNAME],
-  ['ADMIN_PASSWORD',     ADMIN_PASSWORD],
+  ['RAZORPAY_KEY_ID', RAZORPAY_KEY_ID],
+  ['RAZORPAY_KEY_SECRET', RAZORPAY_KEY_SECRET],
+  ['DATABASE_URL', process.env.DATABASE_URL],
+  ['JWT_SECRET', JWT_SECRET],
+  ['ADMIN_USERNAME', ADMIN_USERNAME],
+  ['ADMIN_PASSWORD', ADMIN_PASSWORD],
 ].filter(([, v]) => !v).map(([k]) => k)
 
 if (missingVars.length) {
@@ -76,7 +76,7 @@ if (missingVars.length) {
 
 // ── Razorpay client (preserved exactly) ──────────────────────────────────────
 const razorpay = new Razorpay({
-  key_id:     RAZORPAY_KEY_ID,
+  key_id: RAZORPAY_KEY_ID,
   key_secret: RAZORPAY_KEY_SECRET,
 })
 
@@ -96,12 +96,12 @@ if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
 }
 
 // ── Express app ───────────────────────────────────────────────────────────────
-const app  = express()
+const app = express()
 const PORT = process.env.PORT || 5000
 
 app.use(express.json())
 app.use(cors({
-  origin:  process.env.FRONTEND_ORIGIN || '*',
+  origin: process.env.FRONTEND_ORIGIN || '*',
   methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
   // Allow the Authorization header so admin JWT calls work cross-origin
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -153,7 +153,7 @@ app.get('/api/products', async (req, res) => {
   try {
     const { category } = req.query
     const products = await prisma.product.findMany({
-      where:   category ? { category: category.toLowerCase() } : undefined,
+      where: category ? { category: category.toLowerCase() } : undefined,
       orderBy: { createdAt: 'asc' },
     })
     res.json({ success: true, count: products.length, products: products.map(normaliseProduct) })
@@ -175,8 +175,8 @@ app.get('/api/products/:id', async (req, res) => {
     }
 
     const related = await prisma.product.findMany({
-      where:   { category: product.category, NOT: { id: product.id } },
-      take:    3,
+      where: { category: product.category, NOT: { id: product.id } },
+      take: 3,
       orderBy: { createdAt: 'asc' },
     })
 
@@ -202,18 +202,18 @@ app.post('/api/create-order', async (req, res) => {
     }
 
     const order = await razorpay.orders.create({
-      amount:   Math.round(amount * 100),   // paise
+      amount: Math.round(amount * 100),   // paise
       currency: 'INR',
-      receipt:  `pk_order_${Date.now()}`,
-      notes:    { source: 'pahariknits-web' },
+      receipt: `pk_order_${Date.now()}`,
+      notes: { source: 'pahariknits-web' },
     })
 
     console.log(`✅  Order created: ${order.id}  |  ₹${amount}`)
     res.status(201).json({
-      success:   true,
-      order_id:  order.id,
-      amount:    order.amount,
-      currency:  order.currency,
+      success: true,
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
     })
   } catch (err) {
     console.error('create-order error:', err)
@@ -254,8 +254,8 @@ app.post('/api/verify-payment', async (req, res) => {
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
 
-    const genBuf   = Buffer.from(generated,           'hex')
-    const sigBuf   = Buffer.from(razorpay_signature,  'hex')
+    const genBuf = Buffer.from(generated, 'hex')
+    const sigBuf = Buffer.from(razorpay_signature, 'hex')
     const sigMatch = genBuf.length === sigBuf.length && crypto.timingSafeEqual(genBuf, sigBuf)
 
     if (!sigMatch) {
@@ -271,25 +271,25 @@ app.post('/api/verify-payment', async (req, res) => {
       try {
         await prisma.order.create({
           data: {
-            razorpayOrderId:   razorpay_order_id,
+            razorpayOrderId: razorpay_order_id,
             razorpayPaymentId: razorpay_payment_id,
-            amountINR:         Math.round(amount),
-            status:            'PAID',
+            amountINR: Math.round(amount),
+            status: 'PAID',
 
             // ── Shipping ──────────────────────────────
-            shippingName:   shipping?.name    || null,
-            shippingPhone:  shipping?.phone   || null,
-            shippingStreet: shipping?.street  || null,
-            shippingCity:   shipping?.city    || null,
-            shippingState:  shipping?.state   || null,
-            shippingPin:    shipping?.pin     || null,
-            
+            shippingName: shipping?.name || null,
+            shippingPhone: shipping?.phone || null,
+            shippingStreet: shipping?.street || null,
+            shippingCity: shipping?.city || null,
+            shippingState: shipping?.state || null,
+            shippingPin: shipping?.pin || null,
+
             items: {
               create: items.map(item => ({
                 productId: item.id,
-                name:      item.name,
-                price:     item.price,
-                quantity:  item.quantity,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
               })),
             },
           },
@@ -302,18 +302,18 @@ app.post('/api/verify-payment', async (req, res) => {
       }
     } else {
       // ADD THIS:
-      console.log("❌ DB Save Skipped! Missing data:", { 
-        hasAmount: !!amount, 
-        hasItems: !!items, 
-        itemsLength: items?.length 
+      console.log("❌ DB Save Skipped! Missing data:", {
+        hasAmount: !!amount,
+        hasItems: !!items,
+        itemsLength: items?.length
       });
     }
 
     res.status(200).json({
-      success:    true,
-      message:    'Payment verified.',
+      success: true,
+      message: 'Payment verified.',
       payment_id: razorpay_payment_id,
-      order_id:   razorpay_order_id,
+      order_id: razorpay_order_id,
     })
   } catch (err) {
     console.error('verify-payment error:', err)
@@ -353,11 +353,11 @@ app.post('/api/contact', async (req, res) => {
       const recipientEmail = (process.env.CONTACT_EMAIL || "").trim() || sender
 
       await mailer.sendMail({
-        from:    `"PahariKnits Site" <${sender}>`,
-        to:      recipientEmail,
+        from: `"PahariKnits Site" <${sender}>`,
+        to: recipientEmail,
         replyTo: email,
         subject: `[PahariKnits Contact] ${topic} — from ${name}`,
-        text:    `Name:    ${name}\nEmail:   ${email}\nTopic:   ${topic}\n\n${message}`,
+        text: `Name:    ${name}\nEmail:   ${email}\nTopic:   ${topic}\n\n${message}`,
         html: `
           <div style="font-family:sans-serif;max-width:600px">
             <h2 style="color:#1D3461">New contact message</h2>
@@ -395,6 +395,16 @@ app.get('/api/feedback/check', async (req, res) => {
       return res.status(400).json({ success: false, error: 'productId and customerName are required.' });
     }
 
+    // Check if the product itself exists
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      // Use 404 Not Found if the product doesn't exist
+      return res.status(404).json({ success: false, error: 'Product not found.' });
+    }
+
     const existingFeedback = await prisma.feedback.findUnique({
       where: {
         productId: productId,
@@ -423,9 +433,8 @@ app.post('/api/feedback', async (req, res) => {
       return res.status(400).json({ success: false, error: 'A rating between 1 and 5 is required.' })
     }
     if (!productId || !customerName) {
-      return res.status(400).json({ success: false, error: 'productId and customerName are required.' });
+      return res.status(400).json({ success: false, error: 'productId and customerName are required' });
     }
-
     console.log(`🌟  New Feedback — Rating: ${rating}/5 for product ${productId} by ${customerName}`)
 
     await prisma.feedback.create({
@@ -543,11 +552,11 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
       data: {
         name, price: Math.round(price), category: category.toLowerCase(),
         origin, description, images,
-        badge:      badge      || null,
-        inStock:    inStock    ?? true,
-        material:   material   || null,
+        badge: badge || null,
+        inStock: inStock ?? true,
+        material: material || null,
         dimensions: dimensions || null,
-        care:       care       || null,
+        care: care || null,
         maxQuantity: maxQuantity ? Number(maxQuantity) : null,
       },
     })

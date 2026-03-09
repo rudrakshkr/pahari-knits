@@ -92,9 +92,11 @@ export default function Cart() {
                   </button>
                   <span className="w-8 text-center text-sm font-bold text-ink-900">{quantity}</span>
                   <button
-                    onClick={() => updateQuantity(product.id, quantity + 1)}
+                    onClick={() => updateQuantity(product.id, product.maxQuantity != null ? Math.min(quantity + 1, product.maxQuantity) : quantity + 1)}
+                    disabled={product.maxQuantity != null && quantity >= product.maxQuantity}
                     className="w-7 h-7 rounded-full bg-white shadow-sm flex items-center justify-center
-                               text-navy-700 font-bold text-base hover:bg-navy-50 transition-colors"
+                               text-navy-700 font-bold text-base hover:bg-navy-50 transition-colors
+                               disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     +
                   </button>

@@ -71,7 +71,7 @@ function Spinner() {
 // ── Add Product modal ─────────────────────────────────────────────────────────
 const EMPTY_FORM = {
   name: '', price: '', category: 'shawl', origin: '', description: '',
-  images: '', badge: '', inStock: true, material: '', dimensions: '', care: '',
+  images: '', badge: '', inStock: true, material: '', dimensions: '', care: '', maxQuantity: '',
 }
 
 function AddProductModal({ token, onClose, onAdded }) {
@@ -100,6 +100,7 @@ function AddProductModal({ token, onClose, onAdded }) {
         body:    JSON.stringify({
           ...form,
           price:    Number(form.price),
+          maxQuantity: form.maxQuantity ? Number(form.maxQuantity) : null,
           images:   imagesArr,
           badge:    form.badge || null,
           inStock:  form.inStock,
@@ -143,21 +144,28 @@ function AddProductModal({ token, onClose, onAdded }) {
           )}
 
           <form onSubmit={handleSubmit} id="add-product-form" className="space-y-4 sm:space-y-5">
-            {/* Row 1: Responsive Grid */}
+            {/* Row 1: Name */}
+            <div>
+              <label className={LABEL}>Name *</label>
+              <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)}
+                     required placeholder="Kullu Valley Shawl" />
+            </div>
+
+            {/* Row 2: Price, Max Qty */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={LABEL}>Name *</label>
-                <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)}
-                       required placeholder="Kullu Valley Shawl" />
-              </div>
               <div>
                 <label className={LABEL}>Price (₹) *</label>
                 <input className={INPUT} type="number" min="1" value={form.price}
                        onChange={e => set('price', e.target.value)} required placeholder="2499" />
               </div>
+              <div>
+                <label className={LABEL}>Max Order Quantity</label>
+                <input className={INPUT} type="number" min="1" value={form.maxQuantity}
+                       onChange={e => set('maxQuantity', e.target.value)} placeholder="e.g., 10" />
+              </div>
             </div>
 
-            {/* Row 2: Responsive Grid */}
+            {/* Row 3: Category, Badge */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={LABEL}>Category *</label>
@@ -506,7 +514,7 @@ export default function AdminPanel() {
                   <table className="w-full text-sm min-w-[700px]">
                     <thead>
                       <tr className="border-b border-white/8 bg-white/5">
-                        {['Product', 'Category', 'Price', 'Badge', 'Stock', ''].map(h => (
+                        {['Product', 'Category', 'Price', 'Max Qty', 'Badge', 'Stock', ''].map(h => (
                           <th key={h} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40
                                                   uppercase tracking-widest px-4 py-3 first:pl-5">
                             {h}
@@ -540,6 +548,11 @@ export default function AdminPanel() {
                           </td>
                           <td className="px-4 py-3">
                             <span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="text-xs text-white/60 font-medium">
+                              {p.maxQuantity || '—'}
+                            </span>
                           </td>
                           <td className="px-4 py-3"><Badge text={p.badge} /></td>
                           <td className="px-4 py-3">

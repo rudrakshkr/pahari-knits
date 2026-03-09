@@ -19,6 +19,7 @@ model Product {
   badge       String?
   images      String[] // Native Postgres String Array
   inStock     Boolean  @default(true)
+  maxQuantity Int?
   createdAt   DateTime @default(now())
 
   orders OrderItem[]

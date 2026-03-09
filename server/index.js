@@ -520,7 +520,7 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
   try {
     const {
       name, price, category, origin, description, images,
-      badge, inStock, material, dimensions, care,
+      badge, inStock, material, dimensions, care, maxQuantity,
     } = req.body
 
     // Minimal validation
@@ -548,6 +548,7 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
         material:   material   || null,
         dimensions: dimensions || null,
         care:       care       || null,
+        maxQuantity: maxQuantity ? Number(maxQuantity) : null,
       },
     })
 

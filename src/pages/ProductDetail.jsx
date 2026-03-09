@@ -443,17 +443,22 @@ export default function ProductDetail() {
                 </button>
                 <span className="w-10 text-center text-base font-bold text-ink-900">{qty}</span>
                 <button
-                  onClick={() => setQty(q => q + 1)}
+                  onClick={() => setQty(q => (product.maxQuantity != null ? Math.min(q + 1, product.maxQuantity) : q + 1))}
+                  disabled={product.maxQuantity != null && qty >= product.maxQuantity}
                   className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center
-                             text-ink-700 font-bold hover:bg-navy-50 transition-colors"
+                             text-ink-700 font-bold hover:bg-navy-50 transition-colors
+                             disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   +
                 </button>
               </div>
-              {product.inStock
-                ? <span className="text-xs text-teal-500 font-semibold">✓ In stock</span>
-                : <span className="text-xs text-red-400 font-semibold">Out of stock</span>
-              }
+              {product.maxQuantity != null && qty >= product.maxQuantity ? (
+                <span className="text-xs text-amber-600 font-semibold">Max quantity reached</span>
+              ) : (
+                product.inStock
+                  ? <span className="text-xs text-teal-500 font-semibold">✓ In stock</span>
+                  : <span className="text-xs text-red-400 font-semibold">Out of stock</span>
+              )}
             </div>
 
             {/* CTA buttons */}

@@ -519,7 +519,7 @@ export default function ProductDetail() {
             <div className="mt-6 flex flex-wrap gap-4">
               {[
                 ['🔒', 'Secure checkout'],
-                ['🔄', 'Easy exchange'],
+                ['🔄', 'Easy returns'],
                 ['🚚', 'Free delivery'],
                 // ['🏔', 'Artisan verified'],
               ].map(([icon, label]) => (
@@ -540,7 +540,7 @@ export default function ProductDetail() {
               <div className="flex items-start gap-2.5">
                 <span className="text-navy-400 shrink-0 text-sm mt-0.5">📦</span>
                 <p className="text-[13px] text-ink-600 leading-relaxed">
-                  <strong className="text-navy-700">Easy Exchange:</strong> Available within 20 days of delivery
+                  <strong className="text-navy-700">Easy Returns:</strong> In case of returns, they should be placed within 3 days of delivery. After that no return will be accepted.
                 </p>
               </div>
             </div>

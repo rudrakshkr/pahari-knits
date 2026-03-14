@@ -224,7 +224,7 @@ app.post('/api/create-order', async (req, res) => {
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — POST /api/login
 //
-// Logs in user by validating phone number against orders table.
+// Logs in user by standardizing the phone number and checking the orders table.
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/login', async (req, res) => {
   try {
@@ -234,23 +234,29 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Phone number is required.' });
     }
 
-    // Check if the phone number exists in the orders table
+    // 1. Standardize the format to match the database exactly: "+91 XXXXXXXXXX"
+    const digitsOnly = phoneNumber.replace(/\D/g, ''); // Remove all non-numbers
+    const tenDigitNumber = digitsOnly.slice(-10);      // Grab just the last 10 digits
+    const dbFormattedPhone = `+91 ${tenDigitNumber}`;  // Add the exact prefix + space
+
+    // 2. Check if the phone number exists in the orders table
     const order = await prisma.order.findFirst({
-      where: { shippingPhone: phoneNumber },
+      where: { shippingPhone: dbFormattedPhone },
       include: { items: true },
     });
 
     if (!order) {
-      return res.status(401).json({ success: false, error: 'Invalid phone number.' });
+      return res.status(401).json({ success: false, error: 'No orders found for this phone number.' });
     }
 
-    // If phone number is valid, return the orders associated with it
+    // 3. If valid, return all orders associated with it
     const orders = await prisma.order.findMany({
-      where: { shippingPhone: phoneNumber },
+      where: { shippingPhone: dbFormattedPhone },
       include: { items: true },
+      orderBy: { createdAt: 'desc' } // Newest orders first
     });
 
-    console.log(`✅  Login successful for phone number: ${phoneNumber}`);
+    console.log(`✅  Login successful for: ${dbFormattedPhone}`);
     res.json({ success: true, message: 'Login successful.', orders });
 
   } catch (err) {
@@ -341,27 +347,34 @@ app.post('/api/orders/:id/deliver', async (req, res) => {
 
 
 
-// implement get orders api
+// ══════════════════════════════════════════════════════════════════════════════
+// PUBLIC — GET /api/orders
+//
+// Fetches orders using the same smart phone number formatting.
+// ══════════════════════════════════════════════════════════════════════════════
 app.get('/api/orders', async (req, res) => {
   try {
     const pn = req.query.pn;
 
     if (pn) {
+      // Standardize the format exactly like the login route
+      const digitsOnly = pn.replace(/\D/g, '');
+      const dbFormattedPhone = `+91 ${digitsOnly.slice(-10)}`;
+
       const orders = await prisma.order.findMany({
-        where: { shippingPhone: pn },
+        where: { shippingPhone: dbFormattedPhone },
         include: { items: true },
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, orders });
     } else {
-      res.status(500).json({ success: false, error: 'No orders found!' });
+      res.status(400).json({ success: false, error: 'Phone number is required!' });
     }
   } catch (err) {
     console.error('GET /api/orders error:', err);
     res.status(500).json({ success: false, error: 'Failed to fetch orders.' });
   };
 });
-
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — POST /api/verify-payment

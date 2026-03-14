@@ -17,6 +17,8 @@ import AdminLogin    from './pages/admin/AdminLogin'
 import AdminPanel    from './pages/admin/AdminPanel'
 import Checkout from './pages/Checkout'
 import Feedback from './components/Feedback';
+import Login from './pages/Login';
+import Account from './pages/Account'
 
 export default function App() {
   return (
@@ -48,6 +50,8 @@ export default function App() {
                     <Route path="/contact"      element={<Contact />}       />
                     <Route path="/success"      element={<Success />}       />
                     <Route path="/feedback"      element={<Feedback />}       />
+                    <Route path="/login"      element={<Login />}       />
+                    <Route path="/account"      element={<Account />}       />
                   </Routes>
                 </main>
                 <Footer />

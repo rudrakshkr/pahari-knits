@@ -222,6 +222,95 @@ app.post('/api/create-order', async (req, res) => {
 })
 
 // ══════════════════════════════════════════════════════════════════════════════
+// PUBLIC — POST /api/login
+//
+// Logs in user by validating phone number against orders table.
+// ══════════════════════════════════════════════════════════════════════════════
+app.post('/api/login', async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, error: 'Phone number is required.' });
+    }
+
+    // Check if the phone number exists in the orders table
+    const order = await prisma.order.findFirst({
+      where: { shippingPhone: phoneNumber },
+      include: { items: true },
+    });
+
+    if (!order) {
+      return res.status(401).json({ success: false, error: 'Invalid phone number.' });
+    }
+
+    // If phone number is valid, return the orders associated with it
+    const orders = await prisma.order.findMany({
+      where: { shippingPhone: phoneNumber },
+      include: { items: true },
+    });
+
+    console.log(`✅  Login successful for phone number: ${phoneNumber}`);
+    res.json({ success: true, message: 'Login successful.', orders });
+
+  } catch (err) {
+    console.error('login error:', err);
+    res.status(500).json({ success: false, error: 'Login failed.' });
+  }
+});
+
+
+// API endpoint to update the delivery date
+app.post('/api/orders/:id/deliver', async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { deliveredAt: new Date() },
+    });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    }
+
+    console.log(`✅  Order ${orderId} marked as delivered.`);
+    res.json({ success: true, message: 'Order marked as delivered.', order: updatedOrder });
+
+  } catch (err) {
+    console.error('deliver error:', err);
+    res.status(500).json({ success: false, error: 'Failed to update delivery status.' });
+  }
+});
+
+
+
+
+
+// implement get orders api
+app.get('/api/orders', async (req, res) => {
+  try {
+    console.log(req.query);
+    const pn = req.query.pn;
+
+    if (pn) {
+      const orders = await prisma.order.findMany({
+        where: { shippingPhone: pn },
+        include: { items: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      res.json({ success: true, orders });
+    } else {
+      res.status(500).json({ success: false, error: 'No orders found!' });
+    }
+  } catch (err) {
+    console.error('GET /api/orders error:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch orders.' });
+  };
+});
+
+
+// ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — POST /api/verify-payment
 //
 // PRESERVED Razorpay HMAC verification.
@@ -458,6 +547,7 @@ app.post('/api/feedback', async (req, res) => {
   }
 })
 
+
 // ══════════════════════════════════════════════════════════════════════════════
 // ADMIN — POST /api/admin/login
 //
@@ -638,6 +728,7 @@ app.listen(PORT, () => {
   console.log(`    POST   /api/create-order        (Razorpay)`)
   console.log(`    POST   /api/verify-payment      (Razorpay + DB write)`)
   console.log(`    POST   /api/contact             (Nodemailer)`)
+  console.log(`    POST   /api/login`)
   console.log(`    GET    /api/feedback/check      (DB check)`)
   console.log(`    POST   /api/feedback            (DB write)`)
   console.log(`    POST   /api/admin/login         (JWT)`)

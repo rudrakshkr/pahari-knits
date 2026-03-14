@@ -12,7 +12,7 @@ function formatINR(n) {
   return `₹${Number(n).toLocaleString('en-IN')}`
 }
 function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })
+  return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 const BADGE_OPTIONS = ['', 'Bestseller', 'New Arrival', 'Artisan Pick', 'Limited Edition']
@@ -32,9 +32,9 @@ function StatCard({ label, value, sub }) {
 
 function Badge({ text }) {
   const colours = {
-    'Bestseller':      'bg-amber-500/20 text-amber-400',
-    'New Arrival':     'bg-teal-500/20 text-teal-400',
-    'Artisan Pick':    'bg-blue-500/20 text-blue-400',
+    'Bestseller': 'bg-amber-500/20 text-amber-400',
+    'New Arrival': 'bg-teal-500/20 text-teal-400',
+    'Artisan Pick': 'bg-blue-500/20 text-blue-400',
     'Limited Edition': 'bg-rose-500/20 text-rose-400',
   }
   if (!text) return <span className="text-white/20 text-xs">—</span>
@@ -47,8 +47,8 @@ function Badge({ text }) {
 
 function StatusChip({ status }) {
   const map = {
-    PAID:      'bg-emerald-500/20 text-emerald-400',
-    refunded:  'bg-amber-500/20 text-amber-400',
+    PAID: 'bg-emerald-500/20 text-emerald-400',
+    refunded: 'bg-amber-500/20 text-amber-400',
     cancelled: 'bg-red-500/20 text-red-400',
   }
   return (
@@ -61,9 +61,9 @@ function StatusChip({ status }) {
 function Spinner() {
   return (
     <svg className="w-5 h-5 animate-spin text-white/40 mx-auto" viewBox="0 0 24 24" fill="none">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path className="opacity-75" fill="currentColor"
-            d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z"/>
+        d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z" />
     </svg>
   )
 }
@@ -75,9 +75,9 @@ const EMPTY_FORM = {
 }
 
 function AddProductModal({ token, onClose, onAdded }) {
-  const [form,    setForm   ] = useState(EMPTY_FORM)
+  const [form, setForm] = useState(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
-  const [error,   setError  ] = useState(null)
+  const [error, setError] = useState(null)
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -95,18 +95,18 @@ function AddProductModal({ token, onClose, onAdded }) {
 
     try {
       const res = await fetch('/api/admin/products', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body:    JSON.stringify({
+        body: JSON.stringify({
           ...form,
-          price:    Number(form.price),
+          price: Number(form.price),
           maxQuantity: form.maxQuantity ? Number(form.maxQuantity) : null,
-          images:   imagesArr,
-          badge:    form.badge || null,
-          inStock:  form.inStock,
-          material:   form.material   || null,
+          images: imagesArr,
+          badge: form.badge || null,
+          inStock: form.inStock,
+          material: form.material || null,
           dimensions: form.dimensions || null,
-          care:       form.care       || null,
+          care: form.care || null,
         }),
       })
       const data = await res.json()
@@ -148,7 +148,7 @@ function AddProductModal({ token, onClose, onAdded }) {
             <div>
               <label className={LABEL}>Name *</label>
               <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)}
-                     required placeholder="Kullu Valley Shawl" />
+                required placeholder="Kullu Valley Shawl" />
             </div>
 
             {/* Row 2: Price, Max Qty */}
@@ -156,12 +156,12 @@ function AddProductModal({ token, onClose, onAdded }) {
               <div>
                 <label className={LABEL}>Price (₹) *</label>
                 <input className={INPUT} type="number" min="1" value={form.price}
-                       onChange={e => set('price', e.target.value)} required placeholder="2499" />
+                  onChange={e => set('price', e.target.value)} required placeholder="2499" />
               </div>
               <div>
                 <label className={LABEL}>Max Order Quantity</label>
                 <input className={INPUT} type="number" min="1" value={form.maxQuantity}
-                       onChange={e => set('maxQuantity', e.target.value)} placeholder="e.g., 10" />
+                  onChange={e => set('maxQuantity', e.target.value)} placeholder="e.g., 10" />
               </div>
             </div>
 
@@ -170,14 +170,14 @@ function AddProductModal({ token, onClose, onAdded }) {
               <div>
                 <label className={LABEL}>Category *</label>
                 <select className={INPUT + ' cursor-pointer'} value={form.category}
-                        onChange={e => set('category', e.target.value)}>
+                  onChange={e => set('category', e.target.value)}>
                   {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
                 <label className={LABEL}>Badge</label>
-                <select 
-                  className={INPUT + ' cursor-pointer bg-navy-900 text-white'} 
+                <select
+                  className={INPUT + ' cursor-pointer bg-navy-900 text-white'}
                   value={form.badge}
                   onChange={e => set('badge', e.target.value)}
                 >
@@ -194,23 +194,23 @@ function AddProductModal({ token, onClose, onAdded }) {
             <div>
               <label className={LABEL}>Origin *</label>
               <input className={INPUT} value={form.origin} onChange={e => set('origin', e.target.value)}
-                     required placeholder="Kullu, Himachal Pradesh" />
+                required placeholder="Kullu, Himachal Pradesh" />
             </div>
 
             {/* Description */}
             <div>
               <label className={LABEL}>Description *</label>
               <textarea className={INPUT + ' resize-none'} rows={3} value={form.description}
-                        onChange={e => set('description', e.target.value)} required
-                        placeholder="A detailed description of the product..." />
+                onChange={e => set('description', e.target.value)} required
+                placeholder="A detailed description of the product..." />
             </div>
 
             {/* Images */}
             <div>
               <label className={LABEL}>Image URLs * (comma-separated)</label>
               <textarea className={INPUT + ' resize-none'} rows={2} value={form.images}
-                        onChange={e => set('images', e.target.value)}
-                        placeholder="https://images.unsplash.com/..., https://..." />
+                onChange={e => set('images', e.target.value)}
+                placeholder="https://images.unsplash.com/..., https://..." />
               <p className="text-[10px] sm:text-xs text-white/25 mt-1">First URL = primary image shown in Shop & Cart</p>
             </div>
 
@@ -219,18 +219,18 @@ function AddProductModal({ token, onClose, onAdded }) {
               <div>
                 <label className={LABEL}>Material</label>
                 <input className={INPUT} value={form.material}
-                       onChange={e => set('material', e.target.value)} placeholder="Pure Himalayan wool..." />
+                  onChange={e => set('material', e.target.value)} placeholder="Pure Himalayan wool..." />
               </div>
               <div>
                 <label className={LABEL}>Dimensions</label>
                 <input className={INPUT} value={form.dimensions}
-                       onChange={e => set('dimensions', e.target.value)} placeholder="200 cm × 100 cm" />
+                  onChange={e => set('dimensions', e.target.value)} placeholder="200 cm × 100 cm" />
               </div>
             </div>
             <div>
               <label className={LABEL}>Care Instructions</label>
               <input className={INPUT} value={form.care}
-                     onChange={e => set('care', e.target.value)} placeholder="Hand wash in cold water..." />
+                onChange={e => set('care', e.target.value)} placeholder="Hand wash in cold water..." />
             </div>
 
             {/* In Stock toggle */}
@@ -238,16 +238,14 @@ function AddProductModal({ token, onClose, onAdded }) {
               <button
                 type="button"
                 onClick={() => set('inStock', !form.inStock)}
-                className={`w-11 h-6 rounded-full transition-all duration-200 border relative flex items-center ${
-                  form.inStock 
-                    ? 'bg-emerald-500 border-emerald-400' 
-                    : 'bg-white/5 border-white/20'
-                }`}
+                className={`w-11 h-6 rounded-full transition-all duration-200 border relative flex items-center ${form.inStock
+                  ? 'bg-emerald-500 border-emerald-400'
+                  : 'bg-white/5 border-white/20'
+                  }`}
               >
-                <span 
-                  className={`block w-4 h-4 rounded-full bg-white shadow-md transform transition-transform duration-200 ${
-                    form.inStock ? 'translate-x-6' : 'translate-x-1'
-                  }`} 
+                <span
+                  className={`block w-4 h-4 rounded-full bg-white shadow-md transform transition-transform duration-200 ${form.inStock ? 'translate-x-6' : 'translate-x-1'
+                    }`}
                 />
               </button>
               <span className="text-sm font-medium text-white/70">
@@ -260,19 +258,19 @@ function AddProductModal({ token, onClose, onAdded }) {
         {/* Footer */}
         <div className="px-5 py-4 border-t border-white/8 flex justify-end gap-3 shrink-0">
           <button onClick={onClose}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white/50
+            className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white/50
                              border border-white/10 hover:border-white/20 hover:text-white/70
                              transition-colors">
             Cancel
           </button>
           <button type="submit" form="add-product-form" disabled={loading}
-                  className={[
-                    'px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wide',
-                    'transition-colors flex items-center gap-2',
-                    loading
-                      ? 'bg-[#B8892E]/40 text-white/40 cursor-not-allowed'
-                      : 'bg-[#B8892E] hover:bg-[#9A7020] text-white',
-                  ].join(' ')}>
+            className={[
+              'px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wide',
+              'transition-colors flex items-center gap-2',
+              loading
+                ? 'bg-[#B8892E]/40 text-white/40 cursor-not-allowed'
+                : 'bg-[#B8892E] hover:bg-[#9A7020] text-white',
+            ].join(' ')}>
             {loading ? <><Spinner /> Saving…</> : 'Add Product'}
           </button>
         </div>
@@ -291,12 +289,12 @@ function ConfirmDeleteModal({ label, onConfirm, onCancel, loading }) {
         <p className="text-sm text-white/40 text-center mb-6">This action cannot be undone.</p>
         <div className="flex gap-3">
           <button onClick={onCancel} disabled={loading}
-                  className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm
+            className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm
                              font-semibold text-white/50 hover:text-white/70 transition-colors">
             Cancel
           </button>
           <button onClick={onConfirm} disabled={loading}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600
+            className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600
                              text-white text-sm font-bold uppercase tracking-wide
                              transition-colors flex items-center justify-center gap-2">
             {loading ? <Spinner /> : 'Delete'}
@@ -312,17 +310,18 @@ function ConfirmDeleteModal({ label, onConfirm, onCancel, loading }) {
 // ══════════════════════════════════════════════════════════════════════════════
 export default function AdminPanel() {
   const { token, logout } = useAuth()
-  const navigate          = useNavigate()
+  const navigate = useNavigate()
 
-  const [tab,        setTab       ] = useState('products')
-  const [products,   setProducts  ] = useState([])
-  const [orders,     setOrders    ] = useState([])
-  const [loadingP,   setLoadingP  ] = useState(true)
-  const [loadingO,   setLoadingO  ] = useState(false)
-  const [showAdd,    setShowAdd   ] = useState(false)
+  const [tab, setTab] = useState('products')
+  const [products, setProducts] = useState([])
+  const [orders, setOrders] = useState([])
+  const [loadingP, setLoadingP] = useState(true)
+  const [loadingO, setLoadingO] = useState(false)
+  const [showAdd, setShowAdd] = useState(false)
   const [deleteTarget, setDelTarget] = useState(null)
   const [delLoading, setDelLoading] = useState(false)
-  const [apiError,   setApiError  ] = useState(null)
+  const [apiError, setApiError] = useState(null)
+  const [deliverLoading, setDeliverLoading] = useState(false);
 
   const authFetch = useCallback((url, opts = {}) =>
     fetch(url, {
@@ -333,7 +332,7 @@ export default function AdminPanel() {
   const fetchProducts = useCallback(async () => {
     setLoadingP(true)
     try {
-      const res  = await authFetch('/api/admin/products')
+      const res = await authFetch('/api/admin/products')
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setProducts(data.products)
@@ -347,7 +346,7 @@ export default function AdminPanel() {
   const fetchOrders = useCallback(async () => {
     setLoadingO(true)
     try {
-      const res  = await authFetch('/api/admin/orders')
+      const res = await authFetch('/api/admin/orders')
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setOrders(data.orders)
@@ -359,9 +358,9 @@ export default function AdminPanel() {
   }, [authFetch])
 
   useEffect(() => {
-     fetchProducts() 
-     fetchOrders() 
-    }, [fetchProducts, fetchOrders])
+    fetchProducts()
+    fetchOrders()
+  }, [fetchProducts, fetchOrders])
 
   const handleDelete = async () => {
     if (!deleteTarget) return
@@ -373,7 +372,7 @@ export default function AdminPanel() {
       : `/api/admin/orders/${deleteTarget.id}`
 
     try {
-      const res  = await authFetch(url, { method: 'DELETE' })
+      const res = await authFetch(url, { method: 'DELETE' })
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.error)
 
@@ -388,6 +387,20 @@ export default function AdminPanel() {
       setDelTarget(null)
     } finally {
       setDelLoading(false)
+    }
+  }
+
+  const handleDeliver = async (orderId) => {
+    setDeliverLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/deliver`, { method: 'POST' });
+      if (res.ok) {
+        setDeliverLoading(true);
+      } else {
+        console.error('Failed to mark as delivered');
+      }
+    } finally {
+      setDeliverLoading(false);
     }
   }
 
@@ -413,7 +426,7 @@ export default function AdminPanel() {
 
         <div className="flex items-center gap-2">
           <a href="/shop" target="_blank" rel="noreferrer"
-             className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
+            className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
                         transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg border border-white/8
                         hover:border-white/20 whitespace-nowrap">
             View Shop ↗
@@ -433,12 +446,12 @@ export default function AdminPanel() {
 
         {/* ── Stats row ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <StatCard label="Products"  value={products.length} sub="in catalogue" />
-          <StatCard label="Orders"    value={orders.length}   sub="verified payments" />
-          <StatCard label="Revenue"   value={totalRevenue ? formatINR(totalRevenue) : '—'}
-                    sub="paid orders" />
-          <StatCard label="In Stock"  value={loadingP ? '...' : inStockCount}
-                    sub="available" />
+          <StatCard label="Products" value={products.length} sub="in catalogue" />
+          <StatCard label="Orders" value={orders.length} sub="verified payments" />
+          <StatCard label="Revenue" value={totalRevenue ? formatINR(totalRevenue) : '—'}
+            sub="paid orders" />
+          <StatCard label="In Stock" value={loadingP ? '...' : inStockCount}
+            sub="available" />
         </div>
 
         {/* ── API error banner ── */}
@@ -447,7 +460,7 @@ export default function AdminPanel() {
                           border border-red-500/20 rounded-xl px-4 py-3">
             <p className="text-xs sm:text-sm text-red-400">⚠ {apiError}</p>
             <button onClick={() => setApiError(null)}
-                    className="text-red-400/60 hover:text-red-400 transition-colors text-lg leading-none">✕</button>
+              className="text-red-400/60 hover:text-red-400 transition-colors text-lg leading-none">✕</button>
           </div>
         )}
 
@@ -455,7 +468,7 @@ export default function AdminPanel() {
         <div className="flex gap-1 bg-white/5 rounded-xl p-1 w-full sm:w-fit overflow-x-auto">
           {[
             { key: 'products', label: 'Products', count: products.length },
-            { key: 'orders',   label: 'Orders',   count: orders.length   },
+            { key: 'orders', label: 'Orders', count: orders.length },
           ].map(t => (
             <button
               key={t.key}
@@ -525,12 +538,12 @@ export default function AdminPanel() {
                     <tbody>
                       {products.map((p, i) => (
                         <tr key={p.id}
-                            className={`border-b border-white/5 hover:bg-white/5 transition-colors
+                          className={`border-b border-white/5 hover:bg-white/5 transition-colors
                                         ${i === products.length - 1 ? 'border-b-0' : ''}`}>
                           <td className="px-4 py-3 pl-5">
                             <div className="flex items-center gap-3">
                               <img src={p.imageUrl} alt=""
-                                   className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" />
+                                className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" />
                               <div className="min-w-0">
                                 <p className="font-semibold text-white truncate max-w-[150px] sm:max-w-[180px]">
                                   {p.name}
@@ -558,8 +571,8 @@ export default function AdminPanel() {
                           <td className="px-4 py-3">
                             <span className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap
                                               ${p.inStock
-                                                ? 'bg-emerald-500/20 text-emerald-400'
-                                                : 'bg-red-500/20 text-red-400'}`}>
+                                ? 'bg-emerald-500/20 text-emerald-400'
+                                : 'bg-red-500/20 text-red-400'}`}>
                               {p.inStock ? 'In Stock' : 'Out of Stock'}
                             </span>
                           </td>
@@ -596,7 +609,7 @@ export default function AdminPanel() {
                 </p>
               </div>
               <button onClick={fetchOrders}
-                      className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
+                className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
                                  px-3 py-1.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20
                                  transition-colors flex items-center gap-1">
                 <span className="text-sm leading-none">↻</span> Refresh
@@ -627,7 +640,7 @@ export default function AdminPanel() {
                     <tbody>
                       {orders.map((o, i) => (
                         <tr key={o.id}
-                            className={`border-b border-white/5 hover:bg-white/5 transition-colors
+                          className={`border-b border-white/5 hover:bg-white/5 transition-colors
                                         ${i === orders.length - 1 ? 'border-b-0' : ''}`}>
                           <td className="px-4 py-3 pl-5">
                             <p className="font-mono text-[11px] sm:text-xs text-white/80 truncate max-w-[120px]">
@@ -660,6 +673,16 @@ export default function AdminPanel() {
                                          px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
                             >
                               Delete
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 pr-5 text-right">
+                            <button
+                              onClick={() => handleDeliver(o.id)}
+                              disabled={deliverLoading || o.deliveredAt}
+                              className="text-white/30 hover:text-green-400 transition-colors
+                                         px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
+                            >
+                              {(deliverLoading || o.deliveredAt) ? "Delivered" : "Mark Delivered"}
                             </button>
                           </td>
                         </tr>

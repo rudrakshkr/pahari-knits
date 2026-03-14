@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 
 const NAV = [
-  { to: '/',        label: 'Home'    },
-  { to: '/shop',    label: 'Shop'    },
+  { to: '/', label: 'Home' },
+  { to: '/shop', label: 'Shop' },
   { to: '/contact', label: 'Contact' },
 ]
 
@@ -27,6 +28,7 @@ export default function Header() {
   const { totalItems } = useCart()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const { isLoggedIn } = useAuth();
 
   // Add a subtle shadow once user scrolls down
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function Header() {
     window.addEventListener('scroll', handle, { passive: true })
     return () => window.removeEventListener('scroll', handle)
   }, [])
+  const { logout } = useAuth();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -49,7 +52,7 @@ export default function Header() {
       <div className="max-w-content mx-auto px-6 h-16 flex items-center justify-between gap-6">
         {/* ── Mobile Back Button (Only on Product Pages) ─────────────────── */}
         {isProductPage && (
-          <button 
+          <button
             onClick={() => navigate(-1)}
             className="md:hidden flex items-center gap-2 text-navy-700 hover:text-gold-600 transition-colors"
           >
@@ -102,7 +105,7 @@ export default function Header() {
             }
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 19a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z" />
             </svg>
             Cart
             {totalItems > 0 && (
@@ -123,11 +126,22 @@ export default function Header() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 {menuOpen
-                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
+                  ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
               </svg>
             </button>
           )}
+
+          <div className="flex items-center">
+            <NavLink
+              to="/login" className="text-gray-700 hover:text-gray-900"
+            >
+              {/* Avatar Icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </NavLink>
+          </div>
         </div>
       </div>
 

@@ -54,6 +54,14 @@ model OrderItem {
   quantity   Int
 }
 
+model Return {
+  id          String   @id @default(cuid())
+  orderId     String
+  reason      String?
+  status      String @default("PENDING")
+  createdAt DateTime @default(now())
+  receivedAt DateTime? 
+}
 
 
 model ContactMessage {

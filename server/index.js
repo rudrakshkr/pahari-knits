@@ -260,6 +260,60 @@ app.post('/api/login', async (req, res) => {
 });
 
 
+app.post('/api/returns', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, error: 'Order ID is required.' });
+    }
+
+    const returnRequest = await prisma.return.create({
+      data: { orderId: orderId },
+    });
+
+    console.log(`✅  Return requested for order: ${orderId}`);
+    res.json({ success: true, message: 'Return requested successfully.', return: returnRequest });
+
+  } catch (err) {
+    console.error('return error:', err);
+    res.status(500).json({ success: false, error: 'Failed to request return.' });
+  }
+});
+
+// implement get returns api
+app.get('/api/admin/returns', requireAdmin, async (req, res) => {
+  try {
+
+    const returns = await prisma.return.findMany()
+
+    res.json({ success: true, returns });
+
+  } catch (err) {
+    console.error('GET /api/admin/returns error:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch returns.' });
+  };
+});
+
+// mark the product received in case of return
+app.post('/api/admin/returns', requireAdmin, async (req, res) => {
+  try {
+    const { id, orderId } = req.body;
+    console.log(id, orderId)
+    const returns = await prisma.return.update({
+      where: {id: id},
+      data: { receivedAt: new Date() },
+    })
+
+    res.json({ success: true, returns });
+
+  } catch (err) {
+    console.error('GET /api/admin/returns error:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch returns.' });
+  };
+});
+
+
 // API endpoint to update the delivery date
 app.post('/api/orders/:id/deliver', async (req, res) => {
   const orderId = req.params.id;
@@ -290,7 +344,6 @@ app.post('/api/orders/:id/deliver', async (req, res) => {
 // implement get orders api
 app.get('/api/orders', async (req, res) => {
   try {
-    console.log(req.query);
     const pn = req.query.pn;
 
     if (pn) {
@@ -735,6 +788,7 @@ app.listen(PORT, () => {
   console.log(`    GET    /api/admin/products      (admin)`)
   console.log(`    POST   /api/admin/products      (admin)`)
   console.log(`    DELETE /api/admin/products/:id  (admin)`)
+  console.log(`    GET    /api/admin/returns        (admin)`)
   console.log(`    GET    /api/admin/orders        (admin)`)
   console.log(`    DELETE /api/admin/orders/:id    (admin)\n`)
 })

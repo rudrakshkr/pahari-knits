@@ -315,6 +315,7 @@ export default function AdminPanel() {
   const [tab, setTab] = useState('products')
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
+  const [returns, setReturns] = useState([])
   const [loadingP, setLoadingP] = useState(true)
   const [loadingO, setLoadingO] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
@@ -357,9 +358,24 @@ export default function AdminPanel() {
     }
   }, [authFetch])
 
+  const fetchReturns = useCallback(async () => {
+    setLoadingO(true)
+    try {
+      const res = await authFetch('/api/admin/returns')
+      const data = await res.json()
+      if (!res.ok || !data.success) throw new Error(data.error)
+      setReturns(data.returns)
+    } catch (err) {
+      setApiError(err.message)
+    } finally {
+      setLoadingO(false)
+    }
+  }, [authFetch]);
+
   useEffect(() => {
     fetchProducts()
     fetchOrders()
+    fetchReturns()
   }, [fetchProducts, fetchOrders])
 
   const handleDelete = async () => {
@@ -401,6 +417,32 @@ export default function AdminPanel() {
       }
     } finally {
       setDeliverLoading(false);
+    }
+  }
+
+  const markReceived = async (id, orderId) => {
+    try {
+      const res = await fetch('/api/admin/returns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, orderId }),
+      });
+      if (res.ok) {
+        console.log('Successfully marked as received');
+        window.location.reload();
+      } else {
+        console.error('Failed to mark as received');
+      }
+    } catch (error) {
+      console.error('Failed to mark as received:', error);
+    }
+  }
+
+  const initiateRefund = async (orderId) => {
+    try {
+
+    } catch (error) {
+      console.error('Failed to initiate refund:', error);
     }
   }
 
@@ -469,6 +511,7 @@ export default function AdminPanel() {
           {[
             { key: 'products', label: 'Products', count: products.length },
             { key: 'orders', label: 'Orders', count: orders.length },
+            { key: 'returns', label: 'Returns', count: returns.length },
           ].map(t => (
             <button
               key={t.key}
@@ -596,9 +639,98 @@ export default function AdminPanel() {
         )}
 
         {/* ═══════════════════════════════════════
+            RETURNS TAB
+        ═══════════════════════════════════════ */}
+        {tab === 'returns' && (
+          <div className="flex flex-col gap-4">
+            {/* Tab header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-white">Return Requests</h2>
+              </div>
+              <button onClick={fetchReturns}
+                className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70
+                                 px-3 py-1.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20
+                                 transition-colors flex items-center gap-1">
+                <span className="text-sm leading-none">↻</span> Refresh
+              </button>
+            </div>
+
+            <div className="bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
+              {loadingO ? (
+                <div className="py-16 flex justify-center"><Spinner /></div>
+              ) : returns.length === 0 ? (
+                <div className="py-16 text-center text-white/30 px-4">
+                  <p className="text-4xl mb-3">📦</p>
+                  <p className="text-sm">No returns yet.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[750px]">
+                    <thead>
+                      <tr className="border-b border-white/8 bg-white/5">
+                        {['Order ID', 'Date', 'Reason', 'Status', ''].map(h => (
+                          <th key={h} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40
+                                                  uppercase tracking-widest px-4 py-3 first:pl-5">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {returns.map((o, i) => (
+                        <tr key={o.id}
+                          className={`border-b border-white/5 hover:bg-white/5 transition-colors
+                                        ${i === orders.length - 1 ? 'border-b-0' : ''}`}>
+                          <td className="px-4 py-3 pl-5">
+                            <p className="font-mono text-[11px] sm:text-xs text-white/80 truncate max-w-[120px]">
+                              #{o.orderId}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3 text-[11px] sm:text-xs text-white/50">
+                            {o.createdAt}
+                          </td>
+                          <td className="px-4 py-3 text-[11px] sm:text-xs text-white/50">
+                            {o.reason}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="font-bold text-[#B8892E]">{o.status}</span>
+                          </td>
+                          <td className="px-4 py-3 pr-5 text-right">
+                            <button
+                              onClick={() => markReceived(o.id, o.orderId)}
+                              disabled={o.receivedAt}
+                              className="text-white/30 hover:text-green-400 transition-colors
+                                         px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
+                            >
+                              {(o.receivedAt) ? "Received" : "Mark Received"}
+                            </button>
+                          </td>
+                          <td className="px-4 py-3 pr-5 text-right">
+                            <button
+                              onClick={() => initiateRefund(o.id)}
+                              disabled={!o.receivedAt}
+                              className="text-white/30 hover:text-green-400 transition-colors
+                                         px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium"
+                            >
+                              Initiate Refund
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════
             ORDERS TAB
         ═══════════════════════════════════════ */}
-        {tab === 'orders' && (
+
+        {tab === "orders" && (
           <div className="flex flex-col gap-4">
             {/* Tab header */}
             <div className="flex items-center justify-between">

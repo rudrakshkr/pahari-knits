@@ -42,7 +42,25 @@ export default function Account() {
     fetchOrders();
   }, []);
 
-  console.log(orders)
+  const handleReturn = async (orderId) => {
+    try {
+      const response = await fetch('/api/returns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId }),
+      });
+
+      if (response.ok) {
+        showToast('Return requested for order');
+      } else {
+        console.error('Failed to request return:', response.status);
+      }
+    } catch (error) {
+      console.error('Error requesting return:', error);
+    }
+  };
 
   if (!storedPhoneNumber) {
     return <div className="text-center py-10">Please login to view your account.</div>;
@@ -75,7 +93,10 @@ export default function Account() {
                 {/* Return Action Button */}
                 {
                   order.deliveredAt &&
-                  <button disabled={!order.returnAllowed} className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">
+                  <button
+                    onClick={() => handleReturn(order.id)}
+                    disabled={!order.returnAllowed}
+                    className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">
                     Return Items
 
                     {

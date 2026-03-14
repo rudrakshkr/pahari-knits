@@ -15,7 +15,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login } = useAuth();
+  const { customerLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -47,7 +47,7 @@ export default function Login() {
 
       if (response.ok && data.success) {
         Cookies.set('phoneNumber', formattedPhoneNumber, { expires: 3 });
-        login(formattedPhoneNumber);
+        customerLogin(formattedPhoneNumber);
         navigate('/account');
       } else {
         setError(data.error || 'Login failed. Please check your credentials.');

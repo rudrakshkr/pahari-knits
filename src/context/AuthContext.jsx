@@ -1,24 +1,14 @@
 /**
- * AuthContext.jsx — Admin authentication state
- *
- * Stores the JWT in localStorage under 'pk_admin_token'.
- * Exposes: { token, isAdmin, login, logout }
- *
- * login(token) — stores the token + triggers re-render
- * logout()     — removes the token + redirects to /admin/login
- *
- * Tokens are verified by the backend on every request.
- * We do a lightweight client-side expiry check here just to avoid
- * showing the dashboard when the token is already stale.
+ * AuthContext.jsx — Unified Authentication State
+ * Handles both Admin (JWT) and Customer (Phone Number) sessions.
  */
 
 import React, { createContext, useContext, useState, useCallback } from 'react'
+import Cookies from 'js-cookie'
 
 const AuthContext = createContext(null)
 
-// ── Simple JWT expiry check (no crypto — just parse the payload) ──────────────
-// We never trust client-side checks for actual security — the server enforces
-// JWT verification on every admin API call.  This is purely UX.
+// ── Admin JWT Expiry Check ────────────────────────────────────────────────────
 function isTokenExpired(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]))
@@ -28,30 +18,58 @@ function isTokenExpired(token) {
   }
 }
 
-const STORAGE_KEY = 'pk_admin_token'
+const ADMIN_STORAGE_KEY = 'pk_admin_token'
 
 export function AuthProvider({ children }) {
+  // ════════════════════════════════════════════════════════════════════════
+  // ADMIN STATE (JWT via localStorage)
+  // ════════════════════════════════════════════════════════════════════════
   const [token, setToken] = useState(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = localStorage.getItem(ADMIN_STORAGE_KEY)
     if (stored && !isTokenExpired(stored)) return stored
-    localStorage.removeItem(STORAGE_KEY)   // clear stale token
+    localStorage.removeItem(ADMIN_STORAGE_KEY)
     return null
   })
 
-  const login = useCallback((newToken) => {
-    localStorage.setItem(STORAGE_KEY, newToken)
+  const adminLogin = useCallback((newToken) => {
+    localStorage.setItem(ADMIN_STORAGE_KEY, newToken)
     setToken(newToken)
   }, [])
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY)
+  const adminLogout = useCallback(() => {
+    localStorage.removeItem(ADMIN_STORAGE_KEY)
     setToken(null)
   }, [])
 
   const isAdmin = Boolean(token && !isTokenExpired(token))
 
+  // ════════════════════════════════════════════════════════════════════════
+  // CUSTOMER STATE (Phone Number via Cookies)
+  // ════════════════════════════════════════════════════════════════════════
+  const [customerPhone, setCustomerPhone] = useState(() => {
+    return Cookies.get('phoneNumber') || null
+  })
+
+  const customerLogin = useCallback((phone) => {
+    Cookies.set('phoneNumber', phone, { expires: 30 }) // Remember for 30 days
+    setCustomerPhone(phone)
+  }, [])
+
+  const customerLogout = useCallback(() => {
+    Cookies.remove('phoneNumber')
+    setCustomerPhone(null)
+  }, [])
+
+  const isCustomer = Boolean(customerPhone)
+
   return (
-    <AuthContext.Provider value={{ token, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{
+      // Admin API (Preserved so existing admin pages don't break)
+      token, isAdmin, login: adminLogin, logout: adminLogout,
+      
+      // Customer API
+      customerPhone, isCustomer, customerLogin, customerLogout
+    }}>
       {children}
     </AuthContext.Provider>
   )

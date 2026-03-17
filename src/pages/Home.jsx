@@ -125,11 +125,23 @@ export default function Home() {
             <Link
               to="/shop"
               className="inline-flex items-center gap-2.5 bg-navy-700 hover:bg-navy-800
-                         text-white text-sm font-bold uppercase tracking-wide
-                         px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
+                        text-white text-sm font-bold uppercase tracking-wide
+                        px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
             >
-              Shop Now
-              <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center text-xs leading-none">→</span>
+              <span className="pt-0.5">Shop Now</span> 
+              <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center">
+                {/* Clean SVG Arrow for perfect centering */}
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-3 w-3 text-white" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth={3}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </span>
             </Link>
             <a
               href="#story"
@@ -266,11 +278,23 @@ export default function Home() {
                 <Link
                   to="/shop"
                   className="inline-flex items-center gap-2.5 bg-navy-700 hover:bg-navy-800
-                             text-white text-sm font-bold uppercase tracking-wide
-                             px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
+                            text-white text-sm font-bold uppercase tracking-wide
+                            px-7 py-3.5 rounded-xl shadow-btn transition-colors duration-150"
                 >
-                  Browse Collection
-                  <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center text-xs">→</span>
+                  <span className="pt-0.5">Browse Collection</span>
+                  <span className="w-5 h-5 rounded-md bg-gold-500 flex items-center justify-center">
+                    {/* Matching SVG Arrow for perfect alignment */}
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-3 w-3 text-white" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor" 
+                      strokeWidth={3}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </span>
                 </Link>
               </div>
             </div>

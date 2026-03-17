@@ -266,19 +266,34 @@ app.post('/api/login', async (req, res) => {
 });
 
 
+// ══════════════════════════════════════════════════════════════════════════════
+// PUBLIC — POST /api/returns
+// ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/returns', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, reason, items } = req.body; // 👈 Now accepts 'items'
 
-    if (!orderId) {
-      return res.status(400).json({ success: false, error: 'Order ID is required.' });
+    if (!orderId || !items || items.length === 0) {
+      return res.status(400).json({ success: false, error: 'Order ID and at least one item are required.' });
+    }
+
+    const existingReturn = await prisma.return.findFirst({
+      where: { orderId: orderId }
+    });
+
+    if (existingReturn) {
+      return res.status(409).json({ success: false, error: 'Return already requested for this order.' });
     }
 
     const returnRequest = await prisma.return.create({
-      data: { orderId: orderId },
+      data: { 
+        orderId: orderId,
+        reason: reason || 'No reason provided',
+        items: items // 👈 Saves the array of selected item IDs to the DB
+      },
     });
 
-    console.log(`✅  Return requested for order: ${orderId}`);
+    console.log(`✅  Return requested for order: ${orderId} | Items: ${items.length}`);
     res.json({ success: true, message: 'Return requested successfully.', return: returnRequest });
 
   } catch (err) {
@@ -287,11 +302,20 @@ app.post('/api/returns', async (req, res) => {
   }
 });
 
-// implement get returns api
+// ══════════════════════════════════════════════════════════════════════════════
+// ADMIN — GET /api/admin/returns
+// Fetches all returns, including the full order details and items.
+// ══════════════════════════════════════════════════════════════════════════════
 app.get('/api/admin/returns', requireAdmin, async (req, res) => {
   try {
-
-    const returns = await prisma.return.findMany()
+    const returns = await prisma.return.findMany({
+      include: {
+        order: {
+          include: { items: true } // Pulls in the products so you know what to expect in the mail
+        }
+      },
+      orderBy: { createdAt: 'desc' } // Newest return requests at the top
+    });
 
     res.json({ success: true, returns });
 
@@ -301,21 +325,35 @@ app.get('/api/admin/returns', requireAdmin, async (req, res) => {
   };
 });
 
-// mark the product received in case of return
+// ══════════════════════════════════════════════════════════════════════════════
+// ADMIN — POST /api/admin/returns
+// Handles both "Mark Received" and "Mark Refunded" actions.
+// ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/admin/returns', requireAdmin, async (req, res) => {
   try {
-    const { id, orderId } = req.body;
-    console.log(id, orderId)
-    const returns = await prisma.return.update({
-      where: {id: id},
-      data: { receivedAt: new Date() },
+    const { id, action } = req.body;
+    let dataToUpdate = {};
+
+    if (action === 'receive') {
+      dataToUpdate = { receivedAt: new Date(), status: 'RECEIVED' };
+      console.log(`📦  Return ${id} marked as received!`);
+    } else if (action === 'refund') {
+      dataToUpdate = { refundedAt: new Date(), status: 'REFUNDED' };
+      console.log(`💸  Return ${id} marked as refunded!`);
+    } else {
+      return res.status(400).json({ success: false, error: 'Invalid action.' });
+    }
+    
+    const updatedReturn = await prisma.return.update({
+      where: { id: id },
+      data: dataToUpdate,
     })
 
-    res.json({ success: true, returns });
+    res.json({ success: true, return: updatedReturn });
 
   } catch (err) {
-    console.error('GET /api/admin/returns error:', err);
-    res.status(500).json({ success: false, error: 'Failed to fetch returns.' });
+    console.error('POST /api/admin/returns error:', err);
+    res.status(500).json({ success: false, error: 'Failed to process return.' });
   };
 });
 
@@ -363,7 +401,10 @@ app.get('/api/orders', async (req, res) => {
 
       const orders = await prisma.order.findMany({
         where: { shippingPhone: dbFormattedPhone },
-        include: { items: true },
+        include: { 
+          items: true,
+          returnRequest: true
+        },
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, orders });

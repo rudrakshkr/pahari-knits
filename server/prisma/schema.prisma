@@ -26,43 +26,47 @@ model Product {
 }
 
 model Order {
-  id                  String      @id @default(cuid())
-  razorpayOrderId     String      @unique
-  razorpayPaymentId   String      @unique
-  amountINR           Int
-  status              String      @default("paid")
-  items               OrderItem[]
-  createdAt           DateTime    @default(now())
-  deliveredAt         DateTime?
+  id                String      @id @default(cuid())
+  razorpayOrderId   String      @unique
+  razorpayPaymentId String      @unique
+  amountINR         Int
+  status            String      @default("paid")
+  items             OrderItem[]
+  createdAt         DateTime    @default(now())
+  deliveredAt       DateTime?
+  returnRequest     Return?
 
-  shippingName        String?
-  shippingPhone       String?
-  shippingStreet      String?
-  shippingCity        String?
-  shippingState       String?
-  shippingPin         String?
+  shippingName   String?
+  shippingPhone  String?
+  shippingStreet String?
+  shippingCity   String?
+  shippingState  String?
+  shippingPin    String?
 }
 
 model OrderItem {
-  id         String  @id @default(cuid())
-  order      Order   @relation(fields: [orderId],   references: [id], onDelete: Cascade)
-  orderId    String
-  product    Product @relation(fields: [productId], references: [id], onDelete: Restrict)
-  productId  String
-  name       String
-  price      Int
-  quantity   Int
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productId String
+  name      String
+  price     Int
+  quantity  Int
 }
 
 model Return {
-  id          String   @id @default(cuid())
-  orderId     String
-  reason      String?
-  status      String @default("PENDING")
-  createdAt DateTime @default(now())
-  receivedAt DateTime? 
-}
+  id         String    @id @default(cuid())
+  orderId    String    @unique
+  reason     String?
+  status     String    @default("PENDING")
+  createdAt  DateTime  @default(now())
+  receivedAt DateTime?
+  refundedAt DateTime?
+  items      String[]
 
+  order Order @relation(fields: [orderId], references: [id])
+}
 
 model ContactMessage {
   id        String   @id @default(cuid())
@@ -74,10 +78,10 @@ model ContactMessage {
 }
 
 model Feedback {
-  id        String @id @default(cuid())
-  rating    Int
-  message   String?
-  productId String @unique
+  id           String   @id @default(cuid())
+  rating       Int
+  message      String?
+  productId    String   @unique
   customerName String
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
 }

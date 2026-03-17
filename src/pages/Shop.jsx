@@ -38,34 +38,49 @@ function ProductCard({ product }) {
     // Stop the click from bubbling up to the <Link> wrapper
     e.preventDefault()
     e.stopPropagation()
+    
+    // Extra safety check
+    if (!product.inStock) return;
+
     addToCart(product)
     showToast(product.name, product.imageUrl)
   }
 
   return (
-    <article className="bg-white rounded-2xl overflow-hidden border border-line-200
+    <article className={`bg-white rounded-2xl overflow-hidden border border-line-200
                         shadow-card hover:shadow-card-lg hover:-translate-y-0.5
-                        transition-all duration-200 flex flex-col group">
+                        transition-all duration-200 flex flex-col group ${!product.inStock ? 'opacity-80' : ''}`}>
 
       {/* ── Image — clicking navigates to PDP ── */}
       <Link to={`/product/${product.id}`} className="block relative overflow-hidden">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-[1.03]
-                     transition-transform duration-300"
+          className={`w-full h-64 object-cover group-hover:scale-[1.03]
+                     transition-transform duration-300 ${!product.inStock ? 'grayscale opacity-60' : ''}`}
         />
-        {product.badge && (
+        
+        {/* Out of Stock Overlay */}
+        {!product.inStock && (
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] flex items-center justify-center">
+            <span className="bg-ink-900/80 text-white text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-lg border border-white/20">
+              Out of Stock
+            </span>
+          </div>
+        )}
+
+        {product.badge && product.inStock && (
           <span className={`absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1
                             rounded-full tracking-wide ${BADGE_STYLE[product.badge] ?? 'bg-ink-500 text-white'}`}>
             {product.badge}
           </span>
         )}
+        
         {/* Origin scrim */}
         <div className="absolute bottom-0 left-0 right-0 h-16
                         bg-gradient-to-t from-black/40 to-transparent" />
         <div className="absolute bottom-3 left-4 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+          <span className={`w-1.5 h-1.5 rounded-full ${product.inStock ? 'bg-teal-400' : 'bg-red-400'}`} />
           <span className="text-[11px] font-medium text-white/90 tracking-wide uppercase">
             {product.origin}
           </span>
@@ -75,16 +90,16 @@ function ProductCard({ product }) {
       {/* ── Body ── */}
       <div className="flex flex-col flex-1 p-5">
 
-        {/* Product name links to PDP */}
         <Link
           to={`/product/${product.id}`}
-          className="text-lg font-bold text-ink-900 leading-snug mb-2
-                     hover:text-navy-700 transition-colors"
+          className={`text-lg font-bold leading-snug mb-2 transition-colors ${
+            product.inStock ? 'text-ink-900 hover:text-navy-700' : 'text-ink-400'
+          }`}
         >
           {product.name}
         </Link>
 
-        <p className="text-sm text-ink-400 leading-relaxed mb-5 flex-1">
+        <p className="text-sm text-ink-400 leading-relaxed mb-5 flex-1 line-clamp-2">
           {product.description}
         </p>
 
@@ -93,11 +108,12 @@ function ProductCard({ product }) {
             <p className="text-[10px] font-medium text-ink-200 uppercase tracking-widest mb-0.5">
               Price
             </p>
-            <p className="text-xl font-bold text-navy-700">{formatINR(product.price)}</p>
+            <p className={`text-xl font-bold ${product.inStock ? 'text-navy-700' : 'text-ink-300'}`}>
+              {formatINR(product.price)}
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Quick-view link */}
             <Link
               to={`/product/${product.id}`}
               className="w-9 h-9 rounded-xl border border-line-200 flex items-center justify-center
@@ -114,16 +130,25 @@ function ProductCard({ product }) {
               </svg>
             </Link>
 
-            {/* Add to Cart */}
+            {/* Smart Add to Cart / Out of Stock Button */}
             <button
               onClick={handleAddToCart}
-              className="inline-flex items-center gap-3 bg-gold-500 hover:bg-gold-600
-                         text-white text-sm font-bold px-4 py-2.5 rounded-xl
-                         shadow-btn-gold transition-colors duration-150"
+              disabled={!product.inStock}
+              className={`inline-flex items-center gap-3 text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-150 ${
+                product.inStock 
+                  ? 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-95' 
+                  : 'bg-line-100 text-ink-200 cursor-not-allowed border border-line-200'
+              }`}
             >
-              Add to Cart
-              <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
-                               justify-center text-xl leading-none">+</span>
+              {product.inStock ? (
+                <>
+                  Add to Cart
+                  <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
+                                   justify-center text-xl leading-none">+</span>
+                </>
+              ) : (
+                'Sold Out'
+              )}
             </button>
           </div>
         </div>

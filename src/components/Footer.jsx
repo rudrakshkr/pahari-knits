@@ -14,15 +14,21 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links */}
-        <nav className="flex items-center gap-6 text-sm text-ink-400">
+        {/* Main Links */}
+        <nav className="flex items-center gap-6 text-sm font-medium text-ink-500">
           {[['/', 'Home'], ['/shop', 'Shop'], ['/cart', 'Cart'], ['/contact', 'Contact']].map(([to, label]) => (
             <Link key={to} to={to} className="hover:text-navy-700 transition-colors">{label}</Link>
           ))}
         </nav>
 
-        {/* Copyright */}
-        <p className="text-xs text-ink-200">© {new Date().getFullYear()} PahariKnits. All rights reserved.</p>
+        {/* Legal Links & Copyright */}
+        <div className="flex flex-col items-center md:items-end gap-2 text-xs text-ink-400">
+          <div className="flex gap-4">
+            <Link to="/refund-policy" className="hover:text-navy-700 transition-colors">Refund Policy</Link>
+            <Link to="/terms" className="hover:text-navy-700 transition-colors">Terms & Conditions</Link>
+          </div>
+          <p className="text-[11px] text-ink-200">© {new Date().getFullYear()} PahariKnits. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   )

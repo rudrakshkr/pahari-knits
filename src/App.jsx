@@ -19,6 +19,8 @@ import Checkout from './pages/Checkout'
 import Feedback from './components/Feedback';
 import Login from './pages/Login';
 import Account from './pages/Account'
+import Terms from './pages/Terms'
+import RefundPolicy from './pages/RefundPolicy'
 
 export default function App() {
   return (
@@ -52,6 +54,8 @@ export default function App() {
                     <Route path="/feedback"      element={<Feedback />}       />
                     <Route path="/login"      element={<Login />}       />
                     <Route path="/account"      element={<Account />}       />
+                    <Route path="/terms"        element={<Terms />}         />
+                    <Route path="/refund-policy" element={<RefundPolicy />} />
                   </Routes>
                 </main>
                 <Footer />

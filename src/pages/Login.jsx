@@ -14,7 +14,6 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If they were redirected here from the Cart/Account, send them back after login
   const from = location.state?.from?.pathname || '/account';
 
   const handleSendOTP = async (e) => {
@@ -35,7 +34,7 @@ export default function Login() {
       const data = await res.json();
       
       if (data.success) {
-        setStep(2); // Move to OTP screen
+        setStep(2); 
       } else {
         setError(data.error || 'Failed to send OTP.');
       }
@@ -64,7 +63,6 @@ export default function Login() {
       const data = await res.json();
       
       if (data.success) {
-        // Log them in using the AuthContext!
         customerLogin(email);
         navigate(from, { replace: true });
       } else {
@@ -129,36 +127,47 @@ export default function Login() {
             </button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOTP} className="space-y-6 animate-fade-in">
-            <div>
-              <label className="block text-xs font-bold text-ink-400 uppercase tracking-widest mb-2 text-center">Enter 4-Digit Code</label>
+          <form onSubmit={handleVerifyOTP} className="space-y-7 animate-fade-in">
+            
+            {/* ── UPGRADED MOBILE OTP INPUT ── */}
+            <div className="max-w-[240px] mx-auto">
+              <label className="block text-xs font-bold text-ink-400 uppercase tracking-widest mb-3 text-center">
+                Enter 4-Digit Code
+              </label>
               <input
                 type="text"
+                inputMode="numeric" // 👈 Triggers mobile number pad!
+                pattern="[0-9]*"
                 maxLength={4}
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} // Only allows numbers
-                placeholder="• • • •"
-                className="w-full border border-line-200 rounded-xl px-4 py-4 text-3xl font-mono text-center tracking-[1em] text-navy-900 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-all bg-cream-50/30"
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} 
+                placeholder="••••"
+                className="w-full border border-line-200 rounded-2xl px-2 py-4 text-3xl sm:text-4xl font-mono text-center tracking-[0.5em] sm:tracking-[0.8em] text-navy-900 focus:outline-none focus:border-gold-400 focus:ring-2 focus:ring-gold-400/20 transition-all bg-cream-50/50 placeholder:text-ink-200"
                 required
                 autoFocus
+                style={{ paddingLeft: otp ? '0.5em' : '0' }} // Keeps text perfectly centered despite letter-spacing
               />
             </div>
-            <button
-              type="submit"
-              disabled={loading || otp.length !== 4}
-              className="w-full bg-gold-500 hover:bg-gold-600 text-white py-4 rounded-xl font-bold text-sm shadow-btn-gold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : 'Verify & Login'}
-            </button>
-            <button 
-              type="button" 
-              onClick={() => { setStep(1); setOtp(''); setError(null); }}
-              className="w-full text-xs font-bold text-ink-400 hover:text-navy-700 transition-colors pt-2"
-            >
-              Wait, I need to change my email
-            </button>
+
+            <div className="space-y-3 pt-2">
+              <button
+                type="submit"
+                disabled={loading || otp.length !== 4}
+                className="w-full bg-gold-500 hover:bg-gold-600 text-white py-4 rounded-xl font-bold text-sm shadow-btn-gold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : 'Verify & Login'}
+              </button>
+              
+              <button 
+                type="button" 
+                onClick={() => { setStep(1); setOtp(''); setError(null); }}
+                className="w-full py-3 text-xs font-bold text-ink-400 hover:text-navy-700 transition-colors"
+              >
+                Wait, I need to change my email
+              </button>
+            </div>
           </form>
         )}
       </div>

@@ -10,7 +10,7 @@ const fmtDate = (isoString) => new Date(isoString).toLocaleDateString('en-IN', {
 });
 
 export default function Account() {
-  const { customerPhone, isCustomer, customerLogout } = useAuth();
+  const { customerEmail, isCustomer, customerLogout } = useAuth();
   const navigate = useNavigate();
   
   const [orders, setOrders] = useState([]);
@@ -36,7 +36,8 @@ export default function Account() {
 
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`/api/orders?pn=${encodeURIComponent(customerPhone)}`);
+        // Changed pn= to email=
+        const response = await fetch(`/api/orders?email=${encodeURIComponent(customerEmail)}`);
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -59,7 +60,7 @@ export default function Account() {
     };
 
     fetchOrders();
-  }, [customerPhone, isCustomer]);
+  }, [customerEmail, isCustomer]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const openReturnModal = (order) => {
@@ -95,10 +96,7 @@ export default function Account() {
   };
 
   const confirmReturn = async () => {
-    // Validations (Already checked in proceedToConfirm, but good to have)
-    if (returnModal.selectedItems.length === 0 || !returnModal.reason.trim()) {
-      return;
-    }
+    if (returnModal.selectedItems.length === 0 || !returnModal.reason.trim()) return;
 
     setIsSubmitting(true);
 
@@ -181,7 +179,6 @@ export default function Account() {
       {returnModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/40 backdrop-blur-sm px-4 animate-fade-in">
           <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-slide-up border border-line-100">
-            
             {returnModal.step === 'form' ? (
               /* ── STEP 1: SELECTION FORM ── */
               <>
@@ -189,7 +186,6 @@ export default function Account() {
                   <h3 className="text-xl font-bold text-navy-800">Return Request</h3>
                   <button onClick={closeReturnModal} className="text-ink-300 hover:text-red-500 transition-colors text-xl">✕</button>
                 </div>
-                
                 <div className="p-6">
                   <p className="text-xs font-bold text-ink-400 uppercase tracking-widest mb-4">1. Select items to return</p>
                   <div className="space-y-2 mb-6 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
@@ -203,14 +199,12 @@ export default function Account() {
                       </label>
                     ))}
                   </div>
-
                   <div className="flex justify-between items-end mb-2">
                     <p className="text-xs font-bold text-ink-400 uppercase tracking-widest">2. Reason</p>
                     <p className={`text-[10px] font-bold ${returnModal.reason.length >= 200 ? 'text-red-500' : 'text-ink-300'}`}>{returnModal.reason.length}/200</p>
                   </div>
                   <textarea className="w-full border border-line-100 bg-cream-50/30 rounded-2xl p-4 text-sm text-navy-900 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 min-h-[90px] resize-none transition-all placeholder:text-ink-200" placeholder="Why are you returning these?" value={returnModal.reason} maxLength={200} onChange={(e) => setReturnModal(prev => ({ ...prev, reason: e.target.value }))}></textarea>
                 </div>
-
                 <div className="px-6 py-5 bg-cream-50/50 flex justify-end gap-3">
                   <button onClick={closeReturnModal} className="px-6 py-2.5 text-sm font-bold text-ink-400 hover:text-navy-700 transition-colors">Cancel</button>
                   <button onClick={proceedToConfirm} className="bg-navy-800 hover:bg-navy-900 text-white px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-navy-800/20 transition-all active:scale-95">Continue</button>
@@ -219,28 +213,17 @@ export default function Account() {
             ) : (
               /* ── STEP 2: BEAUTIFUL CONFIRMATION ── */
               <div className="p-8 text-center animate-fade-in">
-                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-bounce-short">
-                  ⚠️
-                </div>
+                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-bounce-short">⚠️</div>
                 <h3 className="text-2xl font-bold text-navy-900 mb-3">Final Confirmation</h3>
                 <p className="text-ink-500 text-sm leading-relaxed mb-8">
                   You are requesting a return for <span className="text-navy-800 font-bold">{returnModal.selectedItems.length} item(s)</span>. <br/>
                   This action <span className="text-red-500 font-bold underline decoration-2 underline-offset-4">cannot be undone</span> once submitted.
                 </p>
-                
                 <div className="flex flex-col gap-3">
-                  <button 
-                    onClick={confirmReturn} 
-                    disabled={isSubmitting}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-2"
-                  >
+                  <button onClick={confirmReturn} disabled={isSubmitting} className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
                     {isSubmitting ? <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting...</> : 'Yes, Request Return'}
                   </button>
-                  <button 
-                    onClick={() => setReturnModal(prev => ({ ...prev, step: 'form' }))}
-                    disabled={isSubmitting}
-                    className="w-full py-3 text-sm font-bold text-ink-400 hover:text-navy-800 transition-colors"
-                  >
+                  <button onClick={() => setReturnModal(prev => ({ ...prev, step: 'form' }))} disabled={isSubmitting} className="w-full py-3 text-sm font-bold text-ink-400 hover:text-navy-800 transition-colors">
                     Wait, go back
                   </button>
                 </div>
@@ -257,7 +240,7 @@ export default function Account() {
             <h1 className="text-3xl md:text-4xl font-bold text-navy-700 tracking-tight mb-2">My Account</h1>
             <p className="text-sm font-medium text-ink-500 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Logged in as <span className="text-navy-700 font-bold">{customerPhone}</span>
+              Logged in as <span className="text-navy-700 font-bold">{customerEmail}</span>
             </p>
           </div>
           <button onClick={handleLogout} className="text-xs font-bold text-ink-400 uppercase tracking-wider hover:text-red-500 transition-colors py-2 px-4 border border-line-200 rounded-lg bg-white hover:border-red-200">

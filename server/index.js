@@ -31,6 +31,7 @@ const crypto = require('crypto')
 const Razorpay = require('razorpay')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const otpStore = new Map();
 
 // ── Prisma 7 + Standard Postgres Driver ───────────────────────────────────────
 // We are using the standard 'pg' pool. It is much more stable for Express 
@@ -394,29 +395,24 @@ app.post('/api/orders/:id/deliver', async (req, res) => {
 // ══════════════════════════════════════════════════════════════════════════════
 app.get('/api/orders', async (req, res) => {
   try {
-    const pn = req.query.pn;
+    const email = req.query.email;
 
-    if (pn) {
-      // Standardize the format exactly like the login route
-      const digitsOnly = pn.replace(/\D/g, '');
-      const dbFormattedPhone = `+91 ${digitsOnly.slice(-10)}`;
+    if (email) {
+      const standardizedEmail = email.toLowerCase().trim();
 
       const orders = await prisma.order.findMany({
-        where: { shippingPhone: dbFormattedPhone },
-        include: { 
-          items: true,
-          returnRequest: true
-        },
+        where: { shippingEmail: standardizedEmail },
+        include: { items: true, returnRequest: true },
         orderBy: { createdAt: 'desc' },
       });
+
       res.json({ success: true, orders });
     } else {
-      res.status(400).json({ success: false, error: 'Phone number is required!' });
+      res.status(400).json({ success: false, error: 'Email is required!' });
     }
   } catch (err) {
-    console.error('GET /api/orders error:', err);
     res.status(500).json({ success: false, error: 'Failed to fetch orders.' });
-  };
+  }
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -477,6 +473,7 @@ app.post('/api/verify-payment', async (req, res) => {
             // ── Shipping ──────────────────────────────
             shippingName: shipping?.name || null,
             shippingPhone: shipping?.phone || null,
+            shippingEmail: shipping?.email.toLowerCase() || null,
             shippingStreet: shipping?.street || null,
             shippingCity: shipping?.city || null,
             shippingState: shipping?.state || null,
@@ -579,6 +576,67 @@ app.post('/api/contact', async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to send message. Please try again.' })
   }
 })
+
+// ── 1. Route to SEND the OTP ──
+app.post('/api/auth/send-otp', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ success: false, error: 'Email is required' });
+
+  // Generate a random 4-digit code (e.g., 4829)
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  
+  // Store it in memory for 10 minutes
+  otpStore.set(email.toLowerCase(), { 
+    otp, 
+    expiresAt: Date.now() + 10 * 60 * 1000 
+  });
+
+  try {
+    // 👈 FIXED: Changed 'transporter' to 'mailer'
+    if (!mailer) {
+       console.warn('⚠️  Nodemailer is not configured. OTP printed to console instead.');
+       console.log(`\n🔑  [DEV MODE] OTP for ${email} is: ${otp}\n`);
+       return res.json({ success: true, message: 'OTP generated (Dev Mode)' });
+    }
+
+    await mailer.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your PahariKnits Login Code',
+      html: `
+        <div style="font-family: sans-serif; text-align: center; padding: 20px;">
+          <h2 style="color: #1A2D50;">PahariKnits Login</h2>
+          <p>Your one-time secure login code is:</p>
+          <h1 style="font-size: 40px; color: #B8892E; letter-spacing: 4px;">${otp}</h1>
+          <p style="color: #666; font-size: 12px;">This code expires in 10 minutes. Do not share it with anyone.</p>
+        </div>
+      `
+    });
+    res.json({ success: true, message: 'OTP sent!' });
+  } catch (error) {
+    console.error('Email error:', error);
+    res.status(500).json({ success: false, error: 'Failed to send email' });
+  }
+});
+
+// ── 2. Route to VERIFY the OTP ──
+app.post('/api/auth/verify-otp', (req, res) => {
+  const { email, otp } = req.body;
+  const record = otpStore.get(email.toLowerCase());
+
+  // Check if it exists, matches, and isn't expired
+  if (!record || record.otp !== otp || Date.now() > record.expiresAt) {
+    return res.status(400).json({ success: false, error: 'Invalid or expired OTP' });
+  }
+
+  // Success! Delete the OTP so it can't be used again
+  otpStore.delete(email.toLowerCase());
+  
+  // 👈 ADDED: Log the successful verification for your terminal
+  console.log(`✅  Email verified: ${email}`);
+  
+  res.json({ success: true, email });
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — GET /api/feedback/check

@@ -1,6 +1,6 @@
 /**
  * AuthContext.jsx — Unified Authentication State
- * Handles both Admin (JWT) and Customer (Phone Number) sessions.
+ * Handles both Admin (JWT) and Customer (Email OTP) sessions.
  */
 
 import React, { createContext, useContext, useState, useCallback } from 'react'
@@ -44,23 +44,23 @@ export function AuthProvider({ children }) {
   const isAdmin = Boolean(token && !isTokenExpired(token))
 
   // ════════════════════════════════════════════════════════════════════════
-  // CUSTOMER STATE (Phone Number via Cookies)
+  // CUSTOMER STATE (Email via Cookies)
   // ════════════════════════════════════════════════════════════════════════
-  const [customerPhone, setCustomerPhone] = useState(() => {
-    return Cookies.get('phoneNumber') || null
+  const [customerEmail, setCustomerEmail] = useState(() => {
+    return Cookies.get('customerEmail') || null
   })
 
-  const customerLogin = useCallback((phone) => {
-    Cookies.set('phoneNumber', phone, { expires: 30 }) // Remember for 30 days
-    setCustomerPhone(phone)
+  const customerLogin = useCallback((email) => {
+    Cookies.set('customerEmail', email, { expires: 30 }) // Remember for 30 days
+    setCustomerEmail(email)
   }, [])
 
   const customerLogout = useCallback(() => {
-    Cookies.remove('phoneNumber')
-    setCustomerPhone(null)
+    Cookies.remove('customerEmail')
+    setCustomerEmail(null)
   }, [])
 
-  const isCustomer = Boolean(customerPhone)
+  const isCustomer = Boolean(customerEmail)
 
   return (
     <AuthContext.Provider value={{
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
       token, isAdmin, login: adminLogin, logout: adminLogout,
       
       // Customer API
-      customerPhone, isCustomer, customerLogin, customerLogout
+      customerEmail, isCustomer, customerLogin, customerLogout
     }}>
       {children}
     </AuthContext.Provider>

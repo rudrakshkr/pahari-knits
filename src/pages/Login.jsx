@@ -1,59 +1,76 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Cookies from 'js-cookie';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
-// ── Shared UI Constants ───────────────────────────────────────────────────────
-const INPUT = `flex-1 bg-transparent px-3 py-3.5 text-base text-ink-900 
-  placeholder-ink-300 focus:outline-none`;
-
-const LABEL = `block text-[13px] font-bold text-ink-900 uppercase tracking-wide mb-2`;
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [step, setStep] = useState(1); // Step 1: Email, Step 2: OTP
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState(null);
+
   const { customerLogin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSubmit = async (e) => {
+  // If they were redirected here from the Cart/Account, send them back after login
+  const from = location.state?.from?.pathname || '/account';
+
+  const handleSendOTP = async (e) => {
     e.preventDefault();
-    setError('');
-    
-    // Improved validation: strip non-digits and check length
-    const digitsOnly = phoneNumber.replace(/\D/g, '');
-    if (digitsOnly.length < 10) {
-      setError('Please enter a valid phone number with at least 10 digits.');
+    setError(null);
+    if (!email.trim() || !email.includes('@')) {
+      setError('Please enter a valid email address.');
       return;
     }
 
     setLoading(true);
-
     try {
-      // Format dynamically based on your backend needs
-      const formattedPhoneNumber = phoneNumber.startsWith('+') 
-        ? phoneNumber 
-        : `+91${digitsOnly}`; // Defaulting to India if no '+' is provided
-
-      const response = await fetch('/api/login', {
+      const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: formattedPhoneNumber }),
+        body: JSON.stringify({ email })
       });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        Cookies.set('phoneNumber', formattedPhoneNumber, { expires: 3 });
-        customerLogin(formattedPhoneNumber);
-        navigate('/account');
+      const data = await res.json();
+      
+      if (data.success) {
+        setStep(2); // Move to OTP screen
       } else {
-        setError(data.error || 'Login failed. Please check your credentials.');
+        setError(data.error || 'Failed to send OTP.');
       }
     } catch (err) {
-      console.error('Login error:', err);
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    setError(null);
+    if (otp.length !== 4) {
+      setError('Please enter the 4-digit OTP.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        // Log them in using the AuthContext!
+        customerLogin(email);
+        navigate(from, { replace: true });
+      } else {
+        setError(data.error || 'Invalid or expired OTP.');
+      }
+    } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -61,84 +78,89 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center bg-cream-50 px-6 py-12">
+    <div className="min-h-[70vh] flex items-center justify-center bg-cream-50 px-6 py-16">
       <Helmet>
         <title>Login | PahariKnits</title>
       </Helmet>
 
-      <div className="w-full max-w-md bg-white border border-line-200 rounded-3xl shadow-card p-8 sm:p-10 opacity-0 animate-fade-up" style={{ animationFillMode: 'forwards' }}>
-        
-        {/* Header Section */}
+      <div className="w-full max-w-md bg-white p-8 md:p-10 rounded-3xl shadow-card border border-line-100 relative overflow-hidden">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-navy-50 text-navy-700 rounded-2xl mb-4">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-ink-900 tracking-tight mb-2">
-            Welcome Back
+          <Link to="/" className="inline-block mb-6">
+            <img src="/logo.png" alt="PahariKnits" className="w-14 h-14 rounded-2xl mx-auto shadow-sm" />
+          </Link>
+          <h1 className="text-2xl font-bold text-navy-800 tracking-tight">
+            {step === 1 ? 'Welcome Back' : 'Verify Your Email'}
           </h1>
-          <p className="text-sm text-ink-400">
-            Enter your phone number to access your account and track your orders.
+          <p className="text-sm text-ink-400 mt-2">
+            {step === 1 
+              ? 'Enter your email to receive a secure login code.' 
+              : <>We sent a 4-digit code to <strong className="text-navy-700">{email}</strong></>
+            }
           </p>
         </div>
 
-        {/* Error Banner */}
         {error && (
-          <div className="mb-6 flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
-            <span className="shrink-0 mt-0.5">⚠️</span>
-            <span>{error}</span>
+          <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm font-medium rounded-xl border border-red-100 flex items-center gap-2">
+            <span>⚠</span> {error}
           </div>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="phoneNumber" className={LABEL}>
-              Phone Number
-            </label>
-            <div className="flex items-center w-full bg-white border border-line-200 shadow-sm rounded-xl overflow-hidden focus-within:ring-4 focus-within:ring-navy-400/10 focus-within:border-navy-400 transition-all">
-              <span className="pl-4 pr-3 py-3.5 text-base font-bold text-ink-400 bg-cream-50 border-r border-line-200 select-none">
-                📞
-              </span>
-              <input 
-                type="tel" 
-                id="phoneNumber" 
-                className={INPUT} 
-                value={phoneNumber} 
-                onChange={(e) => setPhoneNumber(e.target.value)} 
-                placeholder="+91 98765 43210" 
+        {step === 1 ? (
+          <form onSubmit={handleSendOTP} className="space-y-5 animate-fade-in">
+            <div>
+              <label className="block text-xs font-bold text-ink-400 uppercase tracking-widest mb-2">Email Address</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full border border-line-200 rounded-xl px-4 py-3.5 text-sm text-navy-900 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-all bg-cream-50/30"
+                required
               />
             </div>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={loading} 
-            className={[
-              'w-full flex items-center justify-center gap-3 font-bold uppercase tracking-wider py-4 rounded-xl text-sm transition-all duration-200',
-              loading 
-                ? 'bg-gold-300 text-white cursor-not-allowed' 
-                : 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-[0.98]'
-            ].join(' ')}
-          >
-            {loading ? (
-              <>
-                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z"/>
-                </svg>
-                Sending...
-              </>
-            ) : (
-              'Continue securely'
-            )}
-          </button>
-        </form>
-
-        <p className="text-xs text-ink-400 text-center mt-6">
-          By continuing, you agree to PahariKnits' <Link to="/terms" className="text-navy-700 font-medium hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-navy-700 font-medium hover:underline">Privacy Policy</Link>.
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-navy-800 hover:bg-navy-900 text-white py-4 rounded-xl font-bold text-sm shadow-btn transition-all flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : 'Send Login Code'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOTP} className="space-y-6 animate-fade-in">
+            <div>
+              <label className="block text-xs font-bold text-ink-400 uppercase tracking-widest mb-2 text-center">Enter 4-Digit Code</label>
+              <input
+                type="text"
+                maxLength={4}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} // Only allows numbers
+                placeholder="• • • •"
+                className="w-full border border-line-200 rounded-xl px-4 py-4 text-3xl font-mono text-center tracking-[1em] text-navy-900 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition-all bg-cream-50/30"
+                required
+                autoFocus
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading || otp.length !== 4}
+              className="w-full bg-gold-500 hover:bg-gold-600 text-white py-4 rounded-xl font-bold text-sm shadow-btn-gold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : 'Verify & Login'}
+            </button>
+            <button 
+              type="button" 
+              onClick={() => { setStep(1); setOtp(''); setError(null); }}
+              className="w-full text-xs font-bold text-ink-400 hover:text-navy-700 transition-colors pt-2"
+            >
+              Wait, I need to change my email
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

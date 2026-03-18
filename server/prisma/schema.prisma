@@ -38,6 +38,7 @@ model Order {
 
   shippingName   String?
   shippingPhone  String?
+  shippingEmail  String?
   shippingStreet String?
   shippingCity   String?
   shippingState  String?

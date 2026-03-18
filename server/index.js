@@ -140,10 +140,12 @@ function requireAdmin(req, res, next) {
 }
 
 // ── Health ────────────────────────────────────────────────────────────────────
-app.get('/api/health', async (_req, res) => {
-  const count = await prisma.product.count().catch(() => -1)
-  res.json({ status: 'ok', service: 'PahariKnits API', dbProducts: count })
-})
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'online', 
+    message: '🏔️ PahariKnits API is running securely!' 
+  });
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — GET /api/products

@@ -1,6 +1,6 @@
 /**
  * AdminPanel.jsx — PahariKnits Admin Dashboard
- * Optimized for Desktop and Mobile Layouts
+ * Optimized for Desktop and Mobile Layouts (Responsive Card & Table Views)
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
@@ -138,7 +138,6 @@ function AddProductModal({ token, onClose, onAdded }) {
             </div>
           )}
           <form onSubmit={handleSubmit} id="add-product-form" className="space-y-4 sm:space-y-5">
-            {/* Form fields identical to your previous version */}
             <div>
               <label className={LABEL}>Name *</label>
               <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="Kullu Valley Shawl" />
@@ -408,7 +407,7 @@ export default function AdminPanel() {
 
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-5 sm:gap-6">
         {/* ── Stats row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatCard label="Products" value={products.length} sub="in catalogue" />
           <StatCard label="Orders" value={orders.length} sub="verified payments" />
           <StatCard label="Revenue" value={totalRevenue ? formatINR(totalRevenue) : '—'} sub="paid orders" />
@@ -450,49 +449,76 @@ export default function AdminPanel() {
             PRODUCTS TAB
         ═══════════════════════════════════════ */}
         {tab === 'products' && (
-          // ... (Preserved perfectly as you had it)
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-white">Product Catalogue</h2>
-                <p className="text-xs text-white/30 mt-0.5">Changes reflect in the Shop immediately via Neon</p>
+                <p className="text-xs text-white/30 mt-0.5">Changes reflect in the Shop immediately</p>
               </div>
               <button onClick={() => setShowAdd(true)} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#B8892E] hover:bg-[#9A7020] text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(184,137,46,0.35)] transition-colors">
                 <span className="text-lg leading-none">+</span> Add Product
               </button>
             </div>
-            <div className="bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
-              {loadingP ? <div className="py-16 flex justify-center"><Spinner /></div> : products.length === 0 ? (
-                <div className="py-16 text-center text-white/30 px-4">
-                  <p className="text-4xl mb-3">🧶</p><p className="text-sm">No products yet. Add your first one.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-[700px]">
-                    <thead>
-                      <tr className="border-b border-white/8 bg-white/5">
-                        {['Product', 'Category', 'Price', 'Max Qty', 'Badge', 'Stock', ''].map(h => (
-                          <th key={h} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((p, i) => (
-                        <tr key={p.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === products.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-4 py-3 pl-5"><div className="flex items-center gap-3"><img src={p.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" /><div className="min-w-0"><p className="font-semibold text-white truncate max-w-[150px] sm:max-w-[180px]">{p.name}</p><p className="text-[11px] text-white/40 truncate max-w-[150px] sm:max-w-[180px]">{p.origin}</p></div></div></td>
-                          <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium capitalize">{p.category}</span></td>
-                          <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span></td>
-                          <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium">{p.maxQuantity || '—'}</span></td>
-                          <td className="px-4 py-3"><Badge text={p.badge} /></td>
-                          <td className="px-4 py-3"><span className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>{p.inStock ? 'In Stock' : 'Out of Stock'}</span></td>
-                          <td className="px-4 py-3 pr-5 text-right"><button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button></td>
+            
+            {loadingP ? <div className="py-16 flex justify-center"><Spinner /></div> : products.length === 0 ? (
+              <div className="py-16 text-center text-white/30 bg-[#152648]/60 border border-white/8 rounded-2xl">
+                <p className="text-4xl mb-3">🧶</p><p className="text-sm">No products yet. Add your first one.</p>
+              </div>
+            ) : (
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden lg:block bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-white/8 bg-white/5">
+                          {['Product', 'Category', 'Price', 'Max Qty', 'Badge', 'Stock', ''].map(h => (
+                            <th key={h} className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {products.map((p, i) => (
+                          <tr key={p.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === products.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-4 py-3 pl-5"><div className="flex items-center gap-3"><img src={p.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" /><div className="min-w-0"><p className="font-semibold text-white truncate max-w-[180px]">{p.name}</p><p className="text-[11px] text-white/40 truncate max-w-[180px]">{p.origin}</p></div></div></td>
+                            <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium capitalize">{p.category}</span></td>
+                            <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span></td>
+                            <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium">{p.maxQuantity || '—'}</span></td>
+                            <td className="px-4 py-3"><Badge text={p.badge} /></td>
+                            <td className="px-4 py-3"><span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>{p.inStock ? 'In Stock' : 'Out of Stock'}</span></td>
+                            <td className="px-4 py-3 pr-5 text-right"><button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {/* Mobile Card View */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+                  {products.map(p => (
+                    <div key={p.id} className="bg-[#152648]/60 border border-white/8 rounded-xl p-4 flex flex-col gap-4">
+                      <div className="flex gap-4">
+                        <img src={p.imageUrl} className="w-16 h-16 rounded-lg object-cover border border-white/10 shrink-0" alt="" />
+                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                          <p className="font-bold text-white truncate text-sm">{p.name}</p>
+                          <p className="text-xs text-white/50 capitalize mb-1">{p.category} • {formatINR(p.price)}</p>
+                          <div><Badge text={p.badge} /></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-3 border-t border-white/8">
+                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                          {p.inStock ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                        <button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-red-400 hover:text-red-300 bg-red-500/10 px-4 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -500,7 +526,6 @@ export default function AdminPanel() {
             ORDERS TAB
         ═══════════════════════════════════════ */}
         {tab === "orders" && (
-          // ... (Preserved perfectly as you had it)
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div>
@@ -511,43 +536,82 @@ export default function AdminPanel() {
                 <span className="text-sm leading-none">↻</span> Refresh
               </button>
             </div>
-            <div className="bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
-              {loadingO ? <div className="py-16 flex justify-center"><Spinner /></div> : orders.length === 0 ? (
-                <div className="py-16 text-center text-white/30 px-4">
-                  <p className="text-4xl mb-3">📦</p><p className="text-sm">No orders yet.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-[750px]">
-                    <thead>
-                      <tr className="border-b border-white/8 bg-white/5">
-                        {['Order ID', 'Date', 'Items', 'Total', 'Status', '', ''].map((h, index) => (
-                          <th key={index} className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orders.map((o, i) => (
-                        <tr key={o.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === orders.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-4 py-3 pl-5"><p className="font-mono text-[11px] sm:text-xs text-white/80 truncate max-w-[120px]">#{o.razorpayPaymentId.slice(-8).toUpperCase()}</p><p className="text-[10px] sm:text-[11px] text-white/30 font-mono truncate max-w-[120px]">{o.razorpayOrderId}</p></td>
-                          <td className="px-4 py-3 text-[11px] sm:text-xs text-white/50">{fmtDate(o.createdAt)}</td>
-                          <td className="px-4 py-3"><div className="max-w-[180px]">{o.items.map((item, ii) => <p key={ii} className="text-[11px] sm:text-xs text-white/70 truncate">{item.quantity}× {item.name}</p>)}</div></td>
-                          <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(o.amountINR)}</span></td>
-                          <td className="px-4 py-3"><StatusChip status={o.status} /></td>
-                          <td className="px-4 py-3 pr-2 text-right"><button onClick={() => setDelTarget({ type: 'order', id: o.id, label: 'order' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button></td>
-                          <td className="px-4 py-3 pr-5 text-right"><button onClick={() => handleDeliver(o.id)} disabled={deliverLoading || o.deliveredAt} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${o.deliveredAt ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/30 hover:text-emerald-400 hover:bg-emerald-500/10'}`}>{(deliverLoading || o.deliveredAt) ? "Delivered ✓" : "Mark Delivered"}</button></td>
+            
+            {loadingO ? <div className="py-16 flex justify-center"><Spinner /></div> : orders.length === 0 ? (
+              <div className="py-16 text-center text-white/30 bg-[#152648]/60 border border-white/8 rounded-2xl">
+                <p className="text-4xl mb-3">📦</p><p className="text-sm">No orders yet.</p>
+              </div>
+            ) : (
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden lg:block bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-white/8 bg-white/5">
+                          {['Order ID', 'Date', 'Items', 'Total', 'Status', '', ''].map((h, index) => (
+                            <th key={index} className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {orders.map((o, i) => (
+                          <tr key={o.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === orders.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-4 py-3 pl-5"><p className="font-mono text-xs text-white/80 truncate max-w-[120px]">#{o.razorpayPaymentId.slice(-8).toUpperCase()}</p><p className="text-[11px] text-white/30 font-mono truncate max-w-[120px]">{o.razorpayOrderId}</p></td>
+                            <td className="px-4 py-3 text-xs text-white/50">{fmtDate(o.createdAt)}</td>
+                            <td className="px-4 py-3"><div className="max-w-[180px]">{o.items.map((item, ii) => <p key={ii} className="text-xs text-white/70 truncate">{item.quantity}× {item.name}</p>)}</div></td>
+                            <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(o.amountINR)}</span></td>
+                            <td className="px-4 py-3"><StatusChip status={o.status} /></td>
+                            <td className="px-4 py-3 pr-2 text-right"><button onClick={() => setDelTarget({ type: 'order', id: o.id, label: 'order' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button></td>
+                            <td className="px-4 py-3 pr-5 text-right"><button onClick={() => handleDeliver(o.id)} disabled={deliverLoading || o.deliveredAt} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${o.deliveredAt ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/30 hover:text-emerald-400 hover:bg-emerald-500/10'}`}>{(deliverLoading || o.deliveredAt) ? "Delivered ✓" : "Mark Delivered"}</button></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {/* Mobile Card View */}
+                <div className="grid grid-cols-1 gap-4 lg:hidden">
+                  {orders.map(o => (
+                    <div key={o.id} className="bg-[#152648]/60 border border-white/8 rounded-xl p-4 flex flex-col gap-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-mono font-bold text-white text-sm">#{o.razorpayPaymentId.slice(-8).toUpperCase()}</p>
+                          <p className="text-xs text-white/50">{fmtDate(o.createdAt)}</p>
+                        </div>
+                        <StatusChip status={o.status} />
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-3 my-1">
+                        {o.items.map((item, ii) => (
+                          <div key={ii} className="flex justify-between items-center text-xs text-white/70 border-b border-white/5 last:border-0 pb-1.5 mb-1.5 last:pb-0 last:mb-0">
+                            <span className="truncate pr-2">{item.name}</span>
+                            <span className="font-medium shrink-0">x{item.quantity}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between items-center text-sm font-bold text-[#B8892E] pt-2 mt-2 border-t border-white/10">
+                          <span>Total</span>
+                          <span>{formatINR(o.amountINR)}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 w-full pt-1">
+                        <button onClick={() => setDelTarget({ type: 'order', id: o.id, label: 'order' })} className="flex-1 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg text-xs font-bold transition-colors">
+                          Delete
+                        </button>
+                        <button onClick={() => handleDeliver(o.id)} disabled={deliverLoading || o.deliveredAt} className={`flex-[2] py-2.5 rounded-lg text-xs font-bold border transition-colors ${o.deliveredAt ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'}`}>
+                          {(deliverLoading || o.deliveredAt) ? "Delivered ✓" : "Mark Delivered"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {/* ═══════════════════════════════════════
-            RETURNS TAB (NEWLY UPGRADED)
+            RETURNS TAB 
         ═══════════════════════════════════════ */}
         {tab === 'returns' && (
           <div className="flex flex-col gap-4">
@@ -561,126 +625,147 @@ export default function AdminPanel() {
               </button>
             </div>
 
-            <div className="bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
-              {loadingR ? (
-                <div className="py-16 flex justify-center"><Spinner /></div>
-              ) : returns.length === 0 ? (
-                <div className="py-16 text-center text-white/30 px-4">
-                  <p className="text-4xl mb-3">♻️</p>
-                  <p className="text-sm">No returns yet. Customers love your products!</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-[950px]">
-                    <thead>
-                      <tr className="border-b border-white/8 bg-white/5">
-                        <th className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 pl-5">Date</th>
-                        <th className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Customer & Order</th>
-                        <th className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Reason Provided</th>
-                        <th className="text-left text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Items to Return</th>
-                        <th className="text-center text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Item Status</th>
-                        <th className="text-center text-[10px] sm:text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 pr-5">Refund Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {returns.map((r, i) => (
-                        <tr key={r.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === returns.length - 1 ? 'border-b-0' : ''}`}>
-                          
-                          {/* Date */}
-                          <td className="px-4 py-4 pl-5 align-top">
-                            <span className="font-medium text-white/80">{fmtDate(r.createdAt)}</span>
-                          </td>
-                          
-                          {/* Customer & Order */}
-                          <td className="px-4 py-4 align-top">
-                            <p className="font-bold text-white mb-0.5">{r.order?.shippingName || 'Unknown'}</p>
-                            <p className="text-[11px] text-white/50 mb-1">{r.order?.shippingPhone}</p>
-                            <p className="font-mono text-[10px] text-[#B8892E]">#{r.order?.razorpayOrderId}</p>
-                          </td>
-                          
-                          {/* Reason */}
-                          <td className="px-4 py-4 align-top max-w-[180px] whitespace-normal">
-                            <div className="bg-amber-500/10 text-amber-200/80 border border-amber-500/20 p-2.5 rounded-lg text-[11px] italic">
-                              "{r.reason || 'No specific reason provided.'}"
-                            </div>
-                          </td>
-                          
-                          {/* Items List (Filtered for Partial Returns) */}
-                          <td className="px-4 py-4 align-top whitespace-normal min-w-[180px]">
-                            <ul className="space-y-1">
-                              {r.order?.items
-                                ?.filter(item => r.items && r.items.includes(item.id)) // 👈 Only show selected items
-                                .map(item => (
-                                <li key={item.id} className="text-[11px] text-white/70 flex justify-between gap-3 border-b border-white/5 pb-1 last:border-0">
-                                  <span className="truncate">{item.name}</span>
-                                  <span className="font-medium text-white/90 shrink-0">x{item.quantity}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <div className="mt-2 pt-1.5 border-t border-white/10 text-[11px] text-emerald-400 flex justify-between">
-                              <span>Refund Due:</span>
-                              <span className="font-bold">
-                                {/* 👇 Dynamically calculate total based ONLY on returned items */}
-                                {formatINR(r.order?.items
-                                  ?.filter(item => r.items && r.items.includes(item.id))
-                                  .reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0
-                                )}
-                              </span>
-                            </div>
-                          </td>
-                          
-                          {/* Column 1: Received Status */}
-                          <td className="px-4 py-4 align-top text-center">
-                            {r.receivedAt ? (
-                               <div className="flex flex-col items-center">
-                                 <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                                   ✓ Received
-                                 </span>
-                                 <span className="text-[9px] text-white/30 mt-1.5">
-                                   {new Date(r.receivedAt).toLocaleDateString()}
-                                 </span>
-                               </div>
-                            ) : (
-                              <button onClick={() => markReceived(r.id)} className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[11px] font-bold rounded-lg transition-colors">
-                                Mark Received
-                              </button>
-                            )}
-                          </td>
-
-                          {/* Column 2: Refund Status */}
-                          <td className="px-4 py-4 pr-5 align-top text-center">
-                            {r.refundedAt ? (
-                               <div className="flex flex-col items-center">
-                                 <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                                   ✓ Refunded
-                                 </span>
-                                 <span className="text-[9px] text-white/30 mt-1.5">
-                                   {new Date(r.refundedAt).toLocaleDateString()}
-                                 </span>
-                               </div>
-                            ) : (
-                              <button 
-                                onClick={() => markRefunded(r.id)} 
-                                disabled={!r.receivedAt}
-                                className={`inline-flex items-center justify-center w-full px-3 py-1.5 text-[11px] font-bold rounded-lg transition-colors border ${
-                                  r.receivedAt 
-                                    ? 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-400' 
-                                    : 'bg-white/5 border-white/5 text-white/20 cursor-not-allowed'
-                                }`}
-                                title={!r.receivedAt ? "Must receive item first" : "Issue Refund"}
-                              >
-                                Mark Refunded
-                              </button>
-                            )}
-                          </td>
-
+            {loadingR ? <div className="py-16 flex justify-center"><Spinner /></div> : returns.length === 0 ? (
+              <div className="py-16 text-center text-white/30 bg-[#152648]/60 border border-white/8 rounded-2xl">
+                <p className="text-4xl mb-3">♻️</p><p className="text-sm">No returns yet. Customers love your products!</p>
+              </div>
+            ) : (
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden lg:block bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-white/8 bg-white/5">
+                          <th className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 pl-5">Date</th>
+                          <th className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Customer & Order</th>
+                          <th className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Reason Provided</th>
+                          <th className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Items to Return</th>
+                          <th className="text-center text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3">Item Status</th>
+                          <th className="text-center text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 pr-5">Refund Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {returns.map((r, i) => (
+                          <tr key={r.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === returns.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-4 py-4 pl-5 align-top">
+                              <span className="font-medium text-white/80">{fmtDate(r.createdAt)}</span>
+                            </td>
+                            <td className="px-4 py-4 align-top">
+                              <p className="font-bold text-white mb-0.5">{r.order?.shippingName || 'Unknown'}</p>
+                              <p className="text-[11px] text-white/50 mb-1">{r.order?.shippingPhone}</p>
+                              <p className="font-mono text-[10px] text-[#B8892E]">#{r.order?.razorpayOrderId}</p>
+                            </td>
+                            <td className="px-4 py-4 align-top max-w-[180px] whitespace-normal">
+                              <div className="bg-amber-500/10 text-amber-200/80 border border-amber-500/20 p-2.5 rounded-lg text-[11px] italic">
+                                "{r.reason || 'No specific reason provided.'}"
+                              </div>
+                            </td>
+                            <td className="px-4 py-4 align-top whitespace-normal min-w-[180px]">
+                              <ul className="space-y-1">
+                                {r.order?.items?.filter(item => r.items && r.items.includes(item.id)).map(item => (
+                                  <li key={item.id} className="text-[11px] text-white/70 flex justify-between gap-3 border-b border-white/5 pb-1 last:border-0">
+                                    <span className="truncate">{item.name}</span>
+                                    <span className="font-medium text-white/90 shrink-0">x{item.quantity}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                              <div className="mt-2 pt-1.5 border-t border-white/10 text-[11px] text-emerald-400 flex justify-between">
+                                <span>Refund Due:</span>
+                                <span className="font-bold">
+                                  {formatINR(r.order?.items?.filter(item => r.items && r.items.includes(item.id)).reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-4 align-top text-center">
+                              {r.receivedAt ? (
+                                <div className="flex flex-col items-center">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">✓ Received</span>
+                                  <span className="text-[9px] text-white/30 mt-1.5">{new Date(r.receivedAt).toLocaleDateString()}</span>
+                                </div>
+                              ) : (
+                                <button onClick={() => markReceived(r.id)} className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[11px] font-bold rounded-lg transition-colors">Mark Received</button>
+                              )}
+                            </td>
+                            <td className="px-4 py-4 pr-5 align-top text-center">
+                              {r.refundedAt ? (
+                                <div className="flex flex-col items-center">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">✓ Refunded</span>
+                                  <span className="text-[9px] text-white/30 mt-1.5">{new Date(r.refundedAt).toLocaleDateString()}</span>
+                                </div>
+                              ) : (
+                                <button onClick={() => markRefunded(r.id)} disabled={!r.receivedAt} className={`inline-flex items-center justify-center w-full px-3 py-1.5 text-[11px] font-bold rounded-lg transition-colors border ${r.receivedAt ? 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-white/5 border-white/5 text-white/20 cursor-not-allowed'}`} title={!r.receivedAt ? "Must receive item first" : "Issue Refund"}>Mark Refunded</button>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              )}
-            </div>
+
+                {/* Mobile Card View */}
+                <div className="grid grid-cols-1 gap-4 lg:hidden">
+                  {returns.map(r => (
+                    <div key={r.id} className="bg-[#152648]/60 border border-white/8 rounded-xl p-4 flex flex-col gap-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-white text-sm">{r.order?.shippingName || 'Unknown'}</p>
+                          <p className="text-xs text-white/50">{fmtDate(r.createdAt)} • {r.order?.shippingPhone}</p>
+                        </div>
+                        <p className="font-mono text-[10px] text-[#B8892E] bg-[#B8892E]/10 px-2 py-1 rounded">#{r.order?.razorpayOrderId.slice(-8)}</p>
+                      </div>
+
+                      <div className="bg-amber-500/10 text-amber-200/80 border border-amber-500/20 p-3 rounded-lg text-[11px] italic my-1">
+                        "{r.reason || 'No specific reason provided.'}"
+                      </div>
+
+                      <div className="bg-white/5 rounded-lg p-3">
+                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest border-b border-white/10 pb-2 mb-2">Items to Return</p>
+                        <ul className="space-y-2">
+                          {r.order?.items?.filter(item => r.items && r.items.includes(item.id)).map(item => (
+                            <li key={item.id} className="text-xs text-white/70 flex justify-between gap-3">
+                              <span className="truncate">{item.name}</span>
+                              <span className="font-medium text-white/90 shrink-0">x{item.quantity}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-3 pt-2 border-t border-white/10 text-xs text-emerald-400 flex justify-between items-center">
+                          <span>Refund Due:</span>
+                          <span className="font-bold text-sm">
+                            {formatINR(r.order?.items?.filter(item => r.items && r.items.includes(item.id)).reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/8">
+                        {r.receivedAt ? (
+                          <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
+                            <span>✓ Received</span>
+                            <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.receivedAt).toLocaleDateString()}</span>
+                          </div>
+                        ) : (
+                          <button onClick={() => markReceived(r.id)} className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs py-2.5 rounded-lg font-bold border border-blue-500/20 transition-colors">
+                            Mark Received
+                          </button>
+                        )}
+
+                        {r.refundedAt ? (
+                          <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
+                            <span>✓ Refunded</span>
+                            <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.refundedAt).toLocaleDateString()}</span>
+                          </div>
+                        ) : (
+                          <button onClick={() => markRefunded(r.id)} disabled={!r.receivedAt} className={`text-xs py-2.5 rounded-lg font-bold border transition-colors ${r.receivedAt ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-white/5 text-white/20 border-white/5'}`}>
+                            Mark Refunded
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 

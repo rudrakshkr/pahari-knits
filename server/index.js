@@ -492,6 +492,96 @@ app.post('/api/verify-payment', async (req, res) => {
           },
         })
         console.log(`💾  Order saved to DB: ${razorpay_order_id}`)
+
+        // ── NEW: Send Order Confirmation Email ────────────────────────────
+        if (mailer && shipping?.email) {
+          try {
+            // Generate table rows for the items they bought
+            const itemsHtml = items.map(item =>
+              `<tr>
+                <td style="padding: 12px 8px; border-bottom: 1px solid #eee; color: #1A2D50;">${item.name} (x${item.quantity})</td>
+                <td style="padding: 12px 8px; border-bottom: 1px solid #eee; text-align: right; color: #1A2D50; font-weight: bold;">₹${item.price * item.quantity}</td>
+              </tr>`
+            ).join('');
+
+            await mailer.sendMail({
+              from: `"PahariKnits" <${process.env.EMAIL_USER}>`,
+              to: shipping.email.toLowerCase(),
+              subject: `Order Confirmed: #${razorpay_payment_id.slice(-8).toUpperCase()}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden;">
+                  <div style="background-color: #1A2D50; padding: 30px 20px; text-align: center;">
+                    <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; letter-spacing: 1px;">PahariKnits</h1>
+                    <p style="color: #B8892E; margin: 8px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Order Confirmed</p>
+                  </div>
+                  
+                  <div style="padding: 30px 20px; background-color: #FFFFFF;">
+                    <p style="font-size: 16px; color: #374151; line-height: 1.5; margin-top: 0;">Hi <strong>${shipping.name}</strong>,</p>
+                    <p style="font-size: 15px; color: #4B5563; line-height: 1.6;">Thank you for your purchase! We have received your order and are preparing it for shipment from the Himalayas. Here are your details:</p>
+                    
+                    <div style="background-color: #FBF9F6; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid #F3F4F6;">
+                      <p style="margin: 0 0 8px 0; font-size: 14px; color: #6B7280;"><strong>Order ID:</strong> <span style="font-family: monospace; color: #1A2D50;">${razorpay_order_id}</span></p>
+                      <p style="margin: 0; font-size: 14px; color: #6B7280;"><strong>Shipping To:</strong><br/>
+                      <span style="color: #1A2D50;">${shipping.street}<br/>
+                      ${shipping.city}, ${shipping.state} - ${shipping.pin}</span></p>
+                    </div>
+
+                    <h3 style="color: #1A2D50; font-size: 16px; margin-bottom: 12px; border-bottom: 2px solid #B8892E; padding-bottom: 8px; display: inline-block;">Order Summary</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+                      ${itemsHtml}
+                      <tr>
+                        <td style="padding: 16px 8px 8px 8px; font-weight: bold; text-align: right; color: #6B7280;">Total Paid:</td>
+                        <td style="padding: 16px 8px 8px 8px; font-weight: bold; text-align: right; color: #B8892E; font-size: 18px;">₹${amount}</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div style="background-color: #F9FAFB; padding: 20px; text-align: center; border-top: 1px solid #E5E7EB;">
+                    <p style="margin: 0; font-size: 12px; color: #9CA3AF;">If you have any questions or need to request a return, simply log in to your account or reply to this email.</p>
+                  </div>
+                </div>
+              `
+            });
+            console.log(`📧  Order receipt sent to ${shipping.email}`);
+          } catch (emailErr) {
+            console.error('Failed to send order confirmation email:', emailErr);
+          }
+        }
+
+        // ── NEW: Admin "New Order" Alert ──────────────────────────────────
+        if (mailer) {
+          try {
+            // Use the same logic your friend used for the contact form
+            const adminEmail = (process.env.CONTACT_EMAIL || process.env.EMAIL_USER || "").trim();
+            
+            if (adminEmail) {
+              const itemsListText = items.map(i => `${i.quantity}x ${i.name}`).join('\n');
+              
+              await mailer.sendMail({
+                from: `"PahariKnits Alerts" <${process.env.EMAIL_USER}>`,
+                to: adminEmail,
+                subject: `💰 NEW SALE: ₹${amount} - ${shipping.name}`,
+                text: `You just received a new order!\n\nCustomer: ${shipping.name}\nEmail: ${shipping.email}\nPhone: ${shipping.phone}\nAmount: ₹${amount}\n\nItems:\n${itemsListText}\n\nLog in to your admin panel to view shipping details.`,
+                // Keeping the HTML simple and clean for your personal alerts
+                html: `
+                  <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                    <h2 style="color: #10B981; margin-top: 0;">🎉 New Order Received!</h2>
+                    <p><strong>Customer:</strong> ${shipping.name}</p>
+                    <p><strong>Amount:</strong> ₹${amount}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul>
+                      ${items.map(i => `<li>${i.quantity}x ${i.name}</li>`).join('')}
+                    </ul>
+                    <a href="https://pahariknits.com/admin" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #1A2D50; color: white; text-decoration: none; border-radius: 6px;">View Dashboard</a>
+                  </div>
+                `
+              });
+              console.log(`🛎️  Admin alert sent to ${adminEmail}`);
+            }
+          } catch (adminErr) {
+            console.error('Failed to send admin order alert:', adminErr);
+          }
+        }
       } catch (dbErr) {
         // DB write failure does NOT fail the response — payment already succeeded.
         // Log the error; you can reconcile manually from the Razorpay dashboard.

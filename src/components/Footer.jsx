@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="flex gap-4">
             <Link to="/refund-policy" className="hover:text-navy-700 transition-colors">Refund Policy</Link>
             <Link to="/terms" className="hover:text-navy-700 transition-colors">Terms & Conditions</Link>
-            <Link to="/privacy" className="text-sm text-ink-400 hover:text-gold-500 transition-colors">Privacy Policy</Link>
+            <Link to="/privacy" className="hover:text-navy-700 transition-colors">Privacy Policy</Link>
           </div>
           <p className="text-[11px] text-ink-200">© {new Date().getFullYear()} PahariKnits. All rights reserved.</p>
         </div>

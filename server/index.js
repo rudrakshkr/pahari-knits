@@ -560,19 +560,65 @@ app.post('/api/verify-payment', async (req, res) => {
               await mailer.sendMail({
                 from: `"PahariKnits Alerts" <${process.env.EMAIL_USER}>`,
                 to: adminEmail,
-                subject: `💰 NEW SALE: ₹${amount} - ${shipping.name}`,
+                subject: `[New Order] ₹${amount} from ${shipping.name}`,
                 text: `You just received a new order!\n\nCustomer: ${shipping.name}\nEmail: ${shipping.email}\nPhone: ${shipping.phone}\nAmount: ₹${amount}\n\nItems:\n${itemsListText}\n\nLog in to your admin panel to view shipping details.`,
-                // Keeping the HTML simple and clean for your personal alerts
                 html: `
-                  <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-                    <h2 style="color: #10B981; margin-top: 0;">🎉 New Order Received!</h2>
-                    <p><strong>Customer:</strong> ${shipping.name}</p>
-                    <p><strong>Amount:</strong> ₹${amount}</p>
-                    <p><strong>Items:</strong></p>
-                    <ul>
-                      ${items.map(i => `<li>${i.quantity}x ${i.name}</li>`).join('')}
-                    </ul>
-                    <a href="https://pahariknits.com/admin" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #1A2D50; color: white; text-decoration: none; border-radius: 6px;">View Dashboard</a>
+                  <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                    
+                    <div style="background-color: #1A2D50; padding: 24px 32px; border-bottom: 4px solid #10B981;">
+                      <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.5px;">
+                        🛍️ New Order Received
+                      </h2>
+                      <p style="color: #9CA3AF; margin: 8px 0 0 0; font-size: 14px;">
+                        Action required: Ready for fulfillment
+                      </p>
+                    </div>
+
+                    <div style="padding: 32px;">
+                      
+                      <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                        <h3 style="margin: 0 0 16px 0; color: #111827; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Customer Details</h3>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                          <tr>
+                            <td style="padding: 4px 0; color: #6B7280; width: 60px;">Name:</td>
+                            <td style="padding: 4px 0; color: #111827; font-weight: 600;">${shipping.name}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 4px 0; color: #6B7280;">Email:</td>
+                            <td style="padding: 4px 0; color: #111827; font-weight: 500;">
+                              <a href="mailto:${shipping.email}" style="color: #2563EB; text-decoration: none;">${shipping.email}</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 4px 0; color: #6B7280;">Phone:</td>
+                            <td style="padding: 4px 0; color: #111827; font-weight: 500;">${shipping.phone}</td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <h3 style="margin: 0 0 16px 0; color: #111827; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Order Summary</h3>
+                      <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                        ${items.map(i => `
+                          <tr>
+                            <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 14px;">
+                              <span style="color: #9CA3AF; font-weight: 600; margin-right: 8px;">${i.quantity}x</span> ${i.name}
+                            </td>
+                          </tr>
+                        `).join('')}
+                        <tr>
+                          <td style="padding: 16px 0 0 0; font-size: 18px; color: #111827; font-weight: 700; text-align: right;">
+                            Total: <span style="color: #10B981;">₹${amount}</span>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <div style="text-align: center; margin-top: 32px;">
+                        <a href="https://pahariknits.com/admin" style="display: inline-block; background-color: #B8892E; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; letter-spacing: 0.5px;">
+                          View in Admin Dashboard
+                        </a>
+                      </div>
+                      
+                    </div>
                   </div>
                 `
               });

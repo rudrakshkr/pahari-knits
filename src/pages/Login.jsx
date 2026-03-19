@@ -75,6 +75,10 @@ export default function Login() {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-cream-50 px-6 py-16">
       <Helmet>

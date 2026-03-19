@@ -39,6 +39,9 @@ function RegionBadge({ name, emoji }) {
 
 // ── Why card ──────────────────────────────────────────────────────────────────
 function WhyCard({ icon, title, body, accentBg, delay }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div
       className="flex-1 min-w-[200px] max-w-xs bg-white rounded-2xl p-6

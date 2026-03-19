@@ -86,7 +86,7 @@ let mailer = null;
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   mailer = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
+    port: 587,
     secure: true,
     auth: {
       user: process.env.EMAIL_USER,

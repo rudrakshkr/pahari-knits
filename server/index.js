@@ -85,13 +85,14 @@ const razorpay = new Razorpay({
 let mailer = null;
 if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
   mailer = nodemailer.createTransport({
-    service: 'gmail', 
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-      type: "OAuth2",
       user: process.env.EMAIL_USER,
-      serviceClient: process.env.CLIENT_ID,
-      privateKey: process.env.PRIVATE_KEY
+      pass: process.env.EMAIL_PASS,
     },
+    family: 4,
   })
   console.log('✉️  Nodemailer configured to send from:', process.env.EMAIL_USER)
 } else {

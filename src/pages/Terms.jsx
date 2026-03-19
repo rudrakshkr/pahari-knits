@@ -1,7 +1,10 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 export default function Terms() {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
   return (
     <div className="min-h-screen bg-cream-50 py-16 px-6">
       <Helmet>

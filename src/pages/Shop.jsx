@@ -46,6 +46,10 @@ function ProductCard({ product }) {
     showToast(product.name, product.imageUrl)
   }
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <article className={`bg-white rounded-2xl overflow-hidden border border-line-200
                         shadow-card hover:shadow-card-lg hover:-translate-y-0.5

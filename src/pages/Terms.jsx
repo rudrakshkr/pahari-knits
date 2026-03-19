@@ -44,7 +44,7 @@ export default function Terms() {
           <section>
             <h2 className="text-lg font-bold text-navy-800 mb-3">5. User Accounts</h2>
             <p>
-              To use certain features of the site, you may be required to register using your phone number (via OTP). You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+              To use certain features of the site, you may be required to register using your email (via OTP). You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
             </p>
           </section>
 

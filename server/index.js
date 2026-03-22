@@ -3,22 +3,31 @@
  *
  * Public routes
  * ─────────────
- *  GET  /api/health
- *  GET  /api/products             ?category=
- *  GET  /api/products/:id
- *  POST /api/create-order         Razorpay — unchanged
- *  POST /api/verify-payment       Razorpay HMAC + Prisma order write
- *  POST /api/contact              Nodemailer dual-write (DB + email)
- *  POST /api/feedback             Save user feedback to DB
+ * GET    /                           Health check
+ * GET    /api/products               Fetch products (supports ?category=)
+ * GET    /api/products/:id           Fetch single product & related
+ * POST   /api/create-order           Razorpay initialization
+ * POST   /api/verify-payment         Razorpay HMAC, DB write, Brevo receipt
+ * POST   /api/login                  Fetch orders by phone number
+ * POST   /api/auth/send-otp          Send login OTP via Brevo
+ * POST   /api/auth/verify-otp        Verify login OTP
+ * GET    /api/orders                 Fetch orders by email (?email=)
+ * POST   /api/orders/:id/deliver     Mark order as delivered
+ * POST   /api/returns                Request a return
+ * POST   /api/contact                Save message to DB + Brevo email
+ * GET    /api/feedback/check         Check if feedback exists
+ * POST   /api/feedback               Save user feedback to DB
  *
  * Admin routes  (require Bearer JWT)
  * ─────────────
- *  POST   /api/admin/login
- *  GET    /api/admin/products
- *  POST   /api/admin/products
- *  DELETE /api/admin/products/:id
- *  GET    /api/admin/orders
- *  DELETE /api/admin/orders/:id
+ * POST   /api/admin/login            Admin JWT auth
+ * GET    /api/admin/products         Fetch all products
+ * POST   /api/admin/products         Create new product
+ * DELETE /api/admin/products/:id     Delete a product
+ * GET    /api/admin/orders           Fetch all orders
+ * DELETE /api/admin/orders/:id       Delete an order
+ * GET    /api/admin/returns          Fetch all returns
+ * POST   /api/admin/returns          Mark returns received/refunded
  */
 
 'use strict'
@@ -1190,19 +1199,29 @@ app.delete('/api/admin/orders/:id', requireAdmin, async (req, res) => {
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🚀  PahariKnits API  →  http://localhost:${PORT}`)
-  console.log(`    GET    /api/products`)
+  console.log(`\n    --- PUBLIC ROUTES ---`)
+  console.log(`    GET    /                        (Health check)`)
+  console.log(`    GET    /api/products            (?category=)`)
   console.log(`    GET    /api/products/:id`)
   console.log(`    POST   /api/create-order        (Razorpay)`)
-  console.log(`    POST   /api/verify-payment      (Razorpay + DB write)`)
-  console.log(`    POST   /api/contact             (Nodemailer)`)
-  console.log(`    POST   /api/login`)
+  console.log(`    POST   /api/verify-payment      (Razorpay + DB + Brevo)`)
+  console.log(`    POST   /api/login               (Phone auth fallback)`)
+  console.log(`    POST   /api/auth/send-otp       (Brevo email OTP)`)
+  console.log(`    POST   /api/auth/verify-otp     (Verify OTP)`)
+  console.log(`    GET    /api/orders              (?email=)`)
+  console.log(`    POST   /api/orders/:id/deliver  (Update delivery status)`)
+  console.log(`    POST   /api/returns             (Submit return request)`)
+  console.log(`    POST   /api/contact             (DB + Brevo email)`)
   console.log(`    GET    /api/feedback/check      (DB check)`)
   console.log(`    POST   /api/feedback            (DB write)`)
-  console.log(`    POST   /api/admin/login         (JWT)`)
-  console.log(`    GET    /api/admin/products      (admin)`)
-  console.log(`    POST   /api/admin/products      (admin)`)
-  console.log(`    DELETE /api/admin/products/:id  (admin)`)
-  console.log(`    GET    /api/admin/returns        (admin)`)
-  console.log(`    GET    /api/admin/orders        (admin)`)
-  console.log(`    DELETE /api/admin/orders/:id    (admin)\n`)
+  
+  console.log(`\n    --- ADMIN ROUTES (JWT Required) ---`)
+  console.log(`    POST   /api/admin/login`)
+  console.log(`    GET    /api/admin/products`)
+  console.log(`    POST   /api/admin/products`)
+  console.log(`    DELETE /api/admin/products/:id`)
+  console.log(`    GET    /api/admin/orders`)
+  console.log(`    DELETE /api/admin/orders/:id`)
+  console.log(`    GET    /api/admin/returns`)
+  console.log(`    POST   /api/admin/returns       (Receive/Refund action)\n`)
 })

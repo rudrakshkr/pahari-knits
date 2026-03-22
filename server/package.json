@@ -12,6 +12,7 @@
     "db:setup": "npx prisma db push && node seed.js"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^5.0.1",
     "@neondatabase/serverless": "^0.10.4",
     "@prisma/adapter-neon": "^6.8.2",
     "@prisma/adapter-pg": "^7.4.2",

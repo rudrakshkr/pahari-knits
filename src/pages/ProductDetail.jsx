@@ -2,14 +2,14 @@
  * ProductDetail.jsx  —  PahariKnits Product Detail Page
  *
  * Layout (desktop, side-by-side):
- *   LEFT   — vertical thumbnail strip + large main image with fade transition
- *   RIGHT  — breadcrumb · badge · name · origin · price · description
- *             accordion (material / care) · qty stepper · Add to Cart + Buy Now
+ * LEFT   — vertical thumbnail strip + large main image with fade transition
+ * RIGHT  — breadcrumb · badge · name · origin · price · description
+ * accordion (material / care) · qty stepper · Add to Cart + Buy Now
  *
  * Below:  "You Might Also Like" — up to 3 related products from same category
  *
  * Data:   fetched from GET /api/products/:id (Vite proxies to Express)
- *         Falls back gracefully to a "not found" state.
+ * Falls back gracefully to a "not found" state.
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
@@ -117,7 +117,7 @@ function Skeleton() {
 export default function ProductDetail() {
   const { id }             = useParams()
   const navigate           = useNavigate()
-  const { addToCart }      = useCart()
+  const { addToCart, items } = useCart()
   const { showToast }      = useToast()
 
   const [product, setProduct]   = useState(null)
@@ -162,6 +162,23 @@ export default function ProductDetail() {
     return () => { cancelled = true }
   }, [id])
 
+  // ── Smart Inventory Calculations ───────────────────────────────────────────
+  // Checks what is currently in the user's cart so we don't let them add too many
+  const cartItem = items.find(i => i.product.id === product?.id)
+  const currentCartQty = cartItem ? cartItem.quantity : 0
+  const maxAllowed = product?.maxQuantity !== null && product?.maxQuantity !== undefined ? product.maxQuantity : Infinity
+  // How many more can they physically click "add" for?
+  const availableToAdd = Math.max(0, maxAllowed - currentCartQty)
+
+  // Auto-correct the quantity stepper if it exceeds the new available amount
+  useEffect(() => {
+    if (qty > availableToAdd && availableToAdd > 0) {
+      setQty(availableToAdd)
+    } else if (availableToAdd === 0) {
+      setQty(1) // Keep visual at 1, but buttons will be disabled
+    }
+  }, [availableToAdd, qty])
+
   // ── Switch gallery image with a brief fade ────────────────────────────────
   const switchImage = useCallback((index) => {
     if (index === activeImg) return
@@ -174,21 +191,30 @@ export default function ProductDetail() {
 
   // ── Add to cart ────────────────────────────────────────────────────────────
   const handleAddToCart = () => {
+    if (!product.inStock || availableToAdd === 0) return; // Safety block
+    
     const productForCart = {
       ...product,
       imageUrl: product.images[0]
     };
 
+    // Add requested quantity to cart
     for (let i = 0; i < qty; i++) addToCart(productForCart);
     
     showToast(product.name, productForCart.imageUrl);
     
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
+    setQty(1); // Reset stepper back to 1
   }
 
   // ── Buy now = add + go to cart ─────────────────────────────────────────────
   const handleBuyNow = () => {
+    if (!product.inStock || availableToAdd === 0) {
+      navigate('/cart');
+      return;
+    }
+
     const productForCart = {
       ...product,
       imageUrl: product.images[0]
@@ -380,14 +406,6 @@ export default function ProductDetail() {
               {product.name}
             </h1>
 
-            {/* Star rating — static display */}
-            {/* <div className="flex items-center gap-2 mb-5">
-              <div className="flex text-gold-400 text-base leading-none gap-0.5">
-                {'★★★★★'.split('').map((s, i) => <span key={i}>{s}</span>)}
-              </div>
-              <span className="text-xs text-ink-400 font-medium">4.9 · Verified artisan quality</span>
-            </div> */}
-
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-line-200">
               <span className="text-4xl font-bold text-navy-700 tracking-tight">
@@ -429,6 +447,24 @@ export default function ProductDetail() {
               </Accordion>
             </div>
 
+            {/* ── NEW: URGENCY / STOCK ALERT BADGE ── */}
+            {product.inStock && product.maxQuantity !== null && availableToAdd > 0 && (
+              <div className={`mb-5 inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border ${
+                product.maxQuantity <= 3 
+                  ? 'bg-red-50/80 text-red-600 border-red-100' 
+                  : 'bg-amber-50/80 text-amber-700 border-amber-100'
+              }`}>
+                 <span className={product.maxQuantity <= 3 ? "animate-pulse text-lg" : "text-lg"}>
+                   {product.maxQuantity <= 3 ? '🔥' : '⚡'}
+                 </span>
+                 <span className="text-sm font-bold tracking-tight">
+                   {product.maxQuantity <= 3 
+                     ? `Hurry! Only ${product.maxQuantity} left in stock` 
+                     : `Limited availability: ${product.maxQuantity} left`}
+                 </span>
+              </div>
+            )}
+
             {/* Qty stepper */}
             <div className="flex items-center gap-4 mb-4">
               <span className="text-sm font-semibold text-ink-700 shrink-0">Quantity</span>
@@ -436,15 +472,16 @@ export default function ProductDetail() {
                               px-2 py-2 border border-line-200">
                 <button
                   onClick={() => setQty(q => Math.max(1, q - 1))}
+                  disabled={!product.inStock || availableToAdd === 0}
                   className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center
-                             text-ink-700 font-bold hover:bg-navy-50 transition-colors"
+                             text-ink-700 font-bold hover:bg-navy-50 transition-colors disabled:opacity-50"
                 >
                   −
                 </button>
-                <span className="w-10 text-center text-base font-bold text-ink-900">{qty}</span>
+                <span className="w-10 text-center text-base font-bold text-ink-900">{!product.inStock || availableToAdd === 0 ? 0 : qty}</span>
                 <button
-                  onClick={() => setQty(q => (product.maxQuantity != null ? Math.min(q + 1, product.maxQuantity) : q + 1))}
-                  disabled={product.maxQuantity != null && qty >= product.maxQuantity}
+                  onClick={() => setQty(q => Math.min(q + 1, availableToAdd))}
+                  disabled={!product.inStock || qty >= availableToAdd || availableToAdd === 0}
                   className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center
                              text-ink-700 font-bold hover:bg-navy-50 transition-colors
                              disabled:opacity-50 disabled:cursor-not-allowed"
@@ -452,12 +489,16 @@ export default function ProductDetail() {
                   +
                 </button>
               </div>
-              {product.maxQuantity != null && qty >= product.maxQuantity ? (
-                <span className="text-xs text-amber-600 font-semibold">Max quantity reached</span>
+              
+              {/* 👈 NEW: Prioritized Stepper Status Text */}
+              {!product.inStock ? (
+                <span className="text-xs text-red-400 font-semibold">Out of stock</span>
+              ) : maxAllowed !== Infinity && currentCartQty >= maxAllowed ? (
+                <span className="text-xs text-red-500 font-semibold">Max limit currently in cart</span>
+              ) : maxAllowed !== Infinity && qty >= availableToAdd && availableToAdd > 0 ? (
+                <span className="text-xs text-amber-600 font-semibold">Order limit reached</span>
               ) : (
-                product.inStock
-                  ? <span className="text-xs text-teal-500 font-semibold">✓ In stock</span>
-                  : <span className="text-xs text-red-400 font-semibold">Out of stock</span>
+                <span className="text-xs text-teal-500 font-semibold">✓ In stock</span>
               )}
             </div>
 
@@ -466,19 +507,23 @@ export default function ProductDetail() {
               {/* Add to Cart */}
               <button
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={!product.inStock || availableToAdd === 0}
                 className={[
                   'flex-1 min-w-[160px] inline-flex items-center justify-center gap-2.5',
                   'font-bold text-sm uppercase tracking-wide py-4 rounded-xl',
                   'transition-all duration-150',
-                  added
-                    ? 'bg-teal-500 text-white'
-                    : product.inStock
-                      ? 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-[0.98]'
-                      : 'bg-line-200 text-ink-300 cursor-not-allowed',
+                  !product.inStock || availableToAdd === 0
+                    ? 'bg-line-200 text-ink-400 cursor-not-allowed'
+                    : added
+                      ? 'bg-teal-500 text-white'
+                      : 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-[0.98]'
                 ].join(' ')}
               >
-                {added ? (
+                {!product.inStock ? (
+                  "Sold Out"
+                ) : availableToAdd === 0 ? (
+                  "Limit Reached"
+                ) : added ? (
                   <>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor" strokeWidth={3}>
@@ -501,14 +546,14 @@ export default function ProductDetail() {
               {/* Buy Now */}
               <button
                 onClick={handleBuyNow}
-                disabled={!product.inStock}
+                disabled={!product.inStock || availableToAdd === 0}
                 className={[
                   'flex-1 min-w-[160px] inline-flex items-center justify-center',
                   'font-bold text-sm uppercase tracking-wide py-4 rounded-xl',
                   'transition-all duration-150 border-2',
-                  product.inStock
-                    ? 'border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white active:scale-[0.98]'
-                    : 'border-line-200 text-ink-300 cursor-not-allowed',
+                  !product.inStock || availableToAdd === 0
+                    ? 'border-line-200 text-ink-300 bg-transparent cursor-not-allowed'
+                    : 'border-navy-700 text-navy-700 hover:bg-navy-700 hover:text-white active:scale-[0.98]'
                 ].join(' ')}
               >
                 Buy Now
@@ -547,41 +592,6 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-
-      {/* ════════════════════════════════════════════════════════════════════
-          RELATED PRODUCTS
-      ════════════════════════════════════════════════════════════════════ */}
-      {/* {related.length > 0 && (
-        <div className="border-t border-line-200 bg-white mt-6">
-          <div className="max-w-content mx-auto px-6 py-12">
-
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <div className="flex items-center gap-2.5 mb-2">
-                  <span className="h-px w-6 bg-gold-500 rounded-full opacity-60" />
-                  <span className="text-[11px] font-semibold text-gold-500 tracking-[0.22em] uppercase">
-                    From the same tradition
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold text-ink-900">You Might Also Like</h2>
-              </div>
-              <Link
-                to="/shop"
-                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold
-                          text-navy-700 hover:text-navy-900 transition-colors"
-              >
-                View all <span>→</span>
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {related.map(p => <RelatedCard key={p.id} product={p} />)}
-            </div>
-          </div>
-        </div>
-      )} 
-    */}
-
     </div>
   )
 }

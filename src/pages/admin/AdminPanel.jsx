@@ -68,14 +68,19 @@ function Spinner() {
   )
 }
 
-// ── Add Product modal ─────────────────────────────────────────────────────────
+// ── Add/Edit Product modal ────────────────────────────────────────────────────
 const EMPTY_FORM = {
   name: '', price: '', category: 'shawl', origin: '', description: '',
   images: '', badge: '', inStock: true, material: '', dimensions: '', care: '', maxQuantity: '',
 }
 
-function AddProductModal({ token, onClose, onAdded }) {
-  const [form, setForm] = useState(EMPTY_FORM)
+function ProductFormModal({ token, onClose, onSaved, initialData = null }) {
+  const isEdit = !!initialData;
+  const [form, setForm] = useState(
+    initialData
+      ? { ...initialData, images: initialData.images?.join(', ') || '', badge: initialData.badge || '', maxQuantity: initialData.maxQuantity || '' }
+      : EMPTY_FORM
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -93,9 +98,12 @@ function AddProductModal({ token, onClose, onAdded }) {
       return
     }
 
+    const url = isEdit ? `/api/admin/products/${initialData.id}` : '/api/admin/products';
+    const method = isEdit ? 'PUT' : 'POST';
+
     try {
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           ...form,
@@ -110,8 +118,8 @@ function AddProductModal({ token, onClose, onAdded }) {
         }),
       })
       const data = await res.json()
-      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to add product')
-      onAdded(data.product)
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to save product')
+      onSaved(data.product, isEdit)
       onClose()
     } catch (err) {
       setError(err.message)
@@ -127,7 +135,7 @@ function AddProductModal({ token, onClose, onAdded }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-2xl bg-[#152648] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]">
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
-          <h2 className="font-bold text-white text-base sm:text-lg">Add New Product</h2>
+          <h2 className="font-bold text-white text-base sm:text-lg">{isEdit ? 'Edit Product' : 'Add New Product'}</h2>
           <button onClick={onClose} className="text-white/40 hover:text-white transition-colors text-xl leading-none">✕</button>
         </div>
 
@@ -137,7 +145,7 @@ function AddProductModal({ token, onClose, onAdded }) {
               ⚠ {error}
             </div>
           )}
-          <form onSubmit={handleSubmit} id="add-product-form" className="space-y-4 sm:space-y-5">
+          <form onSubmit={handleSubmit} id="product-form" className="space-y-4 sm:space-y-5">
             <div>
               <label className={LABEL}>Name *</label>
               <input className={INPUT} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="Kullu Valley Shawl" />
@@ -197,15 +205,15 @@ function AddProductModal({ token, onClose, onAdded }) {
               <button type="button" onClick={() => set('inStock', !form.inStock)} className={`w-11 h-6 rounded-full transition-all duration-200 border relative flex items-center ${form.inStock ? 'bg-emerald-500 border-emerald-400' : 'bg-white/5 border-white/20'}`}>
                 <span className={`block w-4 h-4 rounded-full bg-white shadow-md transform transition-transform duration-200 ${form.inStock ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>
-              <span className="text-sm font-medium text-white/70">{form.inStock ? 'In Stock' : 'Out of Stock'}</span>
+              <span className="text-sm font-medium text-white/70">{form.inStock ? 'In Stock' : 'Out of Stock (Archives product from shop)'}</span>
             </div>
           </form>
         </div>
 
         <div className="px-5 py-4 border-t border-white/8 flex justify-end gap-3 shrink-0">
           <button onClick={onClose} className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70 transition-colors">Cancel</button>
-          <button type="submit" form="add-product-form" disabled={loading} className={['px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wide', 'transition-colors flex items-center gap-2', loading ? 'bg-[#B8892E]/40 text-white/40 cursor-not-allowed' : 'bg-[#B8892E] hover:bg-[#9A7020] text-white'].join(' ')}>
-            {loading ? <><Spinner /> Saving…</> : 'Add Product'}
+          <button type="submit" form="product-form" disabled={loading} className={['px-5 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wide', 'transition-colors flex items-center gap-2', loading ? 'bg-[#B8892E]/40 text-white/40 cursor-not-allowed' : 'bg-[#B8892E] hover:bg-[#9A7020] text-white'].join(' ')}>
+            {loading ? <><Spinner /> Saving…</> : isEdit ? 'Save Changes' : 'Add Product'}
           </button>
         </div>
       </div>
@@ -248,7 +256,9 @@ export default function AdminPanel() {
   const [loadingO, setLoadingO] = useState(false)
   const [loadingR, setLoadingR] = useState(false)
   
-  const [showAdd, setShowAdd] = useState(false)
+  const [showProductForm, setShowProductForm] = useState(false)
+  const [editingProduct, setEditingProduct] = useState(null)
+  
   const [deleteTarget, setDelTarget] = useState(null)
   const [delLoading, setDelLoading] = useState(false)
   const [apiError, setApiError] = useState(null)
@@ -380,11 +390,91 @@ export default function AdminPanel() {
     } catch (error) { setApiError('An error occurred.'); }
   }
 
+  const handleProductSaved = (savedProduct, isEdit) => {
+    if (isEdit) {
+      setProducts(ps => ps.map(p => p.id === savedProduct.id ? savedProduct : p));
+    } else {
+      setProducts(ps => [...ps, savedProduct]);
+    }
+    setShowProductForm(false);
+    setEditingProduct(null);
+  }
+
   const totalRevenue = orders
     .filter(o => o.status.toLowerCase() === 'paid')
     .reduce((s, o) => s + (o.amountINR || 0), 0)
 
-  const inStockCount = products.filter(p => p.inStock).length
+  // ── Split Products into Active vs Archived ──
+  const activeProducts = products.filter(p => p.inStock)
+  const archivedProducts = products.filter(p => !p.inStock)
+
+  // Helper to render a group of products (avoids writing table HTML twice)
+  const renderProductList = (list, isArchived) => {
+    if (list.length === 0) return null;
+    return (
+      <>
+        {/* Desktop Table View */}
+        <div className={`hidden lg:block bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden ${isArchived ? 'opacity-80' : ''}`}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/8 bg-white/5">
+                  {['Product', 'Category', 'Price', 'Max Qty', 'Badge', 'Stock', 'Actions'].map(h => (
+                    <th key={h} className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((p, i) => (
+                  <tr key={p.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === list.length - 1 ? 'border-b-0' : ''}`}>
+                    <td className="px-4 py-3 pl-5"><div className="flex items-center gap-3"><img src={p.imageUrl} alt="" className={`w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10 ${isArchived ? 'grayscale' : ''}`} /><div className="min-w-0"><p className={`font-semibold truncate max-w-[180px] ${isArchived ? 'text-white/60 line-through' : 'text-white'}`}>{p.name}</p><p className="text-[11px] text-white/40 truncate max-w-[180px]">{p.origin}</p></div></div></td>
+                    <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium capitalize">{p.category}</span></td>
+                    <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span></td>
+                    <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium">{p.maxQuantity || '—'}</span></td>
+                    <td className="px-4 py-3"><Badge text={p.badge} /></td>
+                    <td className="px-4 py-3"><span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>{p.inStock ? 'In Stock' : 'Archived'}</span></td>
+                    <td className="px-4 py-3 pr-5 text-right whitespace-nowrap">
+                      <button onClick={() => setEditingProduct(p)} className="text-white/30 hover:text-blue-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-blue-500/10 text-xs font-medium mr-1">Edit</button>
+                      <button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+          {list.map(p => (
+            <div key={p.id} className={`bg-[#152648]/60 border border-white/8 rounded-xl p-4 flex flex-col gap-4 ${isArchived ? 'opacity-80 grayscale' : ''}`}>
+              <div className="flex gap-4">
+                <img src={p.imageUrl} className="w-16 h-16 rounded-lg object-cover border border-white/10 shrink-0" alt="" />
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <p className={`font-bold truncate text-sm ${isArchived ? 'text-white/60 line-through' : 'text-white'}`}>{p.name}</p>
+                  <p className="text-xs text-white/50 capitalize mb-1">{p.category} • {formatINR(p.price)}</p>
+                  <div><Badge text={p.badge} /></div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-3 border-t border-white/8 mb-2">
+                <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>
+                  {p.inStock ? 'In Stock' : 'Archived'}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setEditingProduct(p)} className="flex-1 text-blue-400 hover:text-blue-300 bg-blue-500/10 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                  Edit
+                </button>
+                <button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="flex-1 text-red-400 hover:text-red-300 bg-red-500/10 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#0E1832] flex flex-col">
@@ -411,7 +501,7 @@ export default function AdminPanel() {
           <StatCard label="Products" value={products.length} sub="in catalogue" />
           <StatCard label="Orders" value={orders.length} sub="verified payments" />
           <StatCard label="Revenue" value={totalRevenue ? formatINR(totalRevenue) : '—'} sub="paid orders" />
-          <StatCard label="In Stock" value={loadingP ? '...' : inStockCount} sub="available" />
+          <StatCard label="In Stock" value={loadingP ? '...' : activeProducts.length} sub="available" />
         </div>
 
         {/* ── API error banner ── */}
@@ -449,74 +539,51 @@ export default function AdminPanel() {
             PRODUCTS TAB
         ═══════════════════════════════════════ */}
         {tab === 'products' && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-bold text-white">Product Catalogue</h2>
-                <p className="text-xs text-white/30 mt-0.5">Changes reflect in the Shop immediately</p>
+                <p className="text-xs text-white/30 mt-0.5">Manage your active and archived inventory</p>
               </div>
-              <button onClick={() => setShowAdd(true)} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#B8892E] hover:bg-[#9A7020] text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(184,137,46,0.35)] transition-colors">
-                <span className="text-lg leading-none">+</span> Add Product
-              </button>
+              <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-end">
+                <button onClick={fetchProducts} className="text-[10px] sm:text-xs font-medium text-white/40 hover:text-white/70 px-3 py-1.5 sm:py-2 rounded-lg border border-white/10 hover:border-white/20 transition-colors flex items-center gap-1">
+                  <span className="text-sm leading-none">↻</span> Refresh
+                </button>
+                <button onClick={() => setShowProductForm(true)} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#B8892E] hover:bg-[#9A7020] text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl shadow-[0_4px_14px_rgba(184,137,46,0.35)] transition-colors">
+                  <span className="text-lg leading-none">+</span> Add Product
+                </button>
+              </div>
             </div>
             
             {loadingP ? <div className="py-16 flex justify-center"><Spinner /></div> : products.length === 0 ? (
               <div className="py-16 text-center text-white/30 bg-[#152648]/60 border border-white/8 rounded-2xl">
-                <p className="text-4xl mb-3">🧶</p><p className="text-sm">No products yet. Add your first one.</p>
+                <p className="text-4xl mb-3">🧶</p><p className="text-sm">No products found.</p>
               </div>
             ) : (
               <>
-                {/* Desktop Table View */}
-                <div className="hidden lg:block bg-[#152648]/60 border border-white/8 rounded-2xl overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-white/8 bg-white/5">
-                          {['Product', 'Category', 'Price', 'Max Qty', 'Badge', 'Stock', ''].map(h => (
-                            <th key={h} className="text-left text-[11px] font-semibold text-white/40 uppercase tracking-widest px-4 py-3 first:pl-5">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {products.map((p, i) => (
-                          <tr key={p.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${i === products.length - 1 ? 'border-b-0' : ''}`}>
-                            <td className="px-4 py-3 pl-5"><div className="flex items-center gap-3"><img src={p.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10" /><div className="min-w-0"><p className="font-semibold text-white truncate max-w-[180px]">{p.name}</p><p className="text-[11px] text-white/40 truncate max-w-[180px]">{p.origin}</p></div></div></td>
-                            <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium capitalize">{p.category}</span></td>
-                            <td className="px-4 py-3"><span className="font-bold text-[#B8892E]">{formatINR(p.price)}</span></td>
-                            <td className="px-4 py-3"><span className="text-xs text-white/60 font-medium">{p.maxQuantity || '—'}</span></td>
-                            <td className="px-4 py-3"><Badge text={p.badge} /></td>
-                            <td className="px-4 py-3"><span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>{p.inStock ? 'In Stock' : 'Out of Stock'}</span></td>
-                            <td className="px-4 py-3 pr-5 text-right"><button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-white/30 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-500/10 text-xs font-medium">Delete</button></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                {/* ── Active Products Section ── */}
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Active Products ({activeProducts.length})
+                  </h3>
+                  {activeProducts.length === 0 ? (
+                    <div className="py-8 text-center text-white/30 border border-white/8 border-dashed rounded-xl">
+                      <p className="text-sm">No active products.</p>
+                    </div>
+                  ) : renderProductList(activeProducts, false)}
                 </div>
 
-                {/* Mobile Card View */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
-                  {products.map(p => (
-                    <div key={p.id} className="bg-[#152648]/60 border border-white/8 rounded-xl p-4 flex flex-col gap-4">
-                      <div className="flex gap-4">
-                        <img src={p.imageUrl} className="w-16 h-16 rounded-lg object-cover border border-white/10 shrink-0" alt="" />
-                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                          <p className="font-bold text-white truncate text-sm">{p.name}</p>
-                          <p className="text-xs text-white/50 capitalize mb-1">{p.category} • {formatINR(p.price)}</p>
-                          <div><Badge text={p.badge} /></div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between pt-3 border-t border-white/8">
-                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${p.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-                          {p.inStock ? 'In Stock' : 'Out of Stock'}
-                        </span>
-                        <button onClick={() => setDelTarget({ type: 'product', id: p.id, label: 'product' })} className="text-red-400 hover:text-red-300 bg-red-500/10 px-4 py-1.5 rounded-lg text-xs font-bold transition-colors">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {/* ── Archived Products Section ── */}
+                {archivedProducts.length > 0 && (
+                  <div className="flex flex-col gap-3 mt-4">
+                    <h3 className="text-sm font-bold text-white/60 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-white/20"></span>
+                      Archived / Out of Stock ({archivedProducts.length})
+                    </h3>
+                    {renderProductList(archivedProducts, true)}
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -772,8 +839,13 @@ export default function AdminPanel() {
       </div>
 
       {/* ── Modals ── */}
-      {showAdd && (
-        <AddProductModal token={token} onClose={() => setShowAdd(false)} onAdded={(p) => { setProducts(ps => [...ps, p]); setShowAdd(false) }} />
+      {(showProductForm || editingProduct) && (
+        <ProductFormModal 
+          token={token} 
+          initialData={editingProduct}
+          onClose={() => { setShowProductForm(false); setEditingProduct(null); }} 
+          onSaved={handleProductSaved} 
+        />
       )}
 
       {deleteTarget && (

@@ -449,12 +449,7 @@ app.get('/api/orders', async (req, res) => {
 //
 // PRESERVED Razorpay HMAC verification.
 // ADDED: persists verified order to Neon via Prisma.
-//
-// Body: {
-//   razorpay_order_id, razorpay_payment_id, razorpay_signature,
-//   amount,   ← total in INR (added by frontend for DB write)
-//   items,    ← [{ id, name, price, quantity }] (added by frontend)
-// }
+// ADDED: Decrements product maxQuantity and toggles inStock if it hits 0.
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/verify-payment', async (req, res) => {
   try {
@@ -520,6 +515,32 @@ app.post('/api/verify-payment', async (req, res) => {
         })
         console.log(`💾  Order saved to DB: ${razorpay_order_id}`)
 
+        // ── NEW: Update Product Inventory ─────────────────────────────────
+        for (const item of items) {
+          try {
+            // Find the current product in the database
+            const product = await prisma.product.findUnique({ where: { id: item.id } });
+            
+            // Only update if the product actually uses maxQuantity tracking
+            if (product && product.maxQuantity !== null) {
+              // Calculate new amount, ensuring it never drops below 0
+              const newQty = Math.max(0, product.maxQuantity - item.quantity);
+              
+              await prisma.product.update({
+                where: { id: item.id },
+                data: {
+                  maxQuantity: newQty,
+                  inStock: newQty > 0 // Automatically archives the product if it hits 0!
+                }
+              });
+              console.log(`📉  Inventory updated: ${product.name} (${product.maxQuantity} -> ${newQty})`);
+            }
+          } catch (invErr) {
+            console.error(`⚠️  Failed to update inventory for product ${item.id}:`, invErr);
+          }
+        }
+        // ──────────────────────────────────────────────────────────────────
+
         // ── NEW: Send Order Confirmation Email ────────────────────────────
         if (brevoClient && shipping?.email) {
           try {
@@ -573,45 +594,6 @@ app.post('/api/verify-payment', async (req, res) => {
               to: [{ email: shipping.email.toLowerCase() }],
 
             });
-
-            // await mailer.sendMail({
-            //   from: `"PahariKnits" <${process.env.EMAIL_USER}>`,
-            //   to: shipping.email.toLowerCase(),
-            //   subject: `Order Confirmed: #${razorpay_payment_id.slice(-8).toUpperCase()}`,
-            //   html: `
-            //     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden;">
-            //       <div style="background-color: #1A2D50; padding: 30px 20px; text-align: center;">
-            //         <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; letter-spacing: 1px;">PahariKnits</h1>
-            //         <p style="color: #B8892E; margin: 8px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">Order Confirmed</p>
-            //       </div>
-
-            //       <div style="padding: 30px 20px; background-color: #FFFFFF;">
-            //         <p style="font-size: 16px; color: #374151; line-height: 1.5; margin-top: 0;">Hi <strong>${shipping.name}</strong>,</p>
-            //         <p style="font-size: 15px; color: #4B5563; line-height: 1.6;">Thank you for your purchase! We have received your order and are preparing it for shipment from the Himalayas. Here are your details:</p>
-
-            //         <div style="background-color: #FBF9F6; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid #F3F4F6;">
-            //           <p style="margin: 0 0 8px 0; font-size: 14px; color: #6B7280;"><strong>Order ID:</strong> <span style="font-family: monospace; color: #1A2D50;">${razorpay_order_id}</span></p>
-            //           <p style="margin: 0; font-size: 14px; color: #6B7280;"><strong>Shipping To:</strong><br/>
-            //           <span style="color: #1A2D50;">${shipping.street}<br/>
-            //           ${shipping.city}, ${shipping.state} - ${shipping.pin}</span></p>
-            //         </div>
-
-            //         <h3 style="color: #1A2D50; font-size: 16px; margin-bottom: 12px; border-bottom: 2px solid #B8892E; padding-bottom: 8px; display: inline-block;">Order Summary</h3>
-            //         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
-            //           ${itemsHtml}
-            //           <tr>
-            //             <td style="padding: 16px 8px 8px 8px; font-weight: bold; text-align: right; color: #6B7280;">Total Paid:</td>
-            //             <td style="padding: 16px 8px 8px 8px; font-weight: bold; text-align: right; color: #B8892E; font-size: 18px;">₹${amount}</td>
-            //           </tr>
-            //         </table>
-            //       </div>
-
-            //       <div style="background-color: #F9FAFB; padding: 20px; text-align: center; border-top: 1px solid #E5E7EB;">
-            //         <p style="margin: 0; font-size: 12px; color: #9CA3AF;">If you have any questions or need to request a return, simply log in to your account or reply to this email.</p>
-            //       </div>
-            //     </div>
-            //   `
-            // });
             console.log(`📧  Order receipt sent to ${shipping.email}`);
           } catch (emailErr) {
             console.error('Failed to send order confirmation email:', emailErr);
@@ -621,14 +603,16 @@ app.post('/api/verify-payment', async (req, res) => {
         // ── NEW: Admin "New Order" Alert ──────────────────────────────────
         if (brevoClient) {
           try {
-            // Use the same logic your friend used for the contact form
-            const adminEmail = (process.env.CONTACT_EMAIL || process.env.EMAIL_USER || "").trim();
+            const adminEmail = (process.env.EMAIL_USER || "").trim();
 
             if (adminEmail) {
               const itemsListText = items.map(i => `${i.quantity}x ${i.name}`).join('\n');
 
               await brevoClient.transactionalEmails.sendTransacEmail({
-                from: `"PahariKnits Alerts" <${process.env.EMAIL_USER}>`,
+                sender: { 
+                  name: 'PahariKnits', // 👈 Changed back to exactly match the working customer receipt
+                  email: (process.env.EMAIL_USER || "").trim() 
+                },
                 to: [{ email: adminEmail }],
                 subject: `[New Order] ₹${amount} from ${shipping.name}`,
                 textContent: `You just received a new order!\n\nCustomer: ${shipping.name}\nEmail: ${shipping.email}\nPhone: ${shipping.phone}\nAmount: ₹${amount}\n\nItems:\n${itemsListText}\n\nLog in to your admin panel to view shipping details.`,
@@ -692,72 +676,6 @@ app.post('/api/verify-payment', async (req, res) => {
                   </div>
                 `
               });
-
-              // await mailer.sendMail({
-              //   from: `"PahariKnits Alerts" <${process.env.EMAIL_USER}>`,
-              //   to: adminEmail,
-              //   subject: `[New Order] ₹${amount} from ${shipping.name}`,
-              //   text: `You just received a new order!\n\nCustomer: ${shipping.name}\nEmail: ${shipping.email}\nPhone: ${shipping.phone}\nAmount: ₹${amount}\n\nItems:\n${itemsListText}\n\nLog in to your admin panel to view shipping details.`,
-              //   html: `
-              //     <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
-
-              //       <div style="background-color: #1A2D50; padding: 24px 32px; border-bottom: 4px solid #10B981;">
-              //         <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.5px;">
-              //           🛍️ New Order Received
-              //         </h2>
-              //         <p style="color: #9CA3AF; margin: 8px 0 0 0; font-size: 14px;">
-              //           Action required: Ready for fulfillment
-              //         </p>
-              //       </div>
-
-              //       <div style="padding: 32px;">
-
-              //         <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
-              //           <h3 style="margin: 0 0 16px 0; color: #111827; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Customer Details</h3>
-              //           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-              //             <tr>
-              //               <td style="padding: 4px 0; color: #6B7280; width: 60px;">Name:</td>
-              //               <td style="padding: 4px 0; color: #111827; font-weight: 600;">${shipping.name}</td>
-              //             </tr>
-              //             <tr>
-              //               <td style="padding: 4px 0; color: #6B7280;">Email:</td>
-              //               <td style="padding: 4px 0; color: #111827; font-weight: 500;">
-              //                 <a href="mailto:${shipping.email}" style="color: #2563EB; text-decoration: none;">${shipping.email}</a>
-              //               </td>
-              //             </tr>
-              //             <tr>
-              //               <td style="padding: 4px 0; color: #6B7280;">Phone:</td>
-              //               <td style="padding: 4px 0; color: #111827; font-weight: 500;">${shipping.phone}</td>
-              //             </tr>
-              //           </table>
-              //         </div>
-
-              //         <h3 style="margin: 0 0 16px 0; color: #111827; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Order Summary</h3>
-              //         <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-              //           ${items.map(i => `
-              //             <tr>
-              //               <td style="padding: 12px 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 14px;">
-              //                 <span style="color: #9CA3AF; font-weight: 600; margin-right: 8px;">${i.quantity}x</span> ${i.name}
-              //               </td>
-              //             </tr>
-              //           `).join('')}
-              //           <tr>
-              //             <td style="padding: 16px 0 0 0; font-size: 18px; color: #111827; font-weight: 700; text-align: right;">
-              //               Total: <span style="color: #10B981;">₹${amount}</span>
-              //             </td>
-              //           </tr>
-              //         </table>
-
-              //         <div style="text-align: center; margin-top: 32px;">
-              //           <a href="https://pahariknits.com/admin" style="display: inline-block; background-color: #B8892E; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; letter-spacing: 0.5px;">
-              //             View in Admin Dashboard
-              //           </a>
-              //         </div>
-
-              //       </div>
-              //     </div>
-              //   `
-              // });
               console.log(`🛎️  Admin alert sent to ${adminEmail}`);
             }
           } catch (adminErr) {
@@ -765,12 +683,9 @@ app.post('/api/verify-payment', async (req, res) => {
           }
         }
       } catch (dbErr) {
-        // DB write failure does NOT fail the response — payment already succeeded.
-        // Log the error; you can reconcile manually from the Razorpay dashboard.
         console.error('DB order write failed (payment still valid):', dbErr.message)
       }
     } else {
-      // ADD THIS:
       console.log("❌ DB Save Skipped! Missing data:", {
         hasAmount: !!amount,
         hasItems: !!items,
@@ -789,6 +704,7 @@ app.post('/api/verify-payment', async (req, res) => {
     res.status(500).json({ success: false, error: 'Verification error. Contact support.' })
   }
 })
+
 // ══════════════════════════════════════════════════════════════════════════════
 // PUBLIC — POST /api/contact
 //
@@ -1132,6 +1048,39 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
   } catch (err) {
     console.error('admin POST product error:', err)
     res.status(500).json({ success: false, error: 'Failed to create product.' })
+  }
+})
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ADMIN — PUT /api/admin/products/:id
+// Updates an existing product so you can archive/edit without breaking orders.
+// ══════════════════════════════════════════════════════════════════════════════
+app.put('/api/admin/products/:id', requireAdmin, async (req, res) => {
+  try {
+    const {
+      name, price, category, origin, description, images,
+      badge, inStock, material, dimensions, care, maxQuantity,
+    } = req.body
+
+    const product = await prisma.product.update({
+      where: { id: req.params.id },
+      data: {
+        name, price: Math.round(price), category: category.toLowerCase(),
+        origin, description, images,
+        badge: badge || null,
+        inStock: inStock ?? true,
+        material: material || null,
+        dimensions: dimensions || null,
+        care: care || null,
+        maxQuantity: maxQuantity ? Number(maxQuantity) : null,
+      },
+    })
+
+    console.log(`✏️  Product updated: ${product.id} — ${product.name}`)
+    res.json({ success: true, product: normaliseProduct(product) })
+  } catch (err) {
+    console.error('admin PUT product error:', err)
+    res.status(500).json({ success: false, error: 'Failed to update product.' })
   }
 })
 

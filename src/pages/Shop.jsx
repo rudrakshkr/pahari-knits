@@ -31,24 +31,47 @@ function SkeletonCard() {
 }
 
 function ProductCard({ product }) {
-  const { addToCart } = useCart()
+  // 👈 NEW: We pull 'items' out so we can see what is currently in the cart
+  const { items, addToCart } = useCart()
   const { showToast } = useToast()
 
+  // 👈 NEW: Logic to check if they have reached the limit
+  const cartItem = items.find(i => i.product.id === product.id)
+  const currentCartQty = cartItem ? cartItem.quantity : 0
+  const maxAllowed = product.maxQuantity !== null && product.maxQuantity !== undefined ? product.maxQuantity : Infinity
+  const isMaxedOut = currentCartQty >= maxAllowed
+
   const handleAddToCart = (e) => {
-    // Stop the click from bubbling up to the <Link> wrapper
     e.preventDefault()
     e.stopPropagation()
     
-    // Extra safety check
-    if (!product.inStock) return;
+    // Safety check
+    if (!product.inStock || isMaxedOut) return;
 
-    addToCart(product)
-    showToast(product.name, product.imageUrl)
+    const success = addToCart(product)
+    if (success) {
+      showToast(product.name, product.imageUrl)
+    }
   }
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // 👈 NEW: Determine exact button text and styling based on limits
+  let buttonText = "Add to Cart"
+  let isDisabled = false
+  let btnClasses = "bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-95"
+
+  if (!product.inStock) {
+    buttonText = "Sold Out"
+    isDisabled = true
+    btnClasses = "bg-line-100 text-ink-200 cursor-not-allowed border border-line-200"
+  } else if (isMaxedOut) {
+    buttonText = "Max Reached"
+    isDisabled = true
+    btnClasses = "bg-line-100 text-ink-400 cursor-not-allowed border border-line-200"
+  }
 
   return (
     <article className={`bg-white rounded-2xl overflow-hidden border border-line-200
@@ -134,24 +157,16 @@ function ProductCard({ product }) {
               </svg>
             </Link>
 
-            {/* Smart Add to Cart / Out of Stock Button */}
+            {/* Smart Add to Cart / Out of Stock / Max Reached Button */}
             <button
               onClick={handleAddToCart}
-              disabled={!product.inStock}
-              className={`inline-flex items-center gap-3 text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-150 ${
-                product.inStock 
-                  ? 'bg-gold-500 hover:bg-gold-600 text-white shadow-btn-gold active:scale-95' 
-                  : 'bg-line-100 text-ink-200 cursor-not-allowed border border-line-200'
-              }`}
+              disabled={isDisabled}
+              className={`inline-flex items-center gap-3 text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-150 ${btnClasses}`}
             >
-              {product.inStock ? (
-                <>
-                  Add to Cart
-                  <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
-                                   justify-center text-xl leading-none">+</span>
-                </>
-              ) : (
-                'Sold Out'
+              {buttonText}
+              {!isDisabled && (
+                <span className="w-5 h-5 rounded-md bg-white/20 flex items-center
+                                 justify-center text-xl leading-none">+</span>
               )}
             </button>
           </div>

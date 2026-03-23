@@ -44,22 +44,49 @@ export default function Terms() {
             </p>
           </section>
 
+          {/* ── NEW SECTION: RETURNS & LOGISTICS ── */}
           <section>
-            <h2 className="text-lg font-bold text-navy-800 mb-3">5. User Accounts</h2>
+            <h2 className="text-lg font-bold text-navy-800 mb-3">5. Returns, Refunds & Cancellations</h2>
+            <div className="space-y-4">
+              <p>
+                We stand by the quality of our Himalayan handlooms. However, to protect our artisans and business from fraudulent claims, we enforce a strict verification policy for all return requests.
+              </p>
+              
+              <div>
+                <h3 className="font-bold text-navy-800 mb-2">Mandatory Unboxing Video</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li>An uncut, continuous unboxing video must be recorded when opening the original sealed package.</li>
+                  <li>This video must be submitted to our support team via WhatsApp at <strong>+91 [YOUR NUMBER]</strong> within 48 hours of delivery.</li>
+                  <li>Upon successful verification of the product's condition in the video, the return will be initiated.</li>
+                  <li><strong>If a valid unboxing video is not provided, the return request will be permanently rejected.</strong></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-navy-800 mb-2">Reverse Logistics Fee</h3>
+                <p>
+                  For all authorized returns, a flat reverse logistics fee of <strong>₹40</strong> will be deducted from the final refund amount. This fee helps cover a portion of the courier charges required to safely transport the garment back to our facility.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold text-navy-800 mb-3">6. User Accounts</h2>
             <p>
               To use certain features of the site, you may be required to register using your email (via OTP). You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-navy-800 mb-3">6. Intellectual Property</h2>
+            <h2 className="text-lg font-bold text-navy-800 mb-3">7. Intellectual Property</h2>
             <p>
               All content on this website, including text, graphics, logos, images, and software, is the property of PahariKnits and is protected by Indian copyright laws. You may not reproduce, distribute, or create derivative works without our explicit written consent.
             </p>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold text-navy-800 mb-3">7. Governing Law</h2>
+            <h2 className="text-lg font-bold text-navy-800 mb-3">8. Governing Law</h2>
             <p>
               These Terms shall be governed by and construed in accordance with the laws of India. Any disputes arising in connection with these terms shall be subject to the exclusive jurisdiction of the courts in Himachal Pradesh, India.
             </p>

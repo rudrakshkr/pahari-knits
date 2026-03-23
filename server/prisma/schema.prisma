@@ -57,14 +57,16 @@ model OrderItem {
 }
 
 model Return {
-  id         String    @id @default(cuid())
-  orderId    String    @unique
-  reason     String?
-  status     String    @default("PENDING")
-  createdAt  DateTime  @default(now())
-  receivedAt DateTime?
-  refundedAt DateTime?
-  items      String[]
+  id              String    @id @default(cuid())
+  orderId         String    @unique
+  reason          String?
+  status          String    @default("PENDING")
+  createdAt       DateTime  @default(now())
+  receivedAt      DateTime?
+  refundedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  items           String[]
 
   order Order @relation(fields: [orderId], references: [id])
 }

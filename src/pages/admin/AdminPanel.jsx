@@ -185,7 +185,6 @@ function ProductFormModal({ token, onClose, onSaved, initialData = null }) {
             <div>
               <label className={LABEL}>Image URLs * (comma-separated)</label>
               <textarea className={INPUT + ' resize-none'} rows={2} value={form.images} onChange={e => set('images', e.target.value)} placeholder="https://images.unsplash.com/..., https://..." />
-              <p className="text-[10px] sm:text-xs text-white/25 mt-1">First URL = primary image shown in Shop & Cart</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -240,6 +239,33 @@ function ConfirmDeleteModal({ label, onConfirm, onCancel, loading }) {
   )
 }
 
+// ── Reject Return confirmation ────────────────────────────────────────────────
+function RejectReturnModal({ onConfirm, onCancel, loading, reason, setReason }) {
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-[#152648] border border-white/10 rounded-2xl p-6 shadow-2xl">
+        <p className="text-3xl text-center mb-4">❌</p>
+        <h3 className="text-lg font-bold text-white text-center mb-2">Reject Return</h3>
+        <p className="text-sm text-white/40 text-center mb-4">Please provide a reason. The customer will see this directly on their account page.</p>
+        <textarea
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-red-400 mb-6 resize-none"
+          rows={3}
+          placeholder="e.g., No unboxing video provided within 48 hours."
+          value={reason}
+          onChange={e => setReason(e.target.value)}
+        />
+        <div className="flex gap-3">
+          <button onClick={onCancel} disabled={loading} className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm font-semibold text-white/50 hover:text-white/70 transition-colors">Cancel</button>
+          <button onClick={onConfirm} disabled={loading || !reason.trim()} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold uppercase tracking-wide transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            {loading ? <Spinner /> : 'Reject Return'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 // ══════════════════════════════════════════════════════════════════════════════
 // Main AdminPanel component
 // ══════════════════════════════════════════════════════════════════════════════
@@ -263,6 +289,12 @@ export default function AdminPanel() {
   const [delLoading, setDelLoading] = useState(false)
   const [apiError, setApiError] = useState(null)
   const [deliverLoading, setDeliverLoading] = useState(false);
+
+  // Rejection Modal State
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectTargetId, setRejectTargetId] = useState(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectLoading, setRejectLoading] = useState(false);
 
   const authFetch = useCallback((url, opts = {}) =>
     fetch(url, {
@@ -388,6 +420,29 @@ export default function AdminPanel() {
         setApiError('Failed to mark as refunded');
       }
     } catch (error) { setApiError('An error occurred.'); }
+  }
+
+  // ── Handle Rejection ──
+  const handleRejectSubmit = async () => {
+    if (!rejectReason.trim()) return;
+    setRejectLoading(true);
+    try {
+      const res = await authFetch('/api/admin/returns', {
+        method: 'POST',
+        body: JSON.stringify({ id: rejectTargetId, action: 'reject', reason: rejectReason }),
+      });
+      if (res.ok) {
+        setReturns(prev => prev.map(r => r.id === rejectTargetId ? { ...r, rejectedAt: new Date().toISOString(), rejectionReason: rejectReason, status: 'REJECTED' } : r));
+        setRejectModalOpen(false);
+        setRejectReason('');
+      } else {
+        setApiError('Failed to reject return');
+      }
+    } catch (error) { 
+      setApiError('An error occurred.'); 
+    } finally { 
+      setRejectLoading(false); 
+    }
   }
 
   const handleProductSaved = (savedProduct, isEdit) => {
@@ -745,17 +800,27 @@ export default function AdminPanel() {
                               </div>
                             </td>
                             <td className="px-4 py-4 align-top text-center">
-                              {r.receivedAt ? (
+                              {r.rejectedAt ? (
+                                <div className="flex flex-col items-center">
+                                  <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 text-[10px] font-bold uppercase tracking-wider border border-red-500/20">✕ Rejected</span>
+                                  <span className="text-[9px] text-red-400/60 mt-1.5 text-center leading-tight max-w-[120px] break-words">{r.rejectionReason}</span>
+                                </div>
+                              ) : r.receivedAt ? (
                                 <div className="flex flex-col items-center">
                                   <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">✓ Received</span>
                                   <span className="text-[9px] text-white/30 mt-1.5">{new Date(r.receivedAt).toLocaleDateString()}</span>
                                 </div>
                               ) : (
-                                <button onClick={() => markReceived(r.id)} className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[11px] font-bold rounded-lg transition-colors">Mark Received</button>
+                                <div className="flex flex-col gap-2 w-full max-w-[120px] mx-auto">
+                                  <button onClick={() => markReceived(r.id)} className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[11px] font-bold rounded-lg transition-colors">Mark Received</button>
+                                  <button onClick={() => { setRejectTargetId(r.id); setRejectModalOpen(true); }} className="inline-flex items-center justify-center w-full px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-[11px] font-bold rounded-lg transition-colors">Reject Return</button>
+                                </div>
                               )}
                             </td>
                             <td className="px-4 py-4 pr-5 align-top text-center">
-                              {r.refundedAt ? (
+                              {r.rejectedAt ? (
+                                <span className="text-white/20 text-xs">—</span>
+                              ) : r.refundedAt ? (
                                 <div className="flex flex-col items-center">
                                   <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">✓ Refunded</span>
                                   <span className="text-[9px] text-white/30 mt-1.5">{new Date(r.refundedAt).toLocaleDateString()}</span>
@@ -806,26 +871,40 @@ export default function AdminPanel() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/8">
-                        {r.receivedAt ? (
-                          <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
-                            <span>✓ Received</span>
-                            <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.receivedAt).toLocaleDateString()}</span>
+                        {r.rejectedAt ? (
+                          <div className="col-span-2 bg-red-500/10 border border-red-500/20 text-red-400 text-xs py-2.5 px-3 rounded-lg flex flex-col items-center justify-center text-center">
+                            <span className="font-bold mb-1">✕ Return Rejected</span>
+                            <span className="text-[10px] text-red-400/70">{r.rejectionReason}</span>
                           </div>
                         ) : (
-                          <button onClick={() => markReceived(r.id)} className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs py-2.5 rounded-lg font-bold border border-blue-500/20 transition-colors">
-                            Mark Received
-                          </button>
-                        )}
+                          <>
+                            {r.receivedAt ? (
+                              <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
+                                <span>✓ Received</span>
+                                <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.receivedAt).toLocaleDateString()}</span>
+                              </div>
+                            ) : (
+                              <div className="flex flex-col gap-2">
+                                <button onClick={() => markReceived(r.id)} className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-xs py-2.5 rounded-lg font-bold border border-blue-500/20 transition-colors">
+                                  Mark Received
+                                </button>
+                                <button onClick={() => { setRejectTargetId(r.id); setRejectModalOpen(true); }} className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs py-2 rounded-lg font-bold border border-red-500/20 transition-colors">
+                                  Reject Return
+                                </button>
+                              </div>
+                            )}
 
-                        {r.refundedAt ? (
-                          <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
-                            <span>✓ Refunded</span>
-                            <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.refundedAt).toLocaleDateString()}</span>
-                          </div>
-                        ) : (
-                          <button onClick={() => markRefunded(r.id)} disabled={!r.receivedAt} className={`text-xs py-2.5 rounded-lg font-bold border transition-colors ${r.receivedAt ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-white/5 text-white/20 border-white/5'}`}>
-                            Mark Refunded
-                          </button>
+                            {r.refundedAt ? (
+                              <div className="bg-emerald-500/10 text-emerald-400 text-xs py-2.5 rounded-lg text-center font-bold flex flex-col items-center justify-center">
+                                <span>✓ Refunded</span>
+                                <span className="text-[9px] text-emerald-400/50 mt-0.5">{new Date(r.refundedAt).toLocaleDateString()}</span>
+                              </div>
+                            ) : (
+                              <button onClick={() => markRefunded(r.id)} disabled={!r.receivedAt} className={`text-xs py-2.5 rounded-lg font-bold border transition-colors ${r.receivedAt ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-white/5 text-white/20 border-white/5 h-full'}`}>
+                                Mark Refunded
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
@@ -850,6 +929,16 @@ export default function AdminPanel() {
 
       {deleteTarget && (
         <ConfirmDeleteModal label={deleteTarget.label} loading={delLoading} onConfirm={handleDelete} onCancel={() => setDelTarget(null)} />
+      )}
+
+      {rejectModalOpen && (
+        <RejectReturnModal 
+          loading={rejectLoading} 
+          reason={rejectReason}
+          setReason={setRejectReason}
+          onConfirm={handleRejectSubmit} 
+          onCancel={() => { setRejectModalOpen(false); setRejectReason(''); }} 
+        />
       )}
     </div>
   )

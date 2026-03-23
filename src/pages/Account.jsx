@@ -36,7 +36,6 @@ export default function Account() {
 
     const fetchOrders = async () => {
       try {
-        // Changed pn= to email=
         const response = await fetch(`/api/orders?email=${encodeURIComponent(customerEmail)}`);
         const data = await response.json();
 
@@ -211,17 +210,32 @@ export default function Account() {
                 </div>
               </>
             ) : (
-              /* ── STEP 2: BEAUTIFUL CONFIRMATION ── */
+              /* ── STEP 2: BEAUTIFUL CONFIRMATION WITH NEW POLICY RULES ── */
               <div className="p-8 text-center animate-fade-in">
-                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-bounce-short">⚠️</div>
-                <h3 className="text-2xl font-bold text-navy-900 mb-3">Final Confirmation</h3>
-                <p className="text-ink-500 text-sm leading-relaxed mb-8">
-                  You are requesting a return for <span className="text-navy-800 font-bold">{returnModal.selectedItems.length} item(s)</span>. <br/>
-                  This action <span className="text-red-500 font-bold underline decoration-2 underline-offset-4">cannot be undone</span> once submitted.
+                <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl animate-bounce-short">⚠️</div>
+                <h3 className="text-2xl font-bold text-navy-900 mb-4">Important Notice</h3>
+                
+                {/* Policy Warning Box */}
+                <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 mb-6 text-left shadow-sm">
+                  <ul className="text-xs text-ink-700 space-y-3">
+                    <li className="flex gap-2 items-start">
+                      <span className="text-amber-500 mt-0.5">📹</span>
+                      <span><strong>Unboxing Video Required:</strong> You must send an uncut unboxing video of the package to <span className="font-bold text-teal-600">[YOUR NUMBER]</span> on WhatsApp. Returns without a video will be rejected.</span>
+                    </li>
+                    <li className="flex gap-2 items-start">
+                      <span className="text-amber-500 mt-0.5">₹</span>
+                      <span><strong>Logistics Fee:</strong> A nominal reverse shipping fee of <strong>₹40</strong> will be deducted from your final refund.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <p className="text-ink-500 text-sm leading-relaxed mb-6">
+                  Ready to request a return for <span className="text-navy-800 font-bold">{returnModal.selectedItems.length} item(s)</span>?
                 </p>
+
                 <div className="flex flex-col gap-3">
-                  <button onClick={confirmReturn} disabled={isSubmitting} className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-red-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
-                    {isSubmitting ? <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting...</> : 'Yes, Request Return'}
+                  <button onClick={confirmReturn} disabled={isSubmitting} className="w-full bg-navy-800 hover:bg-navy-900 text-white py-4 rounded-2xl font-bold text-sm shadow-xl shadow-navy-800/20 transition-all active:scale-95 flex items-center justify-center gap-2 tracking-wide uppercase">
+                    {isSubmitting ? <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting...</> : 'Yes, I Understand & Agree'}
                   </button>
                   <button onClick={() => setReturnModal(prev => ({ ...prev, step: 'form' }))} disabled={isSubmitting} className="w-full py-3 text-sm font-bold text-ink-400 hover:text-navy-800 transition-colors">
                     Wait, go back
@@ -289,23 +303,26 @@ export default function Account() {
                           <ul className="space-y-3">
                             {order.items.map((item) => {
                               const isReturned = order.returnRequest?.items?.includes(item.id);
+                              // Calculate all statuses with rejection in mind
+                              const isRejected = isReturned && order.returnRequest?.rejectedAt;
                               const isRefunded = isReturned && order.returnRequest?.refundedAt;
-                              const isReceived = isReturned && order.returnRequest?.receivedAt && !order.returnRequest?.refundedAt;
-                              const isPending = isReturned && !order.returnRequest?.receivedAt;
+                              const isReceived = isReturned && order.returnRequest?.receivedAt && !isRefunded && !isRejected;
+                              const isPending = isReturned && !isReceived && !isRefunded && !isRejected;
 
                               return (
                                 <li key={item.id} className="flex items-start gap-3">
-                                  <span className={`text-lg mt-0.5 ${isReturned ? 'opacity-50 grayscale' : ''}`}>🧣</span>
+                                  <span className={`text-lg mt-0.5 ${isReturned && !isRejected ? 'opacity-50 grayscale' : ''}`}>🧣</span>
                                   <div>
                                     <div className="flex flex-wrap items-center gap-2">
-                                      <p className={`text-sm font-bold ${isReturned ? 'text-ink-500' : 'text-ink-900'}`}>
+                                      <p className={`text-sm font-bold ${isReturned && !isRejected ? 'text-ink-500' : 'text-ink-900'}`}>
                                         {item.name}
                                       </p>
+                                      {isRejected && <span className="text-[9px] font-bold bg-red-50 text-red-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider border border-red-200">Rejected</span>}
                                       {isRefunded && <span className="text-[9px] font-bold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider border border-emerald-200">Refunded</span>}
                                       {isReceived && <span className="text-[9px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider border border-blue-200">Processing Refund</span>}
                                       {isPending && <span className="text-[9px] font-bold bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider border border-amber-200">Returning</span>}
                                     </div>
-                                    <p className={`text-xs mt-0.5 ${isReturned ? 'text-ink-300 line-through' : 'text-ink-400'}`}>
+                                    <p className={`text-xs mt-0.5 ${isReturned && !isRejected ? 'text-ink-300 line-through' : 'text-ink-400'}`}>
                                       Qty: {item.quantity} × {formatINR(item.price)}
                                     </p>
                                   </div>
@@ -336,7 +353,12 @@ export default function Account() {
                         {order.deliveredAt && (
                           <div className="flex flex-col sm:items-end gap-1.5 mt-4 sm:mt-0">
                             {order.returnRequest ? (
-                              order.returnRequest.refundedAt ? (
+                              order.returnRequest.rejectedAt ? (
+                                <div className="px-5 py-3 rounded-xl bg-red-50 border border-red-200 shadow-sm flex flex-col sm:items-end w-full sm:w-auto">
+                                  <span className="text-sm font-bold text-red-700 mb-1">Return Rejected ✕</span>
+                                  <span className="text-xs font-medium text-red-600/80 text-left sm:text-right max-w-[280px] leading-snug">Reason: {order.returnRequest.rejectionReason}</span>
+                                </div>
+                              ) : order.returnRequest.refundedAt ? (
                                 <div className="px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">Refund Issued ✓</div>
                               ) : order.returnRequest.receivedAt ? (
                                 <div className="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-sm">Item Received (Processing Refund)</div>

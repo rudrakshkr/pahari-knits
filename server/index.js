@@ -359,19 +359,34 @@ app.get('/api/admin/returns', requireAdmin, async (req, res) => {
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ADMIN — POST /api/admin/returns
-// Handles both "Mark Received" and "Mark Refunded" actions.
+// Handles "Mark Received", "Mark Refunded", and "Reject Return" actions.
 // ══════════════════════════════════════════════════════════════════════════════
 app.post('/api/admin/returns', requireAdmin, async (req, res) => {
   try {
-    const { id, action } = req.body;
+    // 1. Extract 'reason' along with id and action
+    const { id, action, reason } = req.body;
     let dataToUpdate = {};
 
     if (action === 'receive') {
       dataToUpdate = { receivedAt: new Date(), status: 'RECEIVED' };
       console.log(`📦  Return ${id} marked as received!`);
+      
     } else if (action === 'refund') {
       dataToUpdate = { refundedAt: new Date(), status: 'REFUNDED' };
       console.log(`💸  Return ${id} marked as refunded!`);
+      
+    } else if (action === 'reject') {
+      // 2. Add the rejection logic and validate the reason
+      if (!reason || !reason.trim()) {
+        return res.status(400).json({ success: false, error: 'Rejection reason is required.' });
+      }
+      dataToUpdate = { 
+        rejectedAt: new Date(), 
+        rejectionReason: reason, 
+        status: 'REJECTED' 
+      };
+      console.log(`❌  Return ${id} marked as rejected. Reason: "${reason}"`);
+      
     } else {
       return res.status(400).json({ success: false, error: 'Invalid action.' });
     }
@@ -379,7 +394,7 @@ app.post('/api/admin/returns', requireAdmin, async (req, res) => {
     const updatedReturn = await prisma.return.update({
       where: { id: id },
       data: dataToUpdate,
-    })
+    });
 
     res.json({ success: true, return: updatedReturn });
 

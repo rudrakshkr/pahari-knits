@@ -56,7 +56,7 @@ export default function Terms() {
                 <h3 className="font-bold text-navy-800 mb-2">Mandatory Unboxing Video</h3>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>An uncut, continuous unboxing video must be recorded when opening the original sealed package.</li>
-                  <li>This video must be submitted to our support team via WhatsApp at <strong>+91 [YOUR NUMBER]</strong> within 48 hours of delivery.</li>
+                  <li>This video must be submitted to our support team via WhatsApp at <strong>+91-7054811774</strong> within 24 hours of creating return request.</li>
                   <li>Upon successful verification of the product's condition in the video, the return will be initiated.</li>
                   <li><strong>If a valid unboxing video is not provided, the return request will be permanently rejected.</strong></li>
                 </ul>

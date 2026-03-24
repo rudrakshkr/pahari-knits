@@ -12,18 +12,18 @@ const fmtDate = (isoString) => new Date(isoString).toLocaleDateString('en-IN', {
 export default function Account() {
   const { customerEmail, isCustomer, customerLogout } = useAuth();
   const navigate = useNavigate();
-  
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
   // ── Modal State ─────────────────────────────────────────────────────────────
-  const [returnModal, setReturnModal] = useState({ 
-    isOpen: false, 
-    order: null, 
-    reason: '', 
+  const [returnModal, setReturnModal] = useState({
+    isOpen: false,
+    order: null,
+    reason: '',
     selectedItems: [],
-    step: 'form' 
+    step: 'form'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -87,8 +87,8 @@ export default function Account() {
       const isSelected = prev.selectedItems.includes(itemId);
       return {
         ...prev,
-        selectedItems: isSelected 
-          ? prev.selectedItems.filter(id => id !== itemId) 
+        selectedItems: isSelected
+          ? prev.selectedItems.filter(id => id !== itemId)
           : [...prev.selectedItems, itemId]
       };
     });
@@ -103,8 +103,8 @@ export default function Account() {
       const response = await fetch('/api/returns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          orderId: returnModal.order.id, 
+        body: JSON.stringify({
+          orderId: returnModal.order.id,
           reason: returnModal.reason,
           items: returnModal.selectedItems
         }),
@@ -113,10 +113,10 @@ export default function Account() {
       const data = await response.json();
 
       if (response.ok) {
-        setOrders(prevOrders => 
-          prevOrders.map(order => 
-            order.id === returnModal.order.id 
-              ? { ...order, returnRequest: { receivedAt: null, items: returnModal.selectedItems } } 
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === returnModal.order.id
+              ? { ...order, returnRequest: { receivedAt: null, items: returnModal.selectedItems } }
               : order
           )
         );
@@ -166,9 +166,8 @@ export default function Account() {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-24 left-0 right-0 mx-auto w-max z-[100] px-6 py-3 rounded-full shadow-lg text-sm font-bold flex items-center justify-center gap-2 animate-slide-down ${
-          toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-navy-700 text-white'
-        }`}>
+        <div className={`fixed top-24 left-0 right-0 mx-auto w-max z-[100] px-6 py-3 rounded-full shadow-lg text-sm font-bold flex items-center justify-center gap-2 animate-slide-down ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-navy-700 text-white'
+          }`}>
           <span>{toast.type === 'error' ? '⚠️' : '✅'}</span>
           {toast.message}
         </div>
@@ -212,25 +211,10 @@ export default function Account() {
             ) : (
               /* ── STEP 2: BEAUTIFUL CONFIRMATION WITH NEW POLICY RULES ── */
               <div className="p-8 text-center animate-fade-in">
-                <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl animate-bounce-short">⚠️</div>
-                <h3 className="text-2xl font-bold text-navy-900 mb-4">Important Notice</h3>
-                
-                {/* Policy Warning Box */}
-                <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 mb-6 text-left shadow-sm">
-                  <ul className="text-xs text-ink-700 space-y-3">
-                    <li className="flex gap-2 items-start">
-                      <span className="text-amber-500 mt-0.5">📹</span>
-                      <span><strong>Unboxing Video Required:</strong> You must send an uncut unboxing video of the package to <span className="font-bold text-teal-600">[YOUR NUMBER]</span> on WhatsApp. Returns without a video will be rejected.</span>
-                    </li>
-                    <li className="flex gap-2 items-start">
-                      <span className="text-amber-500 mt-0.5">₹</span>
-                      <span><strong>Logistics Fee:</strong> A nominal reverse shipping fee of <strong>₹40</strong> will be deducted from your final refund.</span>
-                    </li>
-                  </ul>
-                </div>
-
                 <p className="text-ink-500 text-sm leading-relaxed mb-6">
                   Ready to request a return for <span className="text-navy-800 font-bold">{returnModal.selectedItems.length} item(s)</span>?
+                  <br />
+                  This action can't be undone.
                 </p>
 
                 <div className="flex flex-col gap-3">
@@ -265,11 +249,25 @@ export default function Account() {
         <div className="space-y-6">
           <h2 className="text-lg font-bold text-ink-900 border-b border-line-200 pb-3">Order History</h2>
 
+          {/* Policy Warning Box */}
+          <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 mb-6 text-left shadow-sm">
+            <ul className="text-xs text-ink-700 space-y-3">
+              <li className="flex gap-2 items-start">
+                <span className="text-amber-500 mt-0.5">📹</span>
+                <span><strong>Unboxing Video Required:</strong> You must send an uncut unboxing video of the package to <span className="font-bold text-teal-600">+91-7054811774</span> on WhatsApp. Returns without a video will be rejected.</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-amber-500 mt-0.5">₹</span>
+                <span><strong>Logistics Fee:</strong> A nominal reverse shipping fee of <strong>₹40</strong> will be deducted from your final refund.</span>
+              </li>
+            </ul>
+          </div>
+
           {loading ? (
             <div className="py-20 flex justify-center">
               <svg className="w-8 h-8 animate-spin text-navy-300" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z"/>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3V4a10 10 0 100 10h-2a8 8 0 01-8-8z" />
               </svg>
             </div>
           ) : orders.length === 0 ? (
